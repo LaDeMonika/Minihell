@@ -1,7 +1,7 @@
 # Minihell
 
 ### Monika's Task
-    - write helper functions
+    - practice functions
 
 ### Lilie's Task
     -
