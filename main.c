@@ -204,7 +204,7 @@ void execute_command(char *input, t_minishell *shell)
 	}
 	if (!shell->envp[i])
 	{
-		ft_putstr_fd("PATH not found in envp\n", 2);
+		ft_error_msg(ERR_PATH_NOT_FOUND);
 		return;
 	}
 	char **path_array = ft_split(shell->envp[i] + 5, ':');
@@ -220,7 +220,7 @@ void execute_command(char *input, t_minishell *shell)
 		}
 		i++;
 	}
-	ft_putstr_fd("Command not found\n", 2);
+	ft_error_msg(ERR_INVALID_ARG);
 	exit(EXIT_FAILURE);
 }
 

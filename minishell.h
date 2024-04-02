@@ -1,7 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-//**INCLUDES
+//***************************INCLUDES
 # include "libft/libft.h"
 # include <unistd.h>
 # include <fcntl.h>
@@ -16,12 +16,32 @@
 # include <fcntl.h>
 #include <linux/limits.h>
 
-//**STRUCT
+//***************************STRUCT
 typedef struct s_minishell
 {
     char *current_dir; // Current working directory
     char **envp; // Environment variables
     int last_exit_status; // Exit status of the last command
 }               t_minishell;
+
+//***************************ENUM
+/* enum e_return
+{
+    RET_SUCCESS,
+    RET_FAILURE
+}; */
+
+enum e_error
+{
+    ERR_MALLOC,
+    ERR_TOO_MANY_ARGS,
+    ERR_TOO_FEW_ARGS,
+    ERR_INVALID_ARG,
+    ERR_PATH_NOT_FOUND
+};
+
+//***************************PROTOTYPES
+// error_msg.c
+void    ft_error_msg(char err);
 
 #endif
