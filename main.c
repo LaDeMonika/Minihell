@@ -200,10 +200,7 @@ void execute_command(char *input, t_minishell *shell)
 		i++;
 	}
 	if (!shell->envp[i])
-	{
-		ft_error_msg(ERR_PATH_NOT_FOUND);
-		return;
-	}
+		return(ft_error_msg(ERR_PATH_NOT_FOUND));
 	char **path_array = ft_split(shell->envp[i] + 5, ':');
 	i = 0;
 	while (path_array[i])
@@ -212,9 +209,7 @@ void execute_command(char *input, t_minishell *shell)
 		shell->command_path = ft_strjoin(shell->command_path, shell->input_array[0]);
 		shell->fd = access(shell->command_path, F_OK & X_OK);
 		if (shell->fd == 0)
-		{
 			execve(shell->command_path, shell->input_array, shell->envp);
-		}
 		i++;
 	}
 	ft_error_msg(ERR_INVALID_ARG);
@@ -238,7 +233,6 @@ int main(int argc, char **argv, char **envp)
         execute_command(input, &shell);
         free(input);
     }
-
     free(shell.current_dir);
     return 0;
 }
