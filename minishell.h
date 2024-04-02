@@ -20,6 +20,7 @@
 typedef struct s_minishell
 {
     char *usr_input; // User input
+    char *prompt; // Prompt
     char *current_dir; // Current working directory
     char *command_path; // Path to the command
     char **envp; // Environment variables
