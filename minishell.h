@@ -22,7 +22,6 @@ typedef struct s_minishell
     char *current_dir; // Current working directory
     char **envp; // Environment variables
     int last_exit_status; // Exit status of the last command
-    //and so on what we need
 }               t_minishell;
 
 #endif
