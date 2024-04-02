@@ -1,7 +1,9 @@
 # Minihell
 
 ### Monika's Task
-    - practice functions
+    - err msg add
+    - init shell struct
+    - reorganize from main
 
 ### Lilie's Task
     - experiment with piping
