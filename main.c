@@ -1,8 +1,4 @@
 #include "minishell.h"
-#include "libft/libft.h"
-#include <linux/limits.h>
-#include <readline/history.h>
-#include <stdlib.h>
 
 char	*build_prompt()
 {

@@ -14,13 +14,14 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <fcntl.h>
+#include <linux/limits.h>
 
 //**STRUCT
 typedef struct s_minishell
 {
-    //user input
-    //tokens
-    //env
+    char *current_dir; // Current working directory
+    char **envp; // Environment variables
+    int last_exit_status; // Exit status of the last command
     //and so on what we need
 }               t_minishell;
 
