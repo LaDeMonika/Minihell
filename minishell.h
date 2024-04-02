@@ -20,8 +20,13 @@
 typedef struct s_minishell
 {
     char *current_dir; // Current working directory
+    char *command_path; // Path to the command
     char **envp; // Environment variables
+    char **input_array; // Array of input arguments
+    char **command_history; // Array of command history
+    int history_index; // Index of the command history
     int last_exit_status; // Exit status of the last command
+    int fd;
 }               t_minishell;
 
 //***************************ENUM

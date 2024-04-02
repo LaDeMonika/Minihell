@@ -48,7 +48,7 @@ void	execute_command(char *input, char **envp)
 	char	**path_array;
 	char	**input_array;
 	int	i;
-	char	*command_path;
+	char	*shell->command_path;
 	int	fd;
 
 	path = getenv("PATH");
@@ -58,14 +58,14 @@ void	execute_command(char *input, char **envp)
 	while (path_array[i])
 	{
 
-		command_path = ft_strjoin(path_array[i], "/");
-		command_path = ft_strjoin(command_path, input_array[0]);
-		fd = access(command_path, F_OK & X_OK);
+		shell->command_path = ft_strjoin(path_array[i], "/");
+		shell->command_path = ft_strjoin(shell->command_path, input_array[0]);
+		fd = access(shell->command_path, F_OK & X_OK);
 		if(fd == 0)
 		{
 			printf("%s\n", input_array[0]);
-			printf("%s\n", command_path);
-			execve(command_path, input_array, envp);
+			printf("%s\n", shell->command_path);
+			execve(shell->command_path, input_array, envp);
 		}
 		i++;
 	}
@@ -132,7 +132,7 @@ void	execute_command(char *input, char **envp)
 	char	**path_array;
 	char	**input_array;
 	int	i;
-	char	*command_path;
+	char	*shell->command_path;
 	int	fd;
 
 	path = getenv("PATH");
@@ -142,14 +142,14 @@ void	execute_command(char *input, char **envp)
 	while (path_array[i])
 	{
 
-		command_path = ft_strjoin(path_array[i], "/");
-		command_path = ft_strjoin(command_path, input_array[0]);
-		fd = access(command_path, F_OK & X_OK);
+		shell->command_path = ft_strjoin(path_array[i], "/");
+		shell->command_path = ft_strjoin(shell->command_path, input_array[0]);
+		fd = access(shell->command_path, F_OK & X_OK);
 		if(fd == 0)
 		{
 			printf("%s\n", input_array[0]);
-			printf("%s\n", command_path);
-			execve(command_path, input_array, envp);
+			printf("%s\n", shell->command_path);
+			execve(shell->command_path, input_array, envp);
 		}
 		i++;
 	}
@@ -189,12 +189,9 @@ void	display_prompt(int sigint)
 
 void execute_command(char *input, t_minishell *shell)
 {
-    char **input_array;
 	int i;
-	char *command_path;
-	int fd;
 
-	input_array = ft_split(input, ' ');
+	shell->input_array = ft_split(input, ' ');
 	i = 0;
 	while (shell->envp[i])
 	{
@@ -211,12 +208,12 @@ void execute_command(char *input, t_minishell *shell)
 	i = 0;
 	while (path_array[i])
 	{
-		command_path = ft_strjoin(path_array[i], "/");
-		command_path = ft_strjoin(command_path, input_array[0]);
-		fd = access(command_path, F_OK & X_OK);
-		if (fd == 0)
+		shell->command_path = ft_strjoin(path_array[i], "/");
+		shell->command_path = ft_strjoin(shell->command_path, shell->input_array[0]);
+		shell->fd = access(shell->command_path, F_OK & X_OK);
+		if (shell->fd == 0)
 		{
-			execve(command_path, input_array, shell->envp);
+			execve(shell->command_path, shell->input_array, shell->envp);
 		}
 		i++;
 	}
