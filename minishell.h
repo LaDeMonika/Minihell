@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
+/*   Updated: 2024/04/02 15:21:52 by msimic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -21,6 +33,7 @@ typedef struct s_minishell
 {
     char *usr_input; // User input
     char *prompt; // Prompt
+    char *home_dir; // Home directory
     char *current_dir; // Current working directory
     char *command_path; // Path to the command
     char **envp; // Environment variables
