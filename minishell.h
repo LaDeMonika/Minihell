@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/02 15:21:52 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/02 16:39:16 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 //***************************STRUCT
 typedef struct s_minishell
 {
+    //Discovering what we need and what we don't need
     char *usr_input; // User input
     char *prompt; // Prompt
     char *home_dir; // Home directory
@@ -41,7 +42,7 @@ typedef struct s_minishell
     char **command_history; // Array of command history
     int history_index; // Index of the command history
     int last_exit_status; // Exit status of the last command
-    int fd;
+    int fd; // File descriptor
 }               t_minishell;
 
 //***************************ENUM
