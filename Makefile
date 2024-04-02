@@ -1,5 +1,5 @@
 CFLAGS = -Wall -Werror -Wextra -g
-SRCS = main.c error_msg.c
+SRCS = main.c error_msg.c init_shell.c
 INCLDS = minishell.h
 OBJS = $(SRCS:%.c=%.o)
 NAME = minishell
