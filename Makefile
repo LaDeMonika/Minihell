@@ -1,19 +1,26 @@
 NAME = minishell
+
 CFLAGS = -Wall -Werror -Wextra -g
 INCLDS = inc/minishell.h
-OBJS = $(SRCS:%.c=%.o)
 LIBFTDIR = ./libft
 LIBFTNAME = $(LIBFTDIR)/libft.a
 LIBS =  -L$(LIBFTDIR) -lft
 EXT_LIBS = -lreadline
 
-SRC_DIR = src/minishell.c
+BLA = main/minishell.c
 
-SRC_ERR = err/error_msg.c
+ERR = err/error_msg.c
 
-SRCS = $(SRC_DIR) $(SRC_ERR)
+SRC = $(BLA) $(ERR)
+
+OBJDIR = obj/
+OBJS = $(addprefix $(OBJDIR), $(SRC:.c=.o))
 
 all: makelibft $(NAME)
+
+$(OBJDIR)%.o: src/%.c $(INCLDS)
+	mkdir -p $(dir $@)
+	@$(CC) -c $(CFLAGS) $(DEPFLAGS) $< -o $@
 
 $(NAME): $(LIBFTNAME) $(OBJS)
 	cc $(CFLAGS) $(OBJS) $(LIBS) $(EXT_LIBS)  -o $(NAME)
@@ -21,15 +28,13 @@ $(NAME): $(LIBFTNAME) $(OBJS)
 makelibft:
 	cd $(LIBFTDIR) && make
 
-$(OBJS): %.o: %.c $(INCLDS)
-	cc $(CFLAGS) -c $< -o $@
-
 clean:
 	rm -f $(OBJS)
 	cd $(LIBFTDIR) && make clean
 
 fclean: clean
 	rm -f $(NAME)
+	rm -rf $(OBJDIR)
 	cd $(LIBFTDIR) && make fclean
 
 re: fclean all

@@ -6,16 +6,15 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/02 15:16:49 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 14:55:10 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 //TODO: Implement init_shell function
 //TODO: init shell structure
 //TODO: 
-
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
     shell->usr_input = NULL;

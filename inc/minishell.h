@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 14:41:32 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 14:52:40 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 //***************************STRUCT
 typedef struct s_minishell
 {
-    //Discovering what we need and what we don't need
     char *usr_input; // User input
     char *prompt; // Prompt
     char *home_dir; // Home directory

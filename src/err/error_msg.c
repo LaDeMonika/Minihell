@@ -6,11 +6,11 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 14:40:23 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 16:31:14 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
 static void    ft_puterror(const char *fault, const char *msg)
 {
@@ -24,7 +24,7 @@ static void    ft_puterror(const char *fault, const char *msg)
 void    ft_error_msg(char err)
 {
     if (err == ERR_MALLOC)
-        ft_puterror("Memory allocation failed", "Please try again");
+        ft_puterror("Memory allocation failed", "");
     else if (err == ERR_TOO_MANY_ARGS)
         ft_puterror("Too many arguments", "Please try again");
     else if (err == ERR_TOO_FEW_ARGS)
@@ -32,5 +32,5 @@ void    ft_error_msg(char err)
     else if (err == ERR_INVALID_ARG)
         ft_puterror("Invalid argument", "Please try again");
     else if (err == ERR_PATH_NOT_FOUND)
-        ft_puterror("Path not found", "Please try again");
+        ft_puterror("Path not found", "");
 }
