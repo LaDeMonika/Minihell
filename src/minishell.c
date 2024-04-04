@@ -6,11 +6,11 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:45 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/02 15:21:46 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 14:41:13 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 void execute_command(char *input, t_minishell *shell)
 {

@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/02 16:39:16 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 14:41:32 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 //***************************INCLUDES
-# include "libft/libft.h"
+# include "../libft/libft.h"
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdlib.h>

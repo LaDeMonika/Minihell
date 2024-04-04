@@ -6,11 +6,11 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/02 13:12:44 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/04 14:40:23 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 static void    ft_puterror(const char *fault, const char *msg)
 {

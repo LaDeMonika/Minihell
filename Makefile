@@ -1,14 +1,17 @@
-CFLAGS = -Wall -Werror -Wextra -g
-SRCS = minishell.c error_msg.c
-INCLDS = minishell.h
-OBJS = $(SRCS:%.c=%.o)
 NAME = minishell
+CFLAGS = -Wall -Werror -Wextra -g
+INCLDS = inc/minishell.h
+OBJS = $(SRCS:%.c=%.o)
 LIBFTDIR = ./libft
 LIBFTNAME = $(LIBFTDIR)/libft.a
 LIBS =  -L$(LIBFTDIR) -lft
 EXT_LIBS = -lreadline
 
-.PHONY: all re clean fclean makelibft
+SRC_DIR = src/minishell.c
+
+SRC_ERR = err/error_msg.c
+
+SRCS = $(SRC_DIR) $(SRC_ERR)
 
 all: makelibft $(NAME)
 
@@ -30,3 +33,5 @@ fclean: clean
 	cd $(LIBFTDIR) && make fclean
 
 re: fclean all
+
+.PHONY: all re clean fclean makelibft
