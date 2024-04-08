@@ -6,26 +6,27 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 14:55:10 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/08 16:02:19 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
-//TODO: Implement init_shell function
-//TODO: init shell structure
-//TODO: 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
-    shell->usr_input = NULL;
-    shell->prompt = NULL;
-    shell->home_dir = getenv("HOME");
-    shell->current_dir = NULL;
-    shell->command_path = NULL;
+    shell->current_dir = getcwd(NULL, 0);
     shell->envp = envp;
-    shell->input_array = NULL;
-    shell->command_history = NULL;
-    shell->history_index = 0;
     shell->last_exit_status = 0;
-    shell->fd = 0;
+    shell->user = getenv("USER");
+	shell->prompt = ft_strjoin(shell->user, "@");
+	shell->prompt = ft_strjoin("fake_", shell->prompt);
+	//shell->fd_hostname = open("/etc/hostname", O_RDONLY);
+	//shell->bytes_read = read(fd_hostname, hostname_buffer, 254);
+	//close(fd_hostname);
+	//hostname_len = strchr(hostname_buffer, '.') - hostname_buffer;
+	//hostname_buffer[hostname_len] = '\0';
+	// shell->prompt = ft_strjoin(prompt, hostname_buffer);
+	// shell->prompt = ft_strjoin(prompt, ":");
+	// shell->path_temp = getenv("PWD");
+	// shell->home = getenv("HOME");
 }

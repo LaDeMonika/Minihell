@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:45 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/08 11:19:27 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/08 16:10:21 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,64 +73,25 @@ void execute_command(char *input, t_minishell *shell)
 		i++;
 	}
 }
-/* 
-void execute_command(char *input, t_minishell *shell)
+
+int main(int ac, char **av, char **envp)
 {
-	char **path_array = ft_split(shell->envp[i] + 5, ':');
-	i = 0;
-	while (path_array[i])
-	{
-		shell->command_path = ft_strjoin(path_array[i], "/");
-		shell->command_path = ft_strjoin(shell->command_path, shell->input_array[0]);
-		shell->fd = access(shell->command_path, F_OK & X_OK);
-		if (shell->fd == 0)
-		{
-			pid_t pid = fork();
+    t_minishell *shell = malloc(sizeof(t_minishell));
+	if (!shell)
+		return (ft_error_msg(ERR_MALLOC), 1);
+	(void)ac;
+	(void)av;
 
-			if (pid < 0)
-			{
-			    // Fork failed
-			    perror("fork");
-			}
-			else if (pid == 0)
-			{
-			    // Child process
-			    execve(shell->command_path, shell->input_array, shell->envp);
-			    // If execve returns, it must have failed
-			    perror("execve");
-			    exit(EXIT_FAILURE);
-			}
-			else
-			{
-			    // parent process
-			    int status;
-			    waitpid(pid, &status, 0);
-			}
-		}
-		i++;
-	}
-} */
-
-int main(int argc, char **argv, char **envp)
-{
-    t_minishell shell;
-    char *input;
-	(void)argc;
-	(void)argv;
-
-    shell.current_dir = getcwd(NULL, 0);
-    shell.envp = envp;
-    shell.last_exit_status = 0;
-
+    init_shell_struct(shell, envp);
     while (1)
     {
-		input = readline("minishell> ");
-		if (!input)
+		shell->usr_input = readline("minishell> ");
+		if (!shell->usr_input)
 			break;
-        add_history(input);
-        execute_command(input, &shell);
-        free(input);
+        add_history(shell->usr_input);
+        execute_command(shell->usr_input, shell);
+        free(shell->usr_input);
     }
-    free(shell.current_dir);
+    free(shell->current_dir);
     return 0;
 }

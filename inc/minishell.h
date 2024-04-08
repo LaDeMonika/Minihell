@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/08 11:21:45 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/08 16:03:22 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@
 //***************************STRUCT
 typedef struct s_minishell
 {
+    char    *user; // User
     char    *usr_input; // User input
     char    *prompt; // Prompt
+    int     exit_status; // Exit status
     int     len_prompt; // Length of the prompt
     char    **path_array; // Array of paths
     char    *home_dir; // Home directory
@@ -43,6 +45,7 @@ typedef struct s_minishell
     char    **command_history; // Array of command history
     int     history_index; // Index of the command history
     int     last_exit_status; // Exit status of the last command
+    int     fd_hostname; // File descriptor for hostname
     int     fd; // File descriptor
 }               t_minishell;
 
@@ -63,7 +66,12 @@ enum e_error
 };
 
 //***************************PROTOTYPES
-// error_msg.c
+// main
+void	init_shell_struct(t_minishell *shell, char **envp);
+// builtins
+int     ft_echo(t_minishell *shell);
+int     ft_is_builtin(t_minishell *shell);
+// err
 void    ft_error_msg(char err);
 
 #endif
