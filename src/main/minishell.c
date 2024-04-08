@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:45 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 16:31:05 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/08 10:44:21 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,31 @@ void execute_command(char *input, t_minishell *shell)
 		shell->command_path = ft_strjoin(shell->command_path, shell->input_array[0]);
 		shell->fd = access(shell->command_path, F_OK & X_OK);
 		if (shell->fd == 0)
-			execve(shell->command_path, shell->input_array, shell->envp);
+		{
+			pid_t pid = fork();
+
+			if (pid < 0)
+			{
+			    // Fork failed
+			    perror("fork");
+			}
+			else if (pid == 0)
+			{
+			    // Child process
+			    execve(shell->command_path, shell->input_array, shell->envp);
+			    // If execve returns, it must have failed
+			    perror("execve");
+			    exit(EXIT_FAILURE);
+			}
+			else
+			{
+			    // parent process
+			    int status;
+			    waitpid(pid, &status, 0);
+			}
+		}
 		i++;
 	}
-	ft_error_msg(ERR_INVALID_ARG);
-	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -52,8 +72,11 @@ int main(int argc, char **argv, char **envp)
     shell.envp = envp;
     shell.last_exit_status = 0;
 
-    while ((input = readline("minishell> ")))
+    while (1)
     {
+		input = readline("minishell> ");
+		if (!input)
+			break;
         add_history(input);
         execute_command(input, &shell);
         free(input);
