@@ -1,0 +1,4 @@
+ls | grep m | grep n | grep i
+
+wrong:
+ls | grep o | grep m

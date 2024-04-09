@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/09 11:50:22 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/09 16:19:46 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,21 @@
 # include <signal.h>
 # include <fcntl.h>
 #include <linux/limits.h>
+# include <stdbool.h>
+
+
+# define INPUT 0
+# define OUTPUT 1
+# define HEREDOC 2
+# define APPEND 3
+# define COMMAND 4
+
+typedef struct s_command_list
+{
+    char *command_part;
+    int delimiter;
+    struct s_command_list  *next;
+}   t_command_list;
 
 //***************************STRUCT
 typedef struct s_minishell
