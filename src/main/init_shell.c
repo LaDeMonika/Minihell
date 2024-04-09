@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/08 16:02:19 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/09 10:11:46 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	init_shell_struct(t_minishell *shell, char **envp)
     shell->current_dir = getcwd(NULL, 0);
     shell->envp = envp;
     shell->last_exit_status = 0;
+	shell->pid = getpid();
     shell->user = getenv("USER");
 	shell->prompt = ft_strjoin(shell->user, "@");
 	shell->prompt = ft_strjoin("fake_", shell->prompt);

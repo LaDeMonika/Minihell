@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/08 16:03:22 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/09 11:50:22 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@
 //***************************STRUCT
 typedef struct s_minishell
 {
-    char    *user; // User
-    char    *usr_input; // User input
-    char    *prompt; // Prompt
-    int     exit_status; // Exit status
-    int     len_prompt; // Length of the prompt
+    char    *user;
+    char    *usr_input;
+    char    *prompt;
+    int     len_prompt;
+    pid_t   pid;
+    int     exit_status;
     char    **path_array; // Array of paths
-    char    *home_dir; // Home directory
+    char    *home_dir;
     char    *current_dir; // Current working directory
     char    *command_path; // Path to the command
     char    **envp; // Environment variables
