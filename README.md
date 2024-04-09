@@ -13,14 +13,6 @@
     - Finish implementing the `execute_command` function.
     - Builtins.
     - Implement error handling.
-    ## Next Steps:
-
-    - Finish implementing the `execute_command` function. This function should handle all the commands that your shell is supposed to support.
-    - Implement the `print_prompt` function in prompt.c.
-    - Implement command history functionality. You've already added a `command_history` field to the `t_minishell` struct, but it's not being used yet.
-    - Implement error handling. You've started this with the `ft_error_msg` function, but you need to make sure that all possible errors are handled.
-    - Test your shell to make sure it works as expected and trying out different commands.
-
 
 ### Lilie's Task
     - experiment with piping
