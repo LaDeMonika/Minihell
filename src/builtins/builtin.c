@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/08 15:37:53 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/09 09:44:12 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ static char ft_strcmp(char *s1, char *s2)
     return (1);
 }
 
+/*
+ft_is_builtin is a function that will check if the command is a builtin command.
+If the command is a builtin command, it will execute the builtin command.
+If the command is not a builtin command, it will return 0.
+*/
 int ft_is_builtin(t_minishell *shell)
 {
     int status;
