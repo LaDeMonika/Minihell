@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/10 16:44:32 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/10 22:11:23 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ enum e_error
 // main
 void	execute_command(char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
+char	**ft_split_ignore_quotes(char const *s, char c);
 // builtins
 int     ft_echo(t_minishell *shell);
 int     ft_is_builtin(t_minishell *shell);
