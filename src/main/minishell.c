@@ -86,8 +86,10 @@ void	execute_command(char *command, char **envp)
 	else
 		path = command_array[0];
 	if (path)
+	{
 		execve(path, command_array, envp);
-	perror("execve");
+		perror("execve");
+	}
 	exit(EXIT_FAILURE);
 }
 
@@ -376,8 +378,9 @@ int	main(int argc, char **argv, char **envp)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell->usr_input, envp);
+			free(shell->usr_input);
 		}
-		free(shell->usr_input);
+		
 	}
 	free(shell->current_dir);
 
