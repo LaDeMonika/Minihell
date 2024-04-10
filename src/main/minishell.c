@@ -328,6 +328,7 @@ void	handle_input(char *input, char **envp)
 
 	if (strncmp(input, "exit", 5) == 0 || strncmp(input, "exit ", 5) == 0)
 		exit(EXIT_SUCCESS);
+	//builtins
 
 	input_array = ft_split(input, '|');
 	pipes = 0;
