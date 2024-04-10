@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/09 16:19:46 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/10 16:44:32 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,19 @@ enum e_error
 
 //***************************PROTOTYPES
 // main
+void	execute_command(char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
 // builtins
 int     ft_echo(t_minishell *shell);
 int     ft_is_builtin(t_minishell *shell);
 // err
 void    ft_error_msg(char err);
+//redirections
+void	append_output(char *output_file);
+void	heredoc_input(char *input_file);
+int	    find_delimiter(char c1, char c2);
+void	redirect_input(char *input_file);
+void	redirect_output(char *output_file);
+void	handle_redirections(t_command_list *list, char **envp);
 
 #endif
