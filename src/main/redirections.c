@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 16:36:05 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/10 16:43:44 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/11 16:02:53 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ void	handle_redirections(t_command_list *list, char **envp)
 	(void)envp;
 	while (list)
 	{
-		list->command_part = ft_strtrim(list->command_part, " ");
 		if (list->delimiter == COMMAND)
 			command =list->command_part;
 		else if (list->delimiter == INPUT)

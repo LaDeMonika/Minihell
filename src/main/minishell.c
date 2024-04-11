@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <string.h>
 
 char	*build_prompt(void)
 {
@@ -106,6 +107,39 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current->next = new;
 }
 
+void	append_to_command(t_command_list **head, char *command_part)
+{
+	t_command_list *current;
+
+	current = *head;
+	while (current)
+	{
+		if (current->delimiter == COMMAND)
+			current->command_part = ft_strjoin(current->command_part, command_part);
+		current = current->next;
+	}
+}
+void	extract_command_part(char *command, int start, int len, int preceding_delimiter, t_command_list **list)
+{
+	char *command_part;
+	char *command_remainder;
+	int	end_index;
+
+	command_part = ft_substr(command, start, len);
+	command_part = ft_strtrim(command_part, " ");
+	if (preceding_delimiter != COMMAND)
+	{
+		command_remainder = strchr(command_part, ' ');
+		if (command_remainder)
+		{
+			end_index = command_remainder - command_part;
+			command_remainder = strdup(command_remainder);
+			command_part[end_index] = '\0';
+			append_to_command(list, command_remainder);
+		}
+	}
+	list_add(list, command_part, preceding_delimiter);
+}
 /*
 find delimiter and add those parts to a linked list with info of delimiter kind
 if no delimiter is found, it will only add the command to list
@@ -115,14 +149,11 @@ void	handle_delimiters(char *command, char **envp)
 	int	i;
 	int	preceding_delimiter;
 	int	succeeding_delimiter;
-	bool	delimiter_found;
-	char *command_part;
 	t_command_list	*list;
 	int	start;
 	int	len;
 
 	list = NULL;
-	delimiter_found = false;
 	i = 0;
 	start = 0;
 	len = 0;
@@ -133,17 +164,14 @@ void	handle_delimiters(char *command, char **envp)
 		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			command_part = ft_substr(command, start, len);
-			if (!delimiter_found)
-				delimiter_found = true;
-			list_add(&list, command_part, preceding_delimiter);
+			extract_command_part(command, start, len, preceding_delimiter, &list);
 			if (succeeding_delimiter == HEREDOC || succeeding_delimiter == APPEND)
-				start = i + 2;
+				i += 2;
 			else
-				start = i + 1;
-			i = start;
-			len = 0;
+				i += 1;
 			preceding_delimiter = succeeding_delimiter;
+			start = i;
+			len = 0;
 		}
 		else
 		{
@@ -153,8 +181,7 @@ void	handle_delimiters(char *command, char **envp)
 	}
 	if (i != start)
 	{
-		command_part = ft_substr(command, start, len);
-		list_add(&list, command_part, preceding_delimiter);
+		extract_command_part(command, start, len, preceding_delimiter, &list);
 	}
 	handle_redirections(list, envp);
 }
