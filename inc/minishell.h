@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/11 12:10:16 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 20:14:58 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_command_list
 {
     char *command_part;
     int delimiter;
+    bool    primary_input;
     struct s_command_list  *next;
 }   t_command_list;
 

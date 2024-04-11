@@ -93,6 +93,8 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	new->command_part = command_part;
 	new->delimiter = type;
 	new->next = NULL;
+	if (type == HEREDOC || type == INPUT)
+		new->primary_input = true;
 
 	if (!*head)
 	{
@@ -102,8 +104,12 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
+		if (new->delimiter == HEREDOC && (current->delimiter== HEREDOC || current->delimiter == INPUT))
+			current->primary_input = false;
 		current = current->next;
 	}
+	if (new->delimiter == HEREDOC && (current->delimiter== HEREDOC || current->delimiter == INPUT))
+			current->primary_input = false;
 	current->next = new;
 }
 
@@ -256,6 +262,8 @@ void	handle_input(char *input, char **envp)
 	handle_pipes(input_array, pipes, envp, STDIN_FILENO);
 }
 
+/*
+doesn't work yet*/
 void	sigint_handler(int sig, siginfo_t *info, void *ucontext)
 {
 	(void)sig;

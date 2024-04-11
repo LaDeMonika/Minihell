@@ -35,6 +35,12 @@ command="wc-l < input.txt >> output.txt >> output2.txt"
 command="wc -l >> output.txt << a << b < input.txt > output2.txt"
 command="echo "hello" > output yes.txt <<eof"
 
+#input + heredoc 4 combinations
+command="wc << a << b"
+command="wc < input1 << b"
+command="wc << b < input1"
+command="wc < input1 < input2"
+
 #redirection + piping
 command="grep i < input.txt | wc -l > output.txt"
 
