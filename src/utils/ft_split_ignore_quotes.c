@@ -6,13 +6,11 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/11 11:58:44 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 12:03:34 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include "../../libft/libft.h"
-
 
 void	end_quote_missing()
 {
