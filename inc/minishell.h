@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/10 22:11:23 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 11:55:55 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,7 @@ int	    find_delimiter(char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
 void	handle_redirections(t_command_list *list, char **envp);
+//utils
+
 
 #endif

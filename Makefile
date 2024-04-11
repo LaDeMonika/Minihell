@@ -7,13 +7,15 @@ LIBFTNAME = $(LIBFTDIR)/libft.a
 LIBS =  -L$(LIBFTDIR) -lft
 EXT_LIBS = -lreadline
 
-SRCS = main/minishell.c main/init_shell.c main/redirections.c main/ft_split_ignore_quotes.c
+SRCS = main/minishell.c main/init_shell.c main/redirections.c
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c
 
+UTILS = utils/ft_split_ignore_quotes.c
+
 ERR = err/error_msg.c
 
-SRC = $(SRCS) $(ERR) $(BUILTIN)
+SRC = $(SRCS) $(ERR) $(BUILTIN) $(UTILS)
 
 OBJDIR = obj/
 OBJS = $(addprefix $(OBJDIR), $(SRC:.c=.o))
