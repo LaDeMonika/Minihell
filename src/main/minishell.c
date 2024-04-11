@@ -246,10 +246,8 @@ void	sigint_handler(int sig, siginfo_t *info, void *ucontext)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell *shell;
-
 	char *prompt;
 	struct sigaction sa;
-
 	(void)argc;
 	(void)argv;
 
@@ -257,24 +255,19 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
-
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = sigint_handler;
-
 	sigaction(SIGINT, &sa, NULL);
 	while (1)
 	{
 		prompt = build_prompt();
 		shell->usr_input = readline(prompt);
-
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell->usr_input, envp);
 			free(shell->usr_input);
 		}
-
 	}
 	free(shell->current_dir);
-
 }
