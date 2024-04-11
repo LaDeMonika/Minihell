@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/11 13:04:54 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 15:11:52 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ static void	free_array(char **array, int word)
 	i = 0;
 	while (i < word)
 	{
-		printf("i: %d word: %d freed %s\n", i, word, array[i]);
 		free(array[i]);
 		i++;
 	}
@@ -165,10 +164,8 @@ char	**ft_split_ignore_quotes(char *s, char c)
 	quote_marker = find_quote(s, &start_quote, &end_quote);
 	if (quote_marker != '\0' && end_quote == -1)
 		s = add_heredoc(s, quote_marker);
-	printf("%s\n", s);
 
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
-	/* printf("number of words: %d\n", words); */
 
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
