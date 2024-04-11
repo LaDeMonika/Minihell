@@ -11,7 +11,7 @@ SRCS = main/minishell.c main/init_shell.c main/redirections.c
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c
 
-UTILS = utils/ft_split_ignore_quotes.c
+UTILS = utils/utils_00.c
 
 ERR = err/error_msg.c
 
