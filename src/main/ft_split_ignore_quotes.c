@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_00.c                                         :+:      :+:    :+:   */
+/*   ft_split_ignore_quotes.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/11 14:31:00 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 13:04:54 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
-#include <bits/types/struct_itimerspec.h>
+
 
 static char	*add_heredoc(char *s, char quote_marker)
 {
 	char	*new_s;
-	char	end_quote[2];
 
-	end_quote[0] = quote_marker;
-	end_quote[1] = '\0';
 	new_s = ft_strjoin((const char*)s, "<<");
-	new_s = ft_strjoin(new_s, end_quote);
+	new_s = ft_strjoin(s, &quote_marker);
 	return (new_s);
 }
 
-static char	find_quote(char *s, int *start, int *end, int *markers)
+static char	find_quote(char *s, int *start, int *end)
 {
 	int	i;
 	char	quote_marker;
@@ -35,7 +32,6 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 	*start = -1;
 	*end = -1;
 	len = ft_strlen(s);
-	*markers = 0;
 	i = 0;
 	while (s[i])
 	{
@@ -43,14 +39,12 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 		{
 			quote_marker = s[i];
 			*start = i;
-			*markers += 1;
 			while(s[len - 1])
 			{
 				if (s[len - 1] == quote_marker && len - 1 != *start)
 				{
-					if (*markers == 1)
-						*end = len - 1;
-					*markers += 1;
+					*end = len - 1;
+					return (quote_marker);
 				}
 				len--;
 			}
@@ -111,6 +105,7 @@ static void	free_array(char **array, int word)
 	i = 0;
 	while (i < word)
 	{
+		printf("i: %d word: %d freed %s\n", i, word, array[i]);
 		free(array[i]);
 		i++;
 	}
@@ -164,14 +159,16 @@ char	**ft_split_ignore_quotes(char *s, char c)
 	char	quote_marker;
 	int	start_quote;
 	int	end_quote;
-	int	markers;
 
 	if (!s)
 		return (NULL);
-	quote_marker = find_quote(s, &start_quote, &end_quote, &markers);
-	if (quote_marker != '\0' && markers % 2 != 0)
+	quote_marker = find_quote(s, &start_quote, &end_quote);
+	if (quote_marker != '\0' && end_quote == -1)
 		s = add_heredoc(s, quote_marker);
+	printf("%s\n", s);
+
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
+	/* printf("number of words: %d\n", words); */
 
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));

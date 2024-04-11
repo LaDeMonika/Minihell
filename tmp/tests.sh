@@ -33,6 +33,7 @@ command="wc -l < input.txt >> output.txt"
 command="wc -l << EOF > output.txt"
 command="wc-l < input.txt >> output.txt >> output2.txt"
 command="wc -l >> output.txt << a << b < input.txt > output2.txt"
+command="echo "hello" > output yes.txt <<eof"
 
 #redirection + piping
 command="grep i < input.txt | wc -l > output.txt"
