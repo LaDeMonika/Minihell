@@ -6,22 +6,13 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/10 22:05:17 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/11 11:58:44 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i] != '\0')
-		i++;
-	return (i);
-}
 
 void	end_quote_missing()
 {
