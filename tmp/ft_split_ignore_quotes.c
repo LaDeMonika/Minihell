@@ -6,12 +6,13 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/11 15:11:52 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/12 16:06:32 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
+#include <stdlib.h>
 
 
 static char	*add_heredoc(char *s, char quote_marker)
@@ -79,10 +80,61 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote, in
 	return (words);
 }
 
+char	*append_affix(char *old_s, int start, int len, char *new_s)
+{
+	char	*affix;
+
+	affix = ft_substr(old_s, start, len - start);
+	if (new_s)
+		new_s = ft_strjoin(new_s, affix);
+	else
+		new_s = affix;
+	return (new_s);
+}
+
+char *check_env_variables(char *s)
+{
+	int	i;
+	int	start;
+	char	*env_key;
+	char	*env_value;
+	char	*new_s;
+
+	i = 0;
+	start = 0;
+	new_s = NULL;
+	while (s[i])
+	{
+		if (s[i] == '$')
+		{
+			new_s = append_affix(s, start, i, new_s);
+			start = i + 1;
+			while (s[i] && s[i] != ' ')
+				i++;
+			env_key = ft_substr(s, start, i - start);
+			env_value = getenv(env_key);
+			if (env_value)
+				new_s = ft_strjoin(new_s, env_value);
+			else
+			{
+			 	new_s = ft_strjoin(new_s, "$");
+				new_s = ft_strjoin(new_s, env_key);
+			}
+			start = i;
+
+		}
+		i++;
+	}
+	if (s[start])
+		append_affix(s, start, i, new_s);
+	return (new_s);
+}
+
 static char	*put_word(char *s, int start, int len)
 {
 	int		i;
 	char	*word;
+
 
 	i = 0;
 	word = NULL;
@@ -165,6 +217,10 @@ char	**ft_split_ignore_quotes(char *s, char c)
 	if (quote_marker != '\0' && end_quote == -1)
 		s = add_heredoc(s, quote_marker);
 
+	if (quote_marker == '"')
+		s = check_env_variables(s);
+	printf("quote marker: %c\n", quote_marker);
+	printf("string: %s\n", s);
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
 
 	array = NULL;
