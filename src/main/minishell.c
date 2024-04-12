@@ -81,6 +81,8 @@ void	execute_command(char *command, char **envp)
 		execve(path, command_array, envp);
 		perror("execve");
 	}
+	/* execve(path, command_array, envp);
+	perror(NULL); */
 	exit(EXIT_FAILURE);
 }
 
@@ -205,6 +207,7 @@ void	handle_pipes(char **input_array, int pipes, char **envp, int read_fd)
 	int	pipe_fd[2];
 	int	pid;
 	int	status;
+	int child_pid;
 
 	pipe(pipe_fd);
 	pid = fork();
@@ -223,8 +226,12 @@ void	handle_pipes(char **input_array, int pipes, char **envp, int read_fd)
 		}
 		else
 		{
-			while ((waitpid(-1, &status, 0)) > 0)
-				;
+			while ((child_pid = waitpid(-1, &status, 0)) > 0)
+			{
+				printf("child with pid %d\n terminated\n", child_pid);
+				printf("%d\n", WEXITSTATUS(status));
+			}
+
 		}
 		close(pipe_fd[0]);
 	}

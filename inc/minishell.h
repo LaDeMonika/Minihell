@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/11 20:14:58 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/12 20:31:11 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <fcntl.h>
-#include <linux/limits.h>
+# include <linux/limits.h>
 # include <stdbool.h>
-
 
 # define INPUT 0
 # define OUTPUT 1
