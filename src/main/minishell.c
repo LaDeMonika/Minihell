@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <stdbool.h>
 #include <string.h>
 
 char	*build_prompt(void)
@@ -194,6 +195,58 @@ void	handle_delimiters(char *command, char **envp)
 	handle_redirections(list, envp);
 }
 
+void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int pipes_remaining, char **envp, int read_fd)
+{
+	int	pipe_fd[2];
+	int	status;
+	int child_pid;
+
+	pipe(pipe_fd);
+	pid[pipes_remaining] = fork();
+	if (pid[pipes_remaining] < 0)
+	{
+		perror("fork");
+	}
+	else if (pid[pipes_remaining] > 0)
+	{
+		close(pipe_fd[1]);
+		if (read_fd > 0)
+			close(read_fd);
+		if (pipes_remaining >= 1)
+		{
+			handle_pipes_recursive(pipes_total, pid, input_array + 1, pipes_remaining - 1, envp, pipe_fd[0]);
+		}
+		else
+		{
+			printf("value of pipes: %d\n", pipes_total);
+			while ((child_pid = waitpid(pid[pipes_total - 1], &status, 2)) > 0)
+			{
+				printf("value of pipes: %d\n", pipes_total);
+				printf("child with pid %d terminated\n", child_pid);
+				printf("%d\n", WEXITSTATUS(status));
+				pipes_total--;
+			}
+		}
+
+		close(pipe_fd[0]);
+	}
+	else if (pid[pipes_remaining] == 0)
+	{
+		close(pipe_fd[0]);
+		if (read_fd > 0)
+		{
+			dup2(read_fd, STDIN_FILENO);
+			close(read_fd);
+		}
+		if (pipes_remaining >= 1)
+		{
+			dup2(pipe_fd[1], STDOUT_FILENO);
+		}
+		close(pipe_fd[1]);
+		handle_delimiters(input_array[0], envp);
+	}
+}
+
 // no pipe: execute directly
 // last child: redirect IN, but keep OUT same:
 // first child - redirect OUT, but keep IN same:
@@ -204,52 +257,10 @@ void	handle_delimiters(char *command, char **envp)
 // close all the read ends of pipes before returning from recursive call
 void	handle_pipes(char **input_array, int pipes, char **envp, int read_fd)
 {
-	int	pipe_fd[2];
-	int	pid;
-	int	status;
-	int child_pid;
+	int	pid[pipes + 1];
 
-	pipe(pipe_fd);
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-	}
-	else if (pid > 0)
-	{
-		close(pipe_fd[1]);
-		if (read_fd > 0)
-			close(read_fd);
-		if (pipes >= 1)
-		{
-			handle_pipes(input_array + 1, pipes - 1, envp, pipe_fd[0]);
-		}
-		else
-		{
-			while ((child_pid = waitpid(-1, &status, 0)) > 0)
-			{
-				printf("child with pid %d\n terminated\n", child_pid);
-				printf("%d\n", WEXITSTATUS(status));
-			}
+	handle_pipes_recursive(pipes + 1, pid, input_array, pipes, envp, read_fd);
 
-		}
-		close(pipe_fd[0]);
-	}
-	else if (pid == 0)
-	{
-		close(pipe_fd[0]);
-		if (read_fd > 0)
-		{
-			dup2(read_fd, STDIN_FILENO);
-			close(read_fd);
-		}
-		if (pipes >= 1)
-		{
-			dup2(pipe_fd[1], STDOUT_FILENO);
-		}
-		close(pipe_fd[1]);
-		handle_delimiters(input_array[0], envp);
-	}
 }
 
 
