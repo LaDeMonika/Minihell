@@ -199,7 +199,6 @@ void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int 
 {
 	int	pipe_fd[2];
 	int	status;
-	int child_pid;
 
 	pipe(pipe_fd);
 	pid[pipes_remaining] = fork();
@@ -218,14 +217,8 @@ void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int 
 		}
 		else
 		{
-			printf("value of pipes: %d\n", pipes_total);
-			while ((child_pid = waitpid(pid[pipes_total - 1], &status, 2)) > 0)
-			{
-				printf("value of pipes: %d\n", pipes_total);
-				printf("child with pid %d terminated\n", child_pid);
-				printf("%d\n", WEXITSTATUS(status));
+			while ((waitpid(pid[pipes_total - 1], &status, 2)) > 0)
 				pipes_total--;
-			}
 		}
 
 		close(pipe_fd[0]);
