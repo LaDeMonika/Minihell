@@ -6,13 +6,14 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/12 16:38:31 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/13 23:11:47 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
 #include <bits/types/struct_itimerspec.h>
+#include <stdlib.h>
 
 static char	*add_heredoc(char *s, char quote_marker)
 {
@@ -169,7 +170,7 @@ char	*append_affix(char *old_s, int start, int len, char *new_s)
 	return (new_s);
 }
 
-char *check_env_variables(char *s)
+char *check_env_variables(t_minishell *shell, char *s)
 {
 	int	i;
 	int	start;
@@ -187,16 +188,22 @@ char *check_env_variables(char *s)
 			new_s = append_affix(s, start, i, new_s);
 			start = i + 1;
 			while (s[i] && s[i] != ' ' && s[i] != '"')
-				i++;
-			env_key = ft_substr(s, start, i - start);
-			env_value = getenv(env_key);
+					i++;
+			if (s[start] == '?')
+				env_value = ft_itoa(WEXITSTATUS(shell->status));
+			else
+			{
+				env_key = ft_substr(s, start, i - start);
+				env_value = getenv(env_key);
+			}
 			if (env_value)
 				new_s = ft_strjoin(new_s, env_value);
 			else
 			{
-			 	new_s = ft_strjoin(new_s, "$");
+				new_s = ft_strjoin(new_s, "$");
 				new_s = ft_strjoin(new_s, env_key);
 			}
+
 			start = i;
 
 		}
@@ -207,7 +214,7 @@ char *check_env_variables(char *s)
 	return (new_s);
 }
 
-char	**ft_split_ignore_quotes(char *s, char c)
+char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 {
 	int		words;
 	char	**array;
@@ -219,8 +226,8 @@ char	**ft_split_ignore_quotes(char *s, char c)
 	if (!s)
 		return (NULL);
 	quote_marker = find_quote(s, &start_quote, &end_quote, &markers);
-	if (quote_marker == '"')
-		s = check_env_variables(s);
+	if (!quote_marker || quote_marker == '"')
+		s = check_env_variables(shell, s);
 	if (quote_marker != '\0' && markers % 2 != 0)
 		s = add_heredoc(s, quote_marker);
 

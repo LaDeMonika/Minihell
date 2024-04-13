@@ -1,5 +1,7 @@
 #include "../../inc/minishell.h"
+#include <asm-generic/errno-base.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 char	*build_prompt(void)
@@ -64,10 +66,33 @@ char	*find_command(char **input_array)
 	return (NULL);
 }
 
+void	custom_perror(char *prefix, char *custom_message)
+{
+	write(2, prefix, ft_strlen(prefix));
+	write(2, custom_message, ft_strlen(custom_message));
+	write(2, "\n", 1);
+}
+
+char	*set_exit_status(int *exit_status)
+{
+	*exit_status = EXIT_FAILURE;
+	if (errno == EACCES)
+		*exit_status = 126;
+	else if (errno == EFAULT || errno == ENOENT)
+	{
+		*exit_status = 127;
+		if (errno == EFAULT)
+			return ("command not found");
+	}
+	return (NULL);
+}
+
 void	execute_command(char *command, char **envp)
 {
 	char	**command_array;
 	char	*path;
+	int	exit_status;
+	char	*custom_message;
 
 
 
@@ -77,14 +102,16 @@ void	execute_command(char *command, char **envp)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
-	if (path)
-	{
-		execve(path, command_array, envp);
-		perror("execve");
-	}
-	/* execve(path, command_array, envp);
-	perror(NULL); */
-	exit(EXIT_FAILURE);
+	execve(path, command_array, envp);
+	custom_message = set_exit_status(&exit_status);
+	if (custom_message)
+		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);
+	else
+		perror(ft_strjoin(command_array[0], ": "));
+	printf("command: %s errno: %d\n", command_array[0], errno);
+	printf("command: %s exit status: %d\n", command_array[0], exit_status);
+	exit(exit_status);
+
 }
 
 void	list_add(t_command_list **head, char *command_part, int type)
@@ -195,10 +222,9 @@ void	handle_delimiters(char *command, char **envp)
 	handle_redirections(list, envp);
 }
 
-void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int pipes_remaining, char **envp, int read_fd)
+void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[], char **input_array, int pipes_remaining, char **envp, int read_fd)
 {
 	int	pipe_fd[2];
-	int	status;
 
 	pipe(pipe_fd);
 	pid[pipes_remaining] = fork();
@@ -213,11 +239,11 @@ void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int 
 			close(read_fd);
 		if (pipes_remaining >= 1)
 		{
-			handle_pipes_recursive(pipes_total, pid, input_array + 1, pipes_remaining - 1, envp, pipe_fd[0]);
+			handle_pipes_recursive(shell, pipes_total, pid, input_array + 1, pipes_remaining - 1, envp, pipe_fd[0]);
 		}
 		else
 		{
-			while ((waitpid(pid[pipes_total - 1], &status, 2)) > 0)
+			while ((waitpid(pid[pipes_total - 1], &shell->status, 2)) > 0)
 				pipes_total--;
 		}
 
@@ -248,16 +274,16 @@ void	handle_pipes_recursive(int pipes_total, int pid[], char **input_array, int 
 // if at least one pipe, fork
 // if no pipe (anymore return)
 // close all the read ends of pipes before returning from recursive call
-void	handle_pipes(char **input_array, int pipes, char **envp, int read_fd)
+void	handle_pipes(t_minishell *shell, char **input_array, int pipes, char **envp, int read_fd)
 {
 	int	pid[pipes + 1];
 
-	handle_pipes_recursive(pipes + 1, pid, input_array, pipes, envp, read_fd);
+	handle_pipes_recursive(shell, pipes + 1, pid, input_array, pipes, envp, read_fd);
 
 }
 
 
-void	handle_input(char *input, char **envp)
+void	handle_input(t_minishell *shell, char *input, char **envp)
 {
 	char	**input_array;
 	int		pipes;
@@ -266,11 +292,11 @@ void	handle_input(char *input, char **envp)
 		exit(EXIT_SUCCESS);
 	//builtins
 
-	input_array = ft_split_ignore_quotes(input, '|');
+	input_array = ft_split_ignore_quotes(shell, input, '|');
 	pipes = 0;
 	while (input_array[pipes + 1])
 		pipes++;
-	handle_pipes(input_array, pipes, envp, STDIN_FILENO);
+	handle_pipes(shell, input_array, pipes, envp, STDIN_FILENO);
 }
 
 /*
@@ -311,7 +337,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
-			handle_input(shell->usr_input, envp);
+			handle_input(shell, shell->usr_input, envp);
 			free(shell->usr_input);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/12 20:31:11 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/13 23:05:19 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <fcntl.h>
 # include <linux/limits.h>
 # include <stdbool.h>
+# include <errno.h>
 
 # define INPUT 0
 # define OUTPUT 1
@@ -63,6 +64,7 @@ typedef struct s_minishell
     int     last_exit_status; // Exit status of the last command
     int     fd_hostname; // File descriptor for hostname
     int     fd; // File descriptor
+    int status;
 }               t_minishell;
 
 //***************************ENUM
@@ -85,7 +87,7 @@ enum e_error
 // main
 void	execute_command(char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
-char	**ft_split_ignore_quotes(char *s, char c);
+char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
 // builtins
 int     ft_echo(t_minishell *shell);
 int     ft_is_builtin(t_minishell *shell);
