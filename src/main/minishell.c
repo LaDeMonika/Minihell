@@ -313,13 +313,27 @@ void	sigint_handler(int sig, siginfo_t *info, void *ucontext)
     rl_redisplay(); // Redisplay the prompt on a new line
 }
 
+void	handle_signals()
+{
+	struct sigaction	sa_sigint;
+	struct sigaction	sa_sigquit;
 
+	sa_sigint.sa_sigaction = sigint_handler;
+	sa_sigint.sa_flags = 0;
+	sigemptyset(&sa_sigint.sa_mask);
+	sigaction(SIGINT, &sa_sigint, NULL);
+
+	sa_sigquit.sa_handler = SIG_IGN;
+	sa_sigquit.sa_flags = 0;
+	sigemptyset(&sa_sigquit.sa_mask);
+	sigaction(SIGQUIT, &sa_sigquit, NULL);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell *shell;
 	char *prompt;
-	struct sigaction sa;
+
 	(void)argc;
 	(void)argv;
 
@@ -327,9 +341,10 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
-	sa.sa_flags = SA_SIGINFO;
-	sa.sa_sigaction = sigint_handler;
-	sigaction(SIGINT, &sa, NULL);
+
+	handle_signals();
+
+
 	while (1)
 	{
 		prompt = build_prompt();
