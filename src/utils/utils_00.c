@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/13 23:11:47 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/18 20:02:03 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ char *check_env_variables(t_minishell *shell, char *s)
 			while (s[i] && s[i] != ' ' && s[i] != '"')
 					i++;
 			if (s[start] == '?')
-				env_value = ft_itoa(WEXITSTATUS(shell->status));
+				env_value = ft_itoa(shell->last_exit_status);
 			else
 			{
 				env_key = ft_substr(s, start, i - start);

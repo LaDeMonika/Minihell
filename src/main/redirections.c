@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 16:36:05 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/11 20:38:37 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/18 23:03:15 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	heredoc_input(char *eof)
 
 	input_fd = open("input.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	input = readline("> ");
-	while (ft_strncmp(input, eof, ft_strlen(eof) +1) != 0)
+	while (input && ft_strncmp(input, eof, ft_strlen(eof) +1) != 0)
 	{
 		write(input_fd, input, ft_strlen(input));
 		write(input_fd, "\n", 1);

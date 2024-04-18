@@ -1,8 +1,10 @@
 #include "../../inc/minishell.h"
 #include <asm-generic/errno-base.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
 
 char	*build_prompt(void)
 {
@@ -49,7 +51,7 @@ char	*find_command(char **input_array)
 
 	path = getenv("PATH");
 	if (!path)
-		return(ft_error_msg(ERR_PATH_NOT_FOUND), NULL);
+		return (ft_error_msg(ERR_PATH_NOT_FOUND), NULL);
 	path_array = ft_split(path, ':');
 	i = 0;
 	while (path_array[i])
@@ -91,10 +93,8 @@ void	execute_command(char *command, char **envp)
 {
 	char	**command_array;
 	char	*path;
-	int	exit_status;
+	int		exit_status;
 	char	*custom_message;
-
-
 
 	command_array = ft_split(command, ' ');
 	path = NULL;
@@ -111,7 +111,6 @@ void	execute_command(char *command, char **envp)
 	printf("command: %s errno: %d\n", command_array[0], errno);
 	printf("command: %s exit status: %d\n", command_array[0], exit_status);
 	exit(exit_status);
-
 }
 
 void	list_add(t_command_list **head, char *command_part, int type)
@@ -125,7 +124,6 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	new->next = NULL;
 	if (type == HEREDOC || type == INPUT)
 		new->primary_input = true;
-
 	if (!*head)
 	{
 		*head = new;
@@ -134,32 +132,36 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
-		if (new->delimiter == HEREDOC && (current->delimiter== HEREDOC || current->delimiter == INPUT))
+		if (new->delimiter == HEREDOC && (current->delimiter == HEREDOC
+				|| current->delimiter == INPUT))
 			current->primary_input = false;
 		current = current->next;
 	}
-	if (new->delimiter == HEREDOC && (current->delimiter== HEREDOC || current->delimiter == INPUT))
-			current->primary_input = false;
+	if (new->delimiter == HEREDOC && (current->delimiter == HEREDOC
+			|| current->delimiter == INPUT))
+		current->primary_input = false;
 	current->next = new;
 }
 
 void	append_to_command(t_command_list **head, char *command_part)
 {
-	t_command_list *current;
+	t_command_list	*current;
 
 	current = *head;
 	while (current)
 	{
 		if (current->delimiter == COMMAND)
-			current->command_part = ft_strjoin(current->command_part, command_part);
+			current->command_part = ft_strjoin(current->command_part,
+					command_part);
 		current = current->next;
 	}
 }
-void	extract_command_part(char *command, int start, int len, int preceding_delimiter, t_command_list **list)
+void	extract_command_part(char *command, int start, int len,
+		int preceding_delimiter, t_command_list **list)
 {
-	char *command_part;
-	char *command_remainder;
-	int	end_index;
+	char	*command_part;
+	char	*command_remainder;
+	int		end_index;
 
 	command_part = ft_substr(command, start, len);
 	command_part = ft_strtrim(command_part, " ");
@@ -182,12 +184,12 @@ if no delimiter is found, it will only add the command to list
 */
 void	handle_delimiters(char *command, char **envp)
 {
-	int	i;
-	int	preceding_delimiter;
-	int	succeeding_delimiter;
+	int				i;
+	int				preceding_delimiter;
+	int				succeeding_delimiter;
 	t_command_list	*list;
-	int	start;
-	int	len;
+	int				start;
+	int				len;
 
 	list = NULL;
 	i = 0;
@@ -200,8 +202,10 @@ void	handle_delimiters(char *command, char **envp)
 		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			extract_command_part(command, start, len, preceding_delimiter, &list);
-			if (succeeding_delimiter == HEREDOC || succeeding_delimiter == APPEND)
+			extract_command_part(command, start, len, preceding_delimiter,
+				&list);
+			if (succeeding_delimiter == HEREDOC
+				|| succeeding_delimiter == APPEND)
 				i += 2;
 			else
 				i += 1;
@@ -222,7 +226,8 @@ void	handle_delimiters(char *command, char **envp)
 	handle_redirections(list, envp);
 }
 
-void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[], char **input_array, int pipes_remaining, char **envp, int read_fd)
+void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[],
+		char **input_array, int pipes_remaining, char **envp, int read_fd)
 {
 	int	pipe_fd[2];
 
@@ -234,23 +239,29 @@ void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[], char
 	}
 	else if (pid[pipes_remaining] > 0)
 	{
+		shell->sa_sigint.sa_handler = SIG_IGN;
+		sigaction(SIGINT, &shell->sa_sigint, NULL);
 		close(pipe_fd[1]);
 		if (read_fd > 0)
 			close(read_fd);
 		if (pipes_remaining >= 1)
 		{
-			handle_pipes_recursive(shell, pipes_total, pid, input_array + 1, pipes_remaining - 1, envp, pipe_fd[0]);
+			handle_pipes_recursive(shell, pipes_total, pid, input_array + 1,
+				pipes_remaining - 1, envp, pipe_fd[0]);
 		}
 		else
 		{
 			while ((waitpid(pid[pipes_total - 1], &shell->status, 2)) > 0)
+			{
 				pipes_total--;
+			}
+			set_last_exit_status(shell);
 		}
-
 		close(pipe_fd[0]);
 	}
 	else if (pid[pipes_remaining] == 0)
 	{
+		set_child_signals(shell);
 		close(pipe_fd[0]);
 		if (read_fd > 0)
 		{
@@ -274,14 +285,14 @@ void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[], char
 // if at least one pipe, fork
 // if no pipe (anymore return)
 // close all the read ends of pipes before returning from recursive call
-void	handle_pipes(t_minishell *shell, char **input_array, int pipes, char **envp, int read_fd)
+void	handle_pipes(t_minishell *shell, char **input_array, int pipes,
+		char **envp, int read_fd)
 {
 	int	pid[pipes + 1];
 
-	handle_pipes_recursive(shell, pipes + 1, pid, input_array, pipes, envp, read_fd);
-
+	handle_pipes_recursive(shell, pipes + 1, pid, input_array, pipes, envp,
+		read_fd);
 }
-
 
 void	handle_input(t_minishell *shell, char *input, char **envp)
 {
@@ -290,8 +301,7 @@ void	handle_input(t_minishell *shell, char *input, char **envp)
 
 	if (strncmp(input, "exit", 5) == 0 || strncmp(input, "exit ", 5) == 0)
 		exit(EXIT_SUCCESS);
-	//builtins
-
+	// builtins
 	input_array = ft_split_ignore_quotes(shell, input, '|');
 	pipes = 0;
 	while (input_array[pipes + 1])
@@ -299,52 +309,18 @@ void	handle_input(t_minishell *shell, char *input, char **envp)
 	handle_pipes(shell, input_array, pipes, envp, STDIN_FILENO);
 }
 
-/*
-doesn't work yet*/
-void	sigint_handler(int sig, siginfo_t *info, void *ucontext)
-{
-	(void)sig;
-	(void)info;
-	(void)ucontext;
-	/* printf("\n%s", build_prompt()); */
-	printf("\n");
-	rl_on_new_line();
-    rl_replace_line("", 0); // Clear the current input
-    rl_redisplay(); // Redisplay the prompt on a new line
-}
-
-void	handle_signals()
-{
-	struct sigaction	sa_sigint;
-	struct sigaction	sa_sigquit;
-
-	sa_sigint.sa_sigaction = sigint_handler;
-	sa_sigint.sa_flags = 0;
-	sigemptyset(&sa_sigint.sa_mask);
-	sigaction(SIGINT, &sa_sigint, NULL);
-
-	sa_sigquit.sa_handler = SIG_IGN;
-	sa_sigquit.sa_flags = 0;
-	sigemptyset(&sa_sigquit.sa_mask);
-	sigaction(SIGQUIT, &sa_sigquit, NULL);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
-	t_minishell *shell;
-	char *prompt;
+	t_minishell	*shell;
+	char		*prompt;
 
 	(void)argc;
 	(void)argv;
-
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
-
-	handle_signals();
-
-
+	handle_signals(shell);
 	while (1)
 	{
 		prompt = build_prompt();
@@ -353,6 +329,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell, shell->usr_input, envp);
+			shell->sa_sigint.sa_handler = sigint_handler;
+			sigaction(SIGINT, &shell->sa_sigint, NULL);
 			free(shell->usr_input);
 		}
 	}

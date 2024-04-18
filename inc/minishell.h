@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/13 23:05:19 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/18 22:38:32 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_minishell
     char    *usr_input;
     char    *prompt;
     int     len_prompt;
-    pid_t   pid;
+    int   pid;
     int     exit_status;
     char    **path_array; // Array of paths
     char    *home_dir;
@@ -65,6 +65,8 @@ typedef struct s_minishell
     int     fd_hostname; // File descriptor for hostname
     int     fd; // File descriptor
     int status;
+    struct sigaction    sa_sigint;
+    struct sigaction    sa_sigquit;
 }               t_minishell;
 
 //***************************ENUM
@@ -100,6 +102,15 @@ int	    find_delimiter(char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
 void	handle_redirections(t_command_list *list, char **envp);
+
+//signals
+void	handle_signals(t_minishell *shell);
+void	sigint_handler(int sig);
+void	child_sigint_handler(int sig);
+void	child_sigquit_handler(int sig);
+void	set_child_signals(t_minishell *shell);
+void	set_last_exit_status(t_minishell *shell);
+
 //utils
 
 

@@ -15,11 +15,8 @@
     - Implement error handling.
 
 ### Lilie's Task
-    - experiment with piping
-    - unit tests
-    - organize files into folders and update Makefile
-    - improve commit messages
-
-discuss:
-- decide on git workflow
--
+    - fix cat command
+    - modularise, esp handle pipes function
+    - free
+    - error handling
+    - add bash warning for EOF signal during heredoc
