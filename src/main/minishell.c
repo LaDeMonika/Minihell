@@ -226,54 +226,61 @@ void	handle_delimiters(char *command, char **envp)
 	handle_redirections(list, envp);
 }
 
-void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[],
-		char **input_array, int pipes_remaining, char **envp, int read_fd)
+void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 {
-	int	pipe_fd[2];
+	shell->sa_sigint.sa_handler = SIG_IGN;
+	sigaction(SIGINT, &shell->sa_sigint, NULL);
+	close(shell->pipe_fd[1]);
+	if (read_fd > 0)
+		close(read_fd);
+	if (pipes_left >= 1)
+	{
+		handle_pipes_recursive(shell, input_array + 1,
+			pipes_left - 1, shell->pipe_fd[0]);
+	}
+	else
+	{
+		while ((waitpid(shell->pid[shell->pipes_total - 1], &shell->status, 2)) > 0)
+		{
+			shell->pipes_total--;
+		}
+		set_last_exit_status(shell);
+	}
+	close(shell->pipe_fd[0]);
+}
 
-	pipe(pipe_fd);
-	pid[pipes_remaining] = fork();
-	if (pid[pipes_remaining] < 0)
+void	child(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
+{
+	set_child_signals(shell);
+	close(shell->pipe_fd[0]);
+	if (read_fd > 0)
+	{
+		dup2(read_fd, STDIN_FILENO);
+		close(read_fd);
+	}
+	if (pipes_left >= 1)
+	{
+		dup2(shell->pipe_fd[1], STDOUT_FILENO);
+	}
+	close(shell->pipe_fd[1]);
+	handle_delimiters(input_array[0], shell->envp);
+}
+
+void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
+{
+	pipe(shell->pipe_fd);
+	shell->pid[pipes_left] = fork();
+	if (shell->pid[pipes_left] < 0)
 	{
 		perror("fork");
 	}
-	else if (pid[pipes_remaining] > 0)
+	else if (shell->pid[pipes_left] > 0)
 	{
-		shell->sa_sigint.sa_handler = SIG_IGN;
-		sigaction(SIGINT, &shell->sa_sigint, NULL);
-		close(pipe_fd[1]);
-		if (read_fd > 0)
-			close(read_fd);
-		if (pipes_remaining >= 1)
-		{
-			handle_pipes_recursive(shell, pipes_total, pid, input_array + 1,
-				pipes_remaining - 1, envp, pipe_fd[0]);
-		}
-		else
-		{
-			while ((waitpid(pid[pipes_total - 1], &shell->status, 2)) > 0)
-			{
-				pipes_total--;
-			}
-			set_last_exit_status(shell);
-		}
-		close(pipe_fd[0]);
+		parent(shell, input_array, pipes_left, read_fd);
 	}
-	else if (pid[pipes_remaining] == 0)
+	else if (shell->pid[pipes_left] == 0)
 	{
-		set_child_signals(shell);
-		close(pipe_fd[0]);
-		if (read_fd > 0)
-		{
-			dup2(read_fd, STDIN_FILENO);
-			close(read_fd);
-		}
-		if (pipes_remaining >= 1)
-		{
-			dup2(pipe_fd[1], STDOUT_FILENO);
-		}
-		close(pipe_fd[1]);
-		handle_delimiters(input_array[0], envp);
+		child(shell, input_array, pipes_left, read_fd);
 	}
 }
 
@@ -285,28 +292,22 @@ void	handle_pipes_recursive(t_minishell *shell, int pipes_total, int pid[],
 // if at least one pipe, fork
 // if no pipe (anymore return)
 // close all the read ends of pipes before returning from recursive call
-void	handle_pipes(t_minishell *shell, char **input_array, int pipes,
-		char **envp, int read_fd)
+void	handle_pipes(t_minishell *shell, int read_fd)
 {
-	int	pid[pipes + 1];
+	shell->pid = malloc(sizeof(int) * (shell->pipes_total + 2));
 
-	handle_pipes_recursive(shell, pipes + 1, pid, input_array, pipes, envp,
-		read_fd);
+	handle_pipes_recursive(shell, shell->input_array, shell->pipes_total, read_fd);
 }
 
-void	handle_input(t_minishell *shell, char *input, char **envp)
+void	handle_input(t_minishell *shell)
 {
-	char	**input_array;
-	int		pipes;
-
-	if (strncmp(input, "exit", 5) == 0 || strncmp(input, "exit ", 5) == 0)
+	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input, "exit ", 5) == 0)
 		exit(EXIT_SUCCESS);
 	// builtins
-	input_array = ft_split_ignore_quotes(shell, input, '|');
-	pipes = 0;
-	while (input_array[pipes + 1])
-		pipes++;
-	handle_pipes(shell, input_array, pipes, envp, STDIN_FILENO);
+	shell->input_array = ft_split_ignore_quotes(shell, shell->usr_input, '|');
+	while (shell->input_array[shell->pipes_total + 1])
+		shell->pipes_total++;
+	handle_pipes(shell, STDIN_FILENO);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -328,7 +329,7 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
-			handle_input(shell, shell->usr_input, envp);
+			handle_input(shell);
 			shell->sa_sigint.sa_handler = sigint_handler;
 			sigaction(SIGINT, &shell->sa_sigint, NULL);
 			free(shell->usr_input);

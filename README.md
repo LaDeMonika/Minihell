@@ -15,8 +15,7 @@
     - Implement error handling.
 
 ### Lilie's Task
-    - fix cat command
-    - modularise, esp handle pipes function
+    - exit status not correct for cat | ls
     - free
     - error handling
     - add bash warning for EOF signal during heredoc

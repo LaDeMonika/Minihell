@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/18 22:38:32 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/19 12:52:08 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_minishell
     char    *usr_input;
     char    *prompt;
     int     len_prompt;
-    int   pid;
+    int   *pid;
     int     exit_status;
     char    **path_array; // Array of paths
     char    *home_dir;
@@ -67,6 +67,8 @@ typedef struct s_minishell
     int status;
     struct sigaction    sa_sigint;
     struct sigaction    sa_sigquit;
+    int pipes_total;
+    int pipe_fd[2];
 }               t_minishell;
 
 //***************************ENUM
@@ -95,6 +97,10 @@ int     ft_echo(t_minishell *shell);
 int     ft_is_builtin(t_minishell *shell);
 // err
 void    ft_error_msg(char err);
+
+//pipes
+void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd);
+
 //redirections
 void	append_output(char *output_file);
 void	heredoc_input(char *input_file);
