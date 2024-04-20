@@ -8,9 +8,6 @@
 -> <a href="https://github.com/Swoorup/mysh" target="_blank">Practice example from 42 Decs</a>
 
 ### Monika's Task
-    ## Next Steps:
-
-    - Finish implementing the `execute_command` function.
     - Builtins.
     - Implement error handling.
 
