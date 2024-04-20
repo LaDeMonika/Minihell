@@ -15,7 +15,7 @@
     - Implement error handling.
 
 ### Lilie's Task
-    - exit status not correct for cat | ls
+    - create suppress file for readline
     - free
     - error handling
     - add bash warning for EOF signal during heredoc
