@@ -240,7 +240,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 	}
 	else
 	{
-		while ((waitpid(shell->pid[shell->pipes_total - 1], &shell->status, 2)) > 0)
+		while ((waitpid(shell->pid[shell->pipes_total], &shell->status, 0)) > 0)
 		{
 			shell->pipes_total--;
 		}
