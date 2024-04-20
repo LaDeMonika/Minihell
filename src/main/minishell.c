@@ -1,10 +1,4 @@
 #include "../../inc/minishell.h"
-#include <asm-generic/errno-base.h>
-#include <signal.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/wait.h>
 
 char	*build_prompt(void)
 {
