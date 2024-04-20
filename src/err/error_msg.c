@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_msg.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 16:31:14 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/20 16:58:30 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,28 @@ void    ft_error_msg(char err)
         ft_puterror("Invalid argument", "Please try again");
     else if (err == ERR_PATH_NOT_FOUND)
         ft_puterror("Path not found", "");
+}
+
+void    free_all(t_minishell *shell)
+{
+    if (shell->prompt)
+        free(shell->prompt);
+}
+
+void	error_free_exit(t_minishell *shell, char err)
+{
+    if (err == ERR_SIGEMPTYSET)
+        perror("sigemptyset");
+    else if (err == ERR_SIGACTION)
+        perror("sigaction");
+    else if (err == ERR_OPEN)
+        perror("open");
+    else if (err == ERR_READ)
+        perror("read");
+    else if (err == ERR_CLOSE)
+        perror("close");
+    else if (err == ERR_MALLOC)
+        perror("malloc");
+    free_all(shell);
+	exit(EXIT_FAILURE);
 }

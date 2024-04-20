@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/19 12:52:08 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/20 17:10:22 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,12 @@ enum e_error
     ERR_TOO_MANY_ARGS,
     ERR_TOO_FEW_ARGS,
     ERR_INVALID_ARG,
-    ERR_PATH_NOT_FOUND
+    ERR_PATH_NOT_FOUND,
+    ERR_SIGEMPTYSET,
+    ERR_SIGACTION,
+    ERR_OPEN,
+    ERR_READ,
+    ERR_CLOSE
 };
 
 //***************************PROTOTYPES
@@ -92,11 +97,16 @@ enum e_error
 void	execute_command(char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
+
+//prompt
+void	build_prompt(t_minishell *shell);
+
 // builtins
 int     ft_echo(t_minishell *shell);
 int     ft_is_builtin(t_minishell *shell);
 // err
 void    ft_error_msg(char err);
+void	error_free_exit(t_minishell *shell, char err);
 
 //pipes
 void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd);
@@ -110,7 +120,7 @@ void	redirect_output(char *output_file);
 void	handle_redirections(t_command_list *list, char **envp);
 
 //signals
-void	handle_signals(t_minishell *shell);
+void	set_signals_parent(t_minishell *shell);
 void	sigint_handler(int sig);
 void	child_sigint_handler(int sig);
 void	child_sigquit_handler(int sig);

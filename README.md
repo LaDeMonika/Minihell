@@ -7,6 +7,8 @@
 -> <a href="https://www.linux.org/threads/bash-03-–-command-line-processing.38676/" target="_blank">Command-line processing</a>
 -> <a href="https://github.com/Swoorup/mysh" target="_blank">Practice example from 42 Decs</a>
 
+Valgrind: run it with this flag to suppress all readline leaks: --suppressions=readline.supp
+
 ### Monika's Task
     ## Next Steps:
 

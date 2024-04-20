@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/10 01:33:27 by lilin             #+#    #+#             */
-/*   Updated: 2023/09/14 22:27:49 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/20 15:57:52 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*ft_strnstr(const char	*big, const char	*little, size_t len)
 	size_t	i;
 	size_t	j;
 
+	if (!big || !little || len < 1)
+		return (NULL);
 	i = 0;
 	if (little[i] == '\0')
 		return ((char *)big);
