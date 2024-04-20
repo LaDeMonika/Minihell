@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   error_msg.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 17:03:05 by msimic           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
 
 static void    ft_puterror(const char *fault, const char *msg)
@@ -37,4 +25,28 @@ void    ft_error_msg(char err)
         ft_puterror("Command not found", "");
     else
         ft_puterror("Unknown error", "");
+}
+
+void    free_all(t_minishell *shell)
+{
+    if (shell->prompt)
+        free(shell->prompt);
+}
+
+void	error_free_exit(t_minishell *shell, char err)
+{
+    if (err == ERR_SIGEMPTYSET)
+        perror("sigemptyset");
+    else if (err == ERR_SIGACTION)
+        perror("sigaction");
+    else if (err == ERR_OPEN)
+        perror("open");
+    else if (err == ERR_READ)
+        perror("read");
+    else if (err == ERR_CLOSE)
+        perror("close");
+    else if (err == ERR_MALLOC)
+        perror("malloc");
+    free_all(shell);
+	exit(EXIT_FAILURE);
 }

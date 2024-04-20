@@ -23,31 +23,11 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 
-	/* printf("\n%s", build_prompt()); */
-
-	/* printf("sender pid: %d current pid: %d real uid: %d\n", info->si_pid, getpid(), info->si_uid);
-	sender_pid = info->si_pid;
-	if (info->si_code == CLD_EXITED) // child:
-	{
-		printf("Handled by PID: %d, signal from PID: %d real user ID: %d\n", getpid(), info->si_pid, info->si_uid);
-		exit(EXIT_FAILURE);
-	}
-	else //parent: sid > 0 uid > 0
-	{
-		printf("Handled by PID: %d, signal from PID: %d real user ID: %d\n", getpid(), info->si_pid, info->si_uid);
-		//exit(EXIT_FAILURE);
-	} */
-
-
-	//
-	//printf("\n");
-	//while (kill(0, sig) != -1);
-
 	write(2, "\n", 1);
-	//write(2, "parent caught signal\n", 22);
 	rl_on_new_line();
 	rl_replace_line("", 0);
     rl_redisplay();
+
 }
 
 void	set_child_signals(t_minishell *shell)
@@ -79,15 +59,19 @@ void	set_last_exit_status(t_minishell *shell)
 	}
 }
 
-void	handle_signals(t_minishell *shell)
+void	set_signals_parent(t_minishell *shell)
 {
 	shell->sa_sigint.sa_handler = sigint_handler;
 	shell->sa_sigint.sa_flags = 0;
-	sigemptyset(&shell->sa_sigint.sa_mask);
-	sigaction(SIGINT, &shell->sa_sigint, NULL);
+	if (sigemptyset(&shell->sa_sigint.sa_mask) == -1)
+		error_free_exit(shell, ERR_SIGEMPTYSET);
+	if (sigaction(SIGINT, &shell->sa_sigint, NULL) == -1)
+		error_free_exit(shell, ERR_SIGACTION);
 
 	shell->sa_sigquit.sa_handler = SIG_IGN;
 	shell->sa_sigquit.sa_flags = 0;
-	sigemptyset(&shell->sa_sigquit.sa_mask);
-	sigaction(SIGQUIT, &shell->sa_sigquit, NULL);
+	if (sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
+		error_free_exit(shell, ERR_SIGEMPTYSET);
+	if (sigaction(SIGQUIT, &shell->sa_sigquit, NULL))
+		error_free_exit(shell, ERR_SIGACTION);
 }

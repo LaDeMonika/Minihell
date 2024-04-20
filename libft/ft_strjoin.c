@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 14:59:33 by lilin             #+#    #+#             */
-/*   Updated: 2023/09/14 22:32:04 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/20 14:39:16 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,40 @@
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int		slen;
+	int		s1len;
+	int		s2len;
 	char	*s;
 	int		i;
 
-	if (!s1 || !s2)
-		return (NULL);
-	slen = ft_strlen(s1) + ft_strlen(s2);
-	s = malloc((slen + 1) * sizeof(char));
+	s1len = ft_strlen(s1);
+	s2len = ft_strlen(s2);
+	s = malloc((s1len + s2len + 1) * sizeof(char));
 	if (!s)
 		return (NULL);
 	i = 0;
-	while (*s1)
+	while (s1 && *s1)
 	{
-		s[i] = *s1;
-		i++;
+		s[i++] = *s1;
 		s1++;
 	}
-	while (*s2)
+	while (s2 && *s2)
 	{
-		s[i] = *s2;
-		i++;
+		s[i++] = *s2;
 		s2++;
 	}
 	s[i] = '\0';
 	return (s);
 }
+/* int	main(void)
+{
+	char	*s1;
+	char	*s2;
+	char	*joined;
+
+	s1 = NULL;
+	s2 = NULL;
+	printf("before s1: %s s2: %s\n", s1, s2);
+	joined = ft_strjoin(s1, s2);
+	printf("after joined: %s\n", joined);
+}
+ */

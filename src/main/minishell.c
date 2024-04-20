@@ -1,40 +1,5 @@
 #include "../../inc/minishell.h"
 
-char	*build_prompt(void)
-{
-	char	*prompt;
-	char	*user;
-	int		fd_hostname;
-	int		bytes_read;
-	char	hostname_buffer[254];
-	int		hostname_len;
-	char	*path_temp;
-	char	path[PATH_MAX];
-	char	*home;
-
-	user = getenv("USER");
-	prompt = ft_strjoin(user, "@");
-	prompt = ft_strjoin("fake_", prompt);
-	fd_hostname = open("/etc/hostname", O_RDONLY);
-	bytes_read = read(fd_hostname, hostname_buffer, 254);
-	close(fd_hostname);
-	hostname_len = strchr(hostname_buffer, '.') - hostname_buffer;
-	hostname_buffer[hostname_len] = '\0';
-	prompt = ft_strjoin(prompt, hostname_buffer);
-	prompt = ft_strjoin(prompt, ":");
-	path_temp = getenv("PWD");
-	home = getenv("HOME");
-	if (ft_strnstr(path_temp, home, ft_strlen(home)))
-	{
-		ft_strlcpy(path, path_temp + ft_strlen(home), ft_strlen(path_temp)
-			- ft_strlen(home) + 1);
-		prompt = ft_strjoin(prompt, "~");
-	}
-	prompt = ft_strjoin(prompt, path_temp);
-	prompt = ft_strjoin(prompt, "$ ");
-	return (prompt);
-}
-
 char	*find_command(char **input_array)
 {
 	char	*path;
@@ -228,7 +193,8 @@ void	handle_delimiters(t_minishell *shell, char *command, char **envp)
 	handle_redirections(shell, list, envp);
 }
 
-void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
+void	parent(t_minishell *shell, char **input_array, int pipes_left,
+		int read_fd)
 {
 	shell->sa_sigint.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &shell->sa_sigint, NULL);
@@ -237,8 +203,8 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 		close(read_fd);
 	if (pipes_left >= 1)
 	{
-		handle_pipes_recursive(shell, input_array + 1,
-			pipes_left - 1, shell->pipe_fd[0]);
+		handle_pipes_recursive(shell, input_array + 1, pipes_left - 1,
+			shell->pipe_fd[0]);
 	}
 	else
 	{
@@ -251,7 +217,8 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 	close(shell->pipe_fd[0]);
 }
 
-void	child(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
+void	child(t_minishell *shell, char **input_array, int pipes_left,
+		int read_fd)
 {
 	set_child_signals(shell);
 	close(shell->pipe_fd[0]);
@@ -268,7 +235,8 @@ void	child(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 	handle_delimiters(shell, input_array[0], shell->envp);
 }
 
-void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
+void	handle_pipes_recursive(t_minishell *shell, char **input_array,
+		int pipes_left, int read_fd)
 {
 	pipe(shell->pipe_fd);
 	shell->pid[pipes_left] = fork();
@@ -297,13 +265,14 @@ void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_le
 void	handle_pipes(t_minishell *shell, int read_fd)
 {
 	shell->pid = malloc(sizeof(int) * (shell->pipes_total + 2));
-
-	handle_pipes_recursive(shell, shell->input_array, shell->pipes_total, read_fd);
+	handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
+		read_fd);
 }
 
 void	handle_input(t_minishell *shell)
 {
-	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input, "exit ", 5) == 0)
+	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,
+			"exit ", 5) == 0)
 		exit(EXIT_SUCCESS);
 	shell->input_array = ft_split_ignore_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
@@ -314,7 +283,6 @@ void	handle_input(t_minishell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
-	char		*prompt;
 
 	(void)argc;
 	(void)argv;
@@ -322,11 +290,11 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
-	handle_signals(shell);
 	while (1)
 	{
-		prompt = build_prompt();
-		shell->usr_input = readline(prompt);
+		set_signals_parent(shell);
+		build_prompt(shell);
+		shell->usr_input = readline(shell->prompt);
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
@@ -335,6 +303,8 @@ int	main(int argc, char **argv, char **envp)
 			sigaction(SIGINT, &shell->sa_sigint, NULL);
 			free(shell->usr_input);
 		}
+		free(shell->prompt);
+		shell->prompt = NULL;
 	}
-	free(shell->current_dir);
+	free(shell);
 }
