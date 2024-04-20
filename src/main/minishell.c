@@ -89,13 +89,14 @@ char	*set_exit_status(int *exit_status)
 	return (NULL);
 }
 
-void	execute_command(char *command, char **envp)
+void	execute_command(t_minishell *shell, char *command, char **envp)
 {
 	char	**command_array;
 	char	*path;
 	int		exit_status;
 	char	*custom_message;
 
+	(void)shell;
 	command_array = ft_split(command, ' ');
 	path = NULL;
 	if (strncmp(command_array[0], "./", 2) != 0)
@@ -182,7 +183,7 @@ void	extract_command_part(char *command, int start, int len,
 find delimiter and add those parts to a linked list with info of delimiter kind
 if no delimiter is found, it will only add the command to list
 */
-void	handle_delimiters(char *command, char **envp)
+void	handle_delimiters(t_minishell *shell, char *command, char **envp)
 {
 	int				i;
 	int				preceding_delimiter;
@@ -223,7 +224,7 @@ void	handle_delimiters(char *command, char **envp)
 	{
 		extract_command_part(command, start, len, preceding_delimiter, &list);
 	}
-	handle_redirections(list, envp);
+	handle_redirections(shell, list, envp);
 }
 
 void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
@@ -263,7 +264,7 @@ void	child(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 		dup2(shell->pipe_fd[1], STDOUT_FILENO);
 	}
 	close(shell->pipe_fd[1]);
-	handle_delimiters(input_array[0], shell->envp);
+	handle_delimiters(shell, input_array[0], shell->envp);
 }
 
 void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
