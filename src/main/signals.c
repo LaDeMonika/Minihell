@@ -72,6 +72,6 @@ void	set_signals_parent(t_minishell *shell)
 	shell->sa_sigquit.sa_flags = 0;
 	if (sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
 		error_free_exit(shell, ERR_SIGEMPTYSET);
-	if (sigaction(SIGQUIT, &shell->sa_sigquit, NULL))
+	if (sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
 		error_free_exit(shell, ERR_SIGACTION);
 }

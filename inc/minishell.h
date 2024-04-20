@@ -9,7 +9,6 @@
 # include <stdio.h>
 # include <limits.h>
 # include <sys/wait.h>
-# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
@@ -39,7 +38,7 @@ typedef struct s_minishell
     char    *usr_input;
     char    *prompt;
     int     len_prompt;
-    int   *pid;
+    int     *pid;
     int     exit_status;
     char    **path_array; // Array of paths
     char    *home_dir;
