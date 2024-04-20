@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/02 15:21:51 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 17:10:22 by lilin            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -94,7 +82,7 @@ enum e_error
 
 //***************************PROTOTYPES
 // main
-void	execute_command(char *command, char **envp);
+void	execute_command(t_minishell *shell, char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
 
@@ -117,7 +105,7 @@ void	heredoc_input(char *input_file);
 int	    find_delimiter(char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
-void	handle_redirections(t_command_list *list, char **envp);
+void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals
 void	set_signals_parent(t_minishell *shell);

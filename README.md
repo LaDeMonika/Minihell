@@ -10,9 +10,6 @@
 Valgrind: run it with this flag to suppress all readline leaks: --suppressions=readline.supp
 
 ### Monika's Task
-    ## Next Steps:
-
-    - Finish implementing the `execute_command` function.
     - Builtins.
     - Implement error handling.
 
