@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 16:36:05 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/18 23:03:15 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/20 18:24:06 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	heredoc_execute(char *eof)
 	}
 }
 
-void	handle_redirections(t_command_list *list, char **envp)
+void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 {
 	char *command;
 
@@ -118,5 +118,5 @@ void	handle_redirections(t_command_list *list, char **envp)
 		}
 		list = list->next;
 	}
-	execute_command(command, envp);
+	execute_command(shell, command, envp);
 }
