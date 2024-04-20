@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_echo.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 16:54:04 by msimic           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../../inc/minishell.h"
+#include "ft_echo.h"
 
 static int ft_strcmp(char *s1, char *s2)
 {
@@ -21,7 +9,7 @@ static int ft_strcmp(char *s1, char *s2)
         i++;
     return (s1[i] - s2[i]);
 }
-/* 
+
 static void	ft_putchar_fd(char c, int fd)
 {
 	write(fd, &c, 1);
@@ -37,7 +25,6 @@ static void	ft_putstr_fd(char *s, int fd)
 		s++;
 	}
 }
-*/
 
 static void ft_putstr_no_newline(char *str, int flag)
 {
@@ -75,13 +62,14 @@ int ft_echo(t_minishell *shell)
     }
     return 0;
 }
-/* 
+
 int ft_is_builtin(t_minishell *shell)
 {
     int status;
     int i = 0;
 
-    status = 1;
+    status = 1; // 1 = builtin, 0 = not builtin
+    //while going through the input array, if I find the echo command, I will call the ft_echo function
     while (shell->input_array[i])
     {
         if (ft_strcmp(shell->input_array[i], "echo") == 0)
@@ -90,8 +78,10 @@ int ft_is_builtin(t_minishell *shell)
         }
         i++;
     }
+    //work on the exit status
     if (status == 0)
         shell->exit_status = 0;
+    //printf("Exit status: %d\n", shell->exit_status);
     return (status);
 }
 
@@ -108,4 +98,3 @@ int main(int ac, char **av)
     ft_is_builtin(&shell);
     return (0);
 }
-*/
