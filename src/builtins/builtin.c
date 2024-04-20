@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 14:13:52 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/20 17:18:19 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int ft_is_builtin(t_minishell *shell)
 {
     int status;
 
-    status = 1; // 1 = builtin, 0 = not builtin
+    status = 1; // 0 = builtin, 1 = not builtin
     if (ft_strcmp(shell->input_array[0], "echo") == 0)
         status = ft_echo(shell);
     /* else if (ft_strcmp(shell->input_array[0], "cd") == 0)
@@ -52,7 +52,8 @@ int ft_is_builtin(t_minishell *shell)
         status = ft_env(shell);
     else if (ft_strcmp(shell->input_array[0], "exit") == 0)
         status = ft_exit(shell); */
-    if (status == 0)
-        shell->exit_status = 0;
+    else
+        status = 1;
+    printf("status: %d\n", status);
     return (status);
 }

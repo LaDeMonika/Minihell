@@ -96,6 +96,12 @@ void	execute_command(char *command, char **envp)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
+
+	// builtins
+	/* status = ft_is_builtin(shell);
+	if (status > 0)
+		return ft_error_msg(NOT_BUILTIN); */
+
 	execve(path, command_array, envp);
 	custom_message = set_exit_status(&exit_status);
 	if (custom_message)
@@ -297,7 +303,6 @@ void	handle_input(t_minishell *shell)
 {
 	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input, "exit ", 5) == 0)
 		exit(EXIT_SUCCESS);
-	// builtins
 	shell->input_array = ft_split_ignore_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;

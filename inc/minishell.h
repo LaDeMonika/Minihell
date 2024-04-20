@@ -72,7 +72,8 @@ enum e_error
     ERR_TOO_MANY_ARGS,
     ERR_TOO_FEW_ARGS,
     ERR_INVALID_ARG,
-    ERR_PATH_NOT_FOUND
+    ERR_PATH_NOT_FOUND,
+    NOT_BUILTIN
 };
 
 //***************************PROTOTYPES

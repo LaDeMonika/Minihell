@@ -68,7 +68,7 @@ int ft_is_builtin(t_minishell *shell)
     int status;
     int i = 0;
 
-    status = 1; // 1 = builtin, 0 = not builtin
+    status = 1; // 0 = builtin, 1 = not builtin
     //while going through the input array, if I find the echo command, I will call the ft_echo function
     while (shell->input_array[i])
     {
@@ -81,7 +81,7 @@ int ft_is_builtin(t_minishell *shell)
     //work on the exit status
     if (status == 0)
         shell->exit_status = 0;
-    //printf("Exit status: %d\n", shell->exit_status);
+    printf("Exit status: %d\n", shell->exit_status);
     return (status);
 }
 

@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 16:31:14 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/20 17:03:05 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,8 @@ void    ft_error_msg(char err)
         ft_puterror("Invalid argument", "Please try again");
     else if (err == ERR_PATH_NOT_FOUND)
         ft_puterror("Path not found", "");
+    else if (err == NOT_BUILTIN)
+        ft_puterror("Command not found", "");
+    else
+        ft_puterror("Unknown error", "");
 }
