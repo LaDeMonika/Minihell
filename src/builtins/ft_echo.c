@@ -6,11 +6,16 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 16:54:04 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/21 17:58:11 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+
+//Next to handle: 
+//1.    echo -n -n Hello World      [should not print -n no matter how many times repeated]
+//2.    echo echo -n -n -n Hello World [can print echo and -n as many times there are and prints new line at the end]
+//3.
 
 static int ft_strcmp(char *s1, char *s2)
 {
@@ -21,7 +26,7 @@ static int ft_strcmp(char *s1, char *s2)
         i++;
     return (s1[i] - s2[i]);
 }
-/* 
+/*
 static void	ft_putchar_fd(char c, int fd)
 {
 	write(fd, &c, 1);
@@ -38,18 +43,14 @@ static void	ft_putstr_fd(char *s, int fd)
 	}
 }
 */
-
 static void ft_putstr_no_newline(char *str, int flag)
 {
+    (void)flag;
     while (*str)
     {
-        if (*str == '\n')
-            str++;
         write(1, str, 1);
         str++;
     }
-    if (flag == 0)
-        write(1, "\n", 1);
 }
 
 int ft_echo(t_minishell *shell)
@@ -73,6 +74,8 @@ int ft_echo(t_minishell *shell)
             ft_putstr_fd(" ", 1); // Print a space if there is another argument
         i++;
     }
+    if (new_line_flag == 0)
+        write(1, "\n", 1);
     return 0;
 }
 /* 
