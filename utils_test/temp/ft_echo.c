@@ -1,5 +1,10 @@
 #include "ft_echo.h"
 
+//Next to handle: 
+//1.    echo -n -n Hello World      [should not print -n no matter how many times repeated]
+//2.    echo echo -n -n -n Hello World [can print echo and -n as many times there are and prints new line at the end]
+//3.
+
 static int ft_strcmp(char *s1, char *s2)
 {
     int i;
@@ -28,15 +33,12 @@ static void	ft_putstr_fd(char *s, int fd)
 
 static void ft_putstr_no_newline(char *str, int flag)
 {
+    (void)flag;
     while (*str)
     {
-        if (*str == '\n')
-            str++;
         write(1, str, 1);
         str++;
     }
-    if (flag == 0)
-        write(1, "\n", 1);
 }
 
 int ft_echo(t_minishell *shell)
@@ -60,6 +62,8 @@ int ft_echo(t_minishell *shell)
             ft_putstr_fd(" ", 1); // Print a space if there is another argument
         i++;
     }
+    if (new_line_flag == 0)
+        write(1, "\n", 1);
     return 0;
 }
 
@@ -68,8 +72,7 @@ int ft_is_builtin(t_minishell *shell)
     int status;
     int i = 0;
 
-    status = 1; // 0 = builtin, 1 = not builtin
-    //while going through the input array, if I find the echo command, I will call the ft_echo function
+    status = 1;
     while (shell->input_array[i])
     {
         if (ft_strcmp(shell->input_array[i], "echo") == 0)
@@ -78,10 +81,8 @@ int ft_is_builtin(t_minishell *shell)
         }
         i++;
     }
-    //work on the exit status
     if (status == 0)
         shell->exit_status = 0;
-    printf("Exit status: %d\n", shell->exit_status);
     return (status);
 }
 

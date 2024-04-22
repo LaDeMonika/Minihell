@@ -83,6 +83,14 @@ enum e_error
 //***************************PROTOTYPES
 // main
 void	execute_command(t_minishell *shell, char *command, char **envp);
+char	*find_command(char **input_array);
+void	extract_command_part(char *command, int start, int len,
+		int preceding_delimiter, t_command_list **list);
+void	custom_perror(char *prefix, char *custom_message);
+void	list_add(t_command_list **head, char *command_part, int type);
+void	append_to_command(t_command_list **head, char *command_part);
+char	*set_exit_status(int *exit_status);
+void	execute_command(t_minishell *shell, char *command, char **envp);
 void	init_shell_struct(t_minishell *shell, char **envp);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
 
