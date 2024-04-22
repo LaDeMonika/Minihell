@@ -129,8 +129,8 @@ void	set_last_exit_status(t_minishell *shell);
 void	set_signals_parent(t_minishell *shell);
 
 //********************src/builtins
-int     ft_is_builtin(t_minishell *shell);
-int     ft_echo(t_minishell *shell);
+int ft_is_builtin(t_minishell *shell, char **command_array);
+int ft_echo(char **command_array);
 
 //********************src/utils
 //utils_00

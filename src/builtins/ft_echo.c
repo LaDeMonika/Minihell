@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/21 17:58:11 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/22 17:18:26 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-//Next to handle: 
+//Next to handle:
 //1.    echo -n -n Hello World      [should not print -n no matter how many times repeated]
 //2.    echo echo -n -n -n Hello World [can print echo and -n as many times there are and prints new line at the end]
 //3.
@@ -53,24 +53,24 @@ static void ft_putstr_no_newline(char *str, int flag)
     }
 }
 
-int ft_echo(t_minishell *shell)
+int ft_echo(char **command_array)
 {
     int i = 1;
     int new_line_flag = 0;
 
-    while (shell->input_array[i])
+    while (command_array[i])
     {
-        if (ft_strcmp(shell->input_array[i], "echo") == 0)
+        if (ft_strcmp(command_array[i], "echo") == 0)
         {
-            if (ft_strcmp(shell->input_array[i + 1], "-n") == 0)
+            if (ft_strcmp(command_array[i + 1], "-n") == 0)
             {
                 new_line_flag = 1;
                 i++;
             }
             i++;
         }
-        ft_putstr_no_newline(shell->input_array[i], new_line_flag);
-        if (shell->input_array[i + 1])
+        ft_putstr_no_newline(command_array[i], new_line_flag);
+        if (command_array[i + 1])
             ft_putstr_fd(" ", 1); // Print a space if there is another argument
         i++;
     }
@@ -78,16 +78,16 @@ int ft_echo(t_minishell *shell)
         write(1, "\n", 1);
     return 0;
 }
-/* 
+/*
 int ft_is_builtin(t_minishell *shell)
 {
     int status;
     int i = 0;
 
     status = 1;
-    while (shell->input_array[i])
+    while (command_array[i])
     {
-        if (ft_strcmp(shell->input_array[i], "echo") == 0)
+        if (ft_strcmp(command_array[i], "echo") == 0)
         {
             status = ft_echo(shell);
         }
