@@ -14,7 +14,6 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - Implement error handling.
 
 ### Lilie's Task
-    - create suppress file for readline
     - free
     - error handling
     - add bash warning for EOF signal during heredoc
