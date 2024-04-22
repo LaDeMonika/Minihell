@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 17:18:19 by msimic           ###   ########.fr       */
+/*   Updated: 2024/04/22 17:23:37 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ static char ft_strcmp(char *s1, char *s2)
     while (s1[i] && s2[i])
     {
         if (s1[i] != s2[i])
-            return (0);
+            return (1);
         i++;
     }
     if (s1[i] != s2[i])
-        return (0);
-    return (1);
+        return (1);
+    return (0);
 }
 
 /*
@@ -33,13 +33,16 @@ ft_is_builtin is a function that will check if the command is a builtin command.
 If the command is a builtin command, it will execute the builtin command.
 If the command is not a builtin command, it will return 0.
 */
-int ft_is_builtin(t_minishell *shell)
+int ft_is_builtin(t_minishell *shell, char **command_array)
 {
     int status;
 
+    (void)shell;
     status = 1; // 0 = builtin, 1 = not builtin
-    if (ft_strcmp(shell->input_array[0], "echo") == 0)
-        status = ft_echo(shell);
+    if (ft_strcmp(command_array[0], "echo") == 0)
+    {
+        status = ft_echo(command_array);
+    }
     /* else if (ft_strcmp(shell->input_array[0], "cd") == 0)
         status = ft_cd(shell);
     else if (ft_strcmp(shell->input_array[0], "pwd") == 0)
