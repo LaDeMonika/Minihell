@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_00.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/19 12:32:10 by lilin            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
 #include <bits/types/struct_itimerspec.h>
@@ -22,16 +10,16 @@ static char	*add_heredoc(char *s, char quote_marker)
 
 	end_quote[0] = quote_marker;
 	end_quote[1] = '\0';
-	new_s = ft_strjoin((const char*)s, "<<");
+	new_s = ft_strjoin((const char *)s, "<<");
 	new_s = ft_strjoin(new_s, end_quote);
 	return (new_s);
 }
 
 static char	find_quote(char *s, int *start, int *end, int *markers)
 {
-	int	i;
+	int		i;
 	char	quote_marker;
-	int	len;
+	int		len;
 
 	*start = -1;
 	*end = -1;
@@ -45,7 +33,7 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 			quote_marker = s[i];
 			*start = i;
 			*markers += 1;
-			while(s[len - 1])
+			while (s[len - 1])
 			{
 				if (s[len - 1] == quote_marker && len - 1 != *start)
 				{
@@ -59,10 +47,12 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 		}
 		i++;
 	}
-	return('\0');
+	return ('\0');
 }
 
-static int	count_words(char *s, char sep, char quote_marker, int start_quote, int end_quote)
+// only count outside of quotation marks
+static int	count_words(char *s, char sep, char quote_marker, int start_quote,
+		int end_quote)
 {
 	int	i;
 	int	words;
@@ -73,16 +63,16 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote, in
 		i++;
 	while (s[i])
 	{
-		//only count outside of quotation marks
 		if (quote_marker != '\0' && i == start_quote)
 		{
 			while (i < end_quote)
-			i++;
+				i++;
 		}
 		if (s[i] != sep && (s[i + 1] == sep || !s[i + 1]))
 			words++;
 		i++;
 	}
+	printf("words: %d\n", words);
 	return (words);
 }
 
@@ -119,7 +109,8 @@ static void	free_array(char **array, int word)
 	array = NULL;
 }
 
-static int	put_words(char *s, char sep, char **array, char quote_marker, int start_quote, int end_quote)
+static int	put_words(char *s, char sep, char **array, char quote_marker,
+		int start_quote, int end_quote)
 {
 	int	i;
 	int	word;
@@ -142,7 +133,7 @@ static int	put_words(char *s, char sep, char **array, char quote_marker, int sta
 				if (s[i] != sep)
 					i++;
 				else
-				 	break;
+					break ;
 			}
 			array[word] = put_word(s, start, i - start);
 			if (!array[word])
@@ -219,12 +210,13 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 	int		words;
 	char	**array;
 	char	quote_marker;
-	int	start_quote;
-	int	end_quote;
-	int	markers;
+	int		start_quote;
+	int		end_quote;
+	int		markers;
 
 	if (!s)
 		return (NULL);
+	printf("before splitting: %s\n", s);
 	quote_marker = find_quote(s, &start_quote, &end_quote, &markers);
 	if (!quote_marker || quote_marker == '"')
 		s = check_env_variables(shell, s);
@@ -232,7 +224,6 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 		s = add_heredoc(s, quote_marker);
 
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
-
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
 	if (!array)
@@ -240,9 +231,17 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 	array[words] = NULL;
 	if (put_words(s, c, array, quote_marker, start_quote, end_quote) == -1)
 		return (NULL);
+	printf("after spltting: \n");
+	int	i;
+	i = 0;
+	while (i < words)
+	{
+		printf("%s\n", array[i]);
+		i++;
+	}
 	return (array);
 }
-/* int	main()
+/* int	main(void)
 {
 	char **array = ft_split("echo \"ls -l | grep m\" | grep i", '|');
 

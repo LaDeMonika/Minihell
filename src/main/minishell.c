@@ -91,6 +91,23 @@ void	append_to_command(t_command_list **head, char *command_part)
 		current = current->next;
 	}
 }
+/*ignore redirect symbols if they are in quotes*/
+void	skip_quotes(char *command, char quote_marker, int *i, int *len)
+{
+	(*i)++;
+	(*len)++;
+	while (command[*i] && command[*i] != quote_marker)
+	{
+		(*i)++;
+		(*len)++;
+	}
+	if (command[*i] && command[*i] == quote_marker)
+	{
+		(*i)++;
+		(*len)++;
+	}
+
+}
 
 /*
 find delimiter and add those parts to a linked list with info of delimiter kind
@@ -127,10 +144,14 @@ void	handle_delimiters(t_minishell *shell, char *command, char **envp)
 			start = i;
 			len = 0;
 		}
+		else if (command[i] == '"')
+			skip_quotes(command, '"', &i, &len);
+		else if (command[i] == '\'')
+			skip_quotes(command, '\'', &i, &len);
 		else
 		{
-			len++;
 			i++;
+			len++;
 		}
 	}
 	if (i != start)
