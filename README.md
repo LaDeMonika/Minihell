@@ -18,4 +18,3 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - error handling
     - add bash warning for EOF signal during heredoc
     - remove quotes when doing echo
-    - consider quotes around redirection symbols
