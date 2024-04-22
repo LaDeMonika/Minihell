@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2023/12/12 18:51:03 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/22 20:24:58 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ static void	free_array(char **array, int word)
 	i = 0;
 	while (i < word)
 	{
-		printf("i: %d word: %d freed %s\n", i, word, array[i]);
 		free(array[i]);
 		i++;
 	}

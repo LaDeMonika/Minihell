@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/12 16:06:32 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/22 20:26:13 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,8 +219,6 @@ char	**ft_split_ignore_quotes(char *s, char c)
 
 	if (quote_marker == '"')
 		s = check_env_variables(s);
-	printf("quote marker: %c\n", quote_marker);
-	printf("string: %s\n", s);
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
 
 	array = NULL;

@@ -72,7 +72,6 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote,
 			words++;
 		i++;
 	}
-	printf("words: %d\n", words);
 	return (words);
 }
 
@@ -216,7 +215,6 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 
 	if (!s)
 		return (NULL);
-	printf("before splitting: %s\n", s);
 	quote_marker = find_quote(s, &start_quote, &end_quote, &markers);
 	if (!quote_marker || quote_marker == '"')
 		s = check_env_variables(shell, s);
@@ -231,14 +229,6 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 	array[words] = NULL;
 	if (put_words(s, c, array, quote_marker, start_quote, end_quote) == -1)
 		return (NULL);
-	printf("after spltting: \n");
-	int	i;
-	i = 0;
-	while (i < words)
-	{
-		printf("%s\n", array[i]);
-		i++;
-	}
 	return (array);
 }
 /* int	main(void)
