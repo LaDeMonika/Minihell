@@ -7,7 +7,7 @@ output_minishell="output_minishell.txt"
 #piping
 command="ls | grep m | grep n | grep i"
 eval $command > $output_bash
-echo "$command" | ./minishell | sed '1d;$d' > $output_minishell
+echo "$command" | ./../minishell | sed '1d;$d' > $output_minishell
 
 diff_output=$(diff $output_bash $output_minishell)
 echo "piping test: command "$command""
