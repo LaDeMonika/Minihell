@@ -10,25 +10,25 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 
 	(void)shell;
 	command_array = ft_split(command, ' ');
+	// builtins
+	is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
 	if (strncmp(command_array[0], "./", 2) != 0)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
-	// builtins
-	is_builtin = ft_is_builtin(shell, command_array);
 	if (is_builtin == 1)
 	{
 		execve(path, command_array, envp);
 	}
-	//TODO: also set exit status and custom message for builtins
+	// TODO: also set exit status and custom message for builtins
 	custom_message = set_exit_status(&exit_status);
 	if (custom_message)
 		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);
 	else
 		perror(ft_strjoin(command_array[0], ": "));
 	printf("command: %s errno: %d\n", command_array[0], errno);
-	printf("command: %s exit status: %d\n", command_array[0], exit_status); 
+	printf("command: %s exit status: %d\n", command_array[0], exit_status);
 	exit(exit_status);
 }
 
