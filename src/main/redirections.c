@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 16:36:05 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 18:24:06 by lilin            ###   ########.fr       */
+/*   Updated: 2024/04/22 15:48:32 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ void	redirect_input(char *input_file)
 		perror(input_file);
 		exit(EXIT_FAILURE);
 	}
-
-
 }
 
 void	redirect_output(char *output_file)

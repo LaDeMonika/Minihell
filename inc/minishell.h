@@ -1,7 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-//***************************INCLUDES
+/**************************INCLUDES**************************/
 # include "../libft/libft.h"
 # include <unistd.h>
 # include <fcntl.h>
@@ -17,12 +17,14 @@
 # include <stdbool.h>
 # include <errno.h>
 
+/**************************DEFINES***************************/
 # define INPUT 0
 # define OUTPUT 1
 # define HEREDOC 2
 # define APPEND 3
 # define COMMAND 4
 
+/**************************STRUCT****************************/
 typedef struct s_command_list
 {
     char *command_part;
@@ -31,7 +33,6 @@ typedef struct s_command_list
     struct s_command_list  *next;
 }   t_command_list;
 
-//***************************STRUCT
 typedef struct s_minishell
 {
     char    *user;
@@ -58,13 +59,7 @@ typedef struct s_minishell
     int pipe_fd[2];
 }               t_minishell;
 
-//***************************ENUM
-/* enum e_return
-{
-    RET_SUCCESS,
-    RET_FAILURE
-}; */
-
+/****************************ENUM****************************/
 enum e_error
 {
     ERR_MALLOC,
@@ -80,32 +75,41 @@ enum e_error
     ERR_CLOSE
 };
 
-//***************************PROTOTYPES
-// main
+/*************************PROTOTYPES*************************/
+//********************src/main
+//command
 void	execute_command(t_minishell *shell, char *command, char **envp);
-char	*find_command(char **input_array);
 void	extract_command_part(char *command, int start, int len,
 		int preceding_delimiter, t_command_list **list);
+//main
+char	*find_command(char **input_array);
 void	custom_perror(char *prefix, char *custom_message);
+char	*set_exit_status(int *exit_status);
 void	list_add(t_command_list **head, char *command_part, int type);
 void	append_to_command(t_command_list **head, char *command_part);
-char	*set_exit_status(int *exit_status);
-void	execute_command(t_minishell *shell, char *command, char **envp);
-void	init_shell_struct(t_minishell *shell, char **envp);
+void	handle_delimiters(t_minishell *shell, char *command, char **envp);
+void	parent(t_minishell *shell, char **input_array, int pipes_left,
+		int read_fd);
+void	child(t_minishell *shell, char **input_array, int pipes_left,
+		int read_fd);
+void	handle_pipes_recursive(t_minishell *shell, char **input_array,
+		int pipes_left, int read_fd);
+void	handle_pipes(t_minishell *shell, int read_fd);
+void	handle_input(t_minishell *shell);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
 
-//prompt
-void	build_prompt(t_minishell *shell);
+//init_shell_struct
+void	init_shell_struct(t_minishell *shell, char **envp);
 
-// builtins
-int     ft_echo(t_minishell *shell);
-int     ft_is_builtin(t_minishell *shell);
-// err
+//err
 void    ft_error_msg(char err);
 void	error_free_exit(t_minishell *shell, char err);
 
-//pipes
-void	handle_pipes_recursive(t_minishell *shell, char **input_array, int pipes_left, int read_fd);
+//prompt
+char	*append_to_prompt(t_minishell *shell, char *s);
+void    append_path(t_minishell *shell);
+void    append_hostname(t_minishell *shell);
+void	build_prompt(t_minishell *shell);
 
 //redirections
 void	append_output(char *output_file);
@@ -113,17 +117,26 @@ void	heredoc_input(char *input_file);
 int	    find_delimiter(char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
+void	heredoc_execute(char *eof);
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals
-void	set_signals_parent(t_minishell *shell);
-void	sigint_handler(int sig);
 void	child_sigint_handler(int sig);
 void	child_sigquit_handler(int sig);
+void	sigint_handler(int sig);
 void	set_child_signals(t_minishell *shell);
 void	set_last_exit_status(t_minishell *shell);
+void	set_signals_parent(t_minishell *shell);
 
-//utils
+//********************src/builtins
+int     ft_is_builtin(t_minishell *shell);
+int     ft_echo(t_minishell *shell);
 
+//********************src/utils
+//utils_00
+char	*append_affix(char *old_s, int start, int len, char *new_s);
+char    *check_env_variables(t_minishell *shell, char *s);
+char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
+//utils_01
 
 #endif

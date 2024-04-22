@@ -1,7 +1,4 @@
 #include "inc/minishell.h"
-#include "libft/libft.h"
-#include <stdbool.h>
-#include <unistd.h>
 
 size_t	ft_strlen(const char *s)
 {
