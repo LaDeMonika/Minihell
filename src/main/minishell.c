@@ -247,6 +247,47 @@ void	handle_input(t_minishell *shell)
 		shell->pipes_total++;
 	handle_pipes(shell, STDIN_FILENO);
 }
+char	*read_line_count()
+{
+	char *line_count;
+	int line_count_fd;
+	int bytes_read;
+
+	line_count = malloc(sizeof(char *));
+	line_count_fd = open("line_count.txt", O_RDONLY);
+	bytes_read = read(line_count_fd, line_count, 8);
+	close(line_count_fd);
+	return(line_count);
+}
+
+char	*add_to_line_count(char *old_line_count, int lines)
+{
+	char *new_line_count;
+	int line_count_fd;
+	int i_new_line_count;
+	int	i_old_line_count;
+
+	i_old_line_count = ft_atoi(old_line_count);
+	i_new_line_count = i_old_line_count + lines;
+	new_line_count = ft_itoa(i_new_line_count);
+	line_count_fd = open("line_count.txt", O_WRONLY, 0777);
+	write(line_count_fd, new_line_count, 16);
+	close(line_count_fd);
+	return (new_line_count);
+}
+
+void	init_line_count(t_minishell *shell)
+{
+	int line_count_fd;
+	int bytes_written;
+
+	shell->line_count = malloc(sizeof(char) * 16);
+	line_count_fd = open("line_count.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	shell->line_count = "0";
+	bytes_written = write(line_count_fd, shell->line_count, 8);
+	close(line_count_fd);
+
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -258,6 +299,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
+	init_line_count(shell);
 	while (1)
 	{
 		set_signals_parent(shell);
@@ -265,6 +307,7 @@ int	main(int argc, char **argv, char **envp)
 		shell->usr_input = readline(shell->prompt);
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
+			add_to_line_count(read_line_count(), 1);
 			add_history(shell->usr_input);
 			handle_input(shell);
 			shell->sa_sigint.sa_handler = sigint_handler;
@@ -273,6 +316,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(shell->prompt);
 		shell->prompt = NULL;
+		//printf("line count: %d\n", line_count);
 	}
+	free(shell->line_count);
 	free(shell);
 }

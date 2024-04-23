@@ -57,6 +57,7 @@ typedef struct s_minishell
     struct sigaction    sa_sigquit;
     int pipes_total;
     int pipe_fd[2];
+    char *line_count;
 }               t_minishell;
 
 /****************************ENUM****************************/
@@ -97,6 +98,8 @@ void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 void	handle_pipes(t_minishell *shell, int read_fd);
 void	handle_input(t_minishell *shell);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
+char	*add_to_line_count(char *old_line_count, int lines);
+char	*read_line_count();
 
 //init_shell_struct
 void	init_shell_struct(t_minishell *shell, char **envp);
@@ -113,11 +116,11 @@ void	build_prompt(t_minishell *shell);
 
 //redirections
 void	append_output(char *output_file);
-void	heredoc_input(char *input_file);
+void	heredoc_input(t_minishell *shell, char *eof);
 int	    find_delimiter(char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
-void	heredoc_execute(char *eof);
+void	heredoc_execute(t_minishell *shell, char *eof);
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals
