@@ -98,8 +98,8 @@ void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 void	handle_pipes(t_minishell *shell, int read_fd);
 void	handle_input(t_minishell *shell);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
-char	*add_to_line_count(char *old_line_count, int lines);
-char	*read_line_count();
+void    add_to_line_count(char *old_line_count, int lines);
+void	read_line_count(t_minishell *shell);
 
 //init_shell_struct
 void	init_shell_struct(t_minishell *shell, char **envp);

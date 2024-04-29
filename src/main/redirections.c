@@ -15,7 +15,6 @@ void	heredoc_input(t_minishell *shell, char *eof)
 	int input_fd;
 	char *input;
 	int	local_line_count;
-	char	*line_count;
 
 	(void)shell;
 	local_line_count = 0;
@@ -31,11 +30,10 @@ void	heredoc_input(t_minishell *shell, char *eof)
 	}
 	if (!input)
 	{
-		line_count = read_line_count();
-		write(2, line_count, ft_strlen(line_count));
-		printf("warning at line %s\n", line_count);
-		free(line_count);
-		add_to_line_count(line_count, local_line_count);
+		read_line_count(shell);
+		printf("warning at line %s\n", shell->line_count);
+		//free(line_count);
+		add_to_line_count(shell->line_count, local_line_count);
 	}
 	/* shell->line_count += local_line_count;
 	printf("line count after adding local line count: %d\n",  *//* shell->line_count); */
