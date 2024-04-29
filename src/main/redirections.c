@@ -30,11 +30,11 @@ void	heredoc_input(t_minishell *shell, char *eof)
 	}
 	if (!input)
 	{
-		read_line_count(shell);
-		printf("warning at line %s\n", shell->line_count);
-		//free(line_count);
-		add_to_line_count(shell->line_count, local_line_count);
+		write(2, "bash: warning: here-document at line ", 38);
+		write(2, shell->str_line_count, ft_strlen(shell->str_line_count));
+		write(2, " delimited by end-of-file (wanted `eof')\n", 42);
 	}
+	add_to_line_count(shell, local_line_count);
 	/* shell->line_count += local_line_count;
 	printf("line count after adding local line count: %d\n",  *//* shell->line_count); */
 	close(input_fd);
@@ -118,6 +118,7 @@ void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 			append_output(list->command_part);
 		else if (list->delimiter == HEREDOC)
 		{
+			printf("primary input is heredoc? %d\n", list->primary_input);
 			if (list->primary_input == true)
 				heredoc_input(shell, list->command_part);
 			else if (list->primary_input == false)

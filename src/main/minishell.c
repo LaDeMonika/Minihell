@@ -106,7 +106,6 @@ void	skip_quotes(char *command, char quote_marker, int *i, int *len)
 		(*i)++;
 		(*len)++;
 	}
-
 }
 
 /*
@@ -249,42 +248,36 @@ void	handle_input(t_minishell *shell)
 }
 void	read_line_count(t_minishell *shell)
 {
-	int line_count_fd;
-	int bytes_read;
+	int	line_count_fd;
+	int	bytes_read;
 
-	//line_count = malloc(sizeof(char *) * 16);
 	line_count_fd = open("line_count.txt", O_RDONLY);
-	bytes_read = read(line_count_fd, shell->line_count, 16);
+	bytes_read = read(line_count_fd, shell->str_line_count, 16);
+	shell->line_count = ft_atoi(shell->str_line_count);
 	close(line_count_fd);
 }
 
-void	add_to_line_count(char *old_line_count, int new_lines)
+void	add_to_line_count(t_minishell *shell, int new_lines)
 {
-	char *new_line_count;
-	int line_count_fd;
-	int i_new_line_count;
-	int	i_old_line_count;
+	int		line_count_fd;
 
-	i_old_line_count = ft_atoi(old_line_count);
-	i_new_line_count = i_old_line_count + new_lines;
-	new_line_count = ft_itoa(i_new_line_count);
+	shell->line_count += new_lines;
+	shell->str_line_count = ft_itoa(shell->line_count);
 	line_count_fd = open("line_count.txt", O_WRONLY);
-	write(line_count_fd, new_line_count, 16);
+	write(line_count_fd, shell->str_line_count, ft_strlen(shell->str_line_count));
 	close(line_count_fd);
 }
 
 void	init_line_count(t_minishell *shell)
 {
-	int line_count_fd;
-	int bytes_written;
+	int	line_count_fd;
+	int	bytes_written;
 
-	shell->line_count = malloc(sizeof(char) * 16);
 	line_count_fd = open("line_count.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	ft_bzero(shell->line_count, 16);
-	shell->line_count[0] = '0';
-	bytes_written = write(line_count_fd, shell->line_count, 16);
+	shell->line_count = 0;
+	shell->str_line_count = "0";
+	bytes_written = write(line_count_fd, shell->str_line_count, 1);
 	close(line_count_fd);
-
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -303,9 +296,12 @@ int	main(int argc, char **argv, char **envp)
 		set_signals_parent(shell);
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
+		read_line_count(shell);
+		add_to_line_count(shell, 1);
+		//printf("current line count: %d\n", shell->line_count);
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
-			add_to_line_count(shell->line_count, 1);
+
 			add_history(shell->usr_input);
 			handle_input(shell);
 			shell->sa_sigint.sa_handler = sigint_handler;
@@ -314,8 +310,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(shell->prompt);
 		shell->prompt = NULL;
-		//printf("line count: %d\n", line_count);
+		// printf("line count: %d\n", line_count);
 	}
-	free(shell->line_count);
+	//free(shell->line_count);
 	free(shell);
 }
