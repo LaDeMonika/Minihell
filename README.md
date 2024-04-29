@@ -17,3 +17,9 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - free
     - error handling
     - add bash warning for EOF signal during heredoc: also what happens if there are several heredoc childs
+
+cases not working yet:
+lilin@c2r1p3:~/experimental/Minihell$ wc -l < a << b
+> a
+> b
+bash: a: No such file or directory

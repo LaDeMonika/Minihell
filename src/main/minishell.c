@@ -57,8 +57,7 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	new->command_part = command_part;
 	new->delimiter = type;
 	new->next = NULL;
-	if (type == HEREDOC || type == INPUT)
-		new->primary_input = true;
+
 	if (!*head)
 	{
 		*head = new;
@@ -67,14 +66,8 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
-		if (new->delimiter == HEREDOC && (current->delimiter == HEREDOC
-				|| current->delimiter == INPUT))
-			current->primary_input = false;
 		current = current->next;
 	}
-	if (new->delimiter == HEREDOC && (current->delimiter == HEREDOC
-			|| current->delimiter == INPUT))
-		current->primary_input = false;
 	current->next = new;
 }
 
@@ -129,7 +122,7 @@ void	handle_delimiters(t_minishell *shell, char *command, char **envp)
 	succeeding_delimiter = -1;
 	while (command[i])
 	{
-		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
+		succeeding_delimiter = find_delimiter(shell, command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
 			extract_command_part(command, start, len, preceding_delimiter,
@@ -298,7 +291,6 @@ int	main(int argc, char **argv, char **envp)
 		shell->usr_input = readline(shell->prompt);
 		read_line_count(shell);
 		add_to_line_count(shell, 1);
-		//printf("current line count: %d\n", shell->line_count);
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 
@@ -310,8 +302,6 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(shell->prompt);
 		shell->prompt = NULL;
-		// printf("line count: %d\n", line_count);
 	}
-	//free(shell->line_count);
 	free(shell);
 }

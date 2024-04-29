@@ -28,6 +28,8 @@ void	heredoc_input(t_minishell *shell, char *eof)
 		write(input_fd, "\n", 1);
 		input = readline("> ");
 	}
+	if (input)
+		local_line_count++;
 	if (!input)
 	{
 		write(2, "bash: warning: here-document at line ", 38);
@@ -35,20 +37,21 @@ void	heredoc_input(t_minishell *shell, char *eof)
 		write(2, " delimited by end-of-file (wanted `eof')\n", 42);
 	}
 	add_to_line_count(shell, local_line_count);
-	/* shell->line_count += local_line_count;
-	printf("line count after adding local line count: %d\n",  *//* shell->line_count); */
 	close(input_fd);
 	input_fd = open("input.txt", O_RDONLY);
 	dup2(input_fd, STDIN_FILENO);
 	close(input_fd);
 }
 
-int	find_delimiter(char c1, char c2)
+int	find_delimiter(t_minishell *shell, char c1, char c2)
 {
 	if (c1 == '<')
 	{
 		if (c2 == '<')
+		{
+			shell->no_heredoc = false;
 			return HEREDOC;
+		}
 		return INPUT;
 	}
 	else if (c1 == '>')
@@ -95,9 +98,15 @@ void	heredoc_execute(t_minishell *shell, char *eof)
 		local_line_count++;
 		input = readline("> ");
 	}
-	/* if (!input)
-		printf("line count: %d\n", shell->line_count);
-	shell->line_count += local_line_count; */
+	if (input)
+		local_line_count++;
+	if (!input)
+	{
+		write(2, "bash: warning: here-document at line ", 38);
+		write(2, shell->str_line_count, ft_strlen(shell->str_line_count));
+		write(2, " delimited by end-of-file (wanted `eof')\n", 42);
+	}
+	add_to_line_count(shell, local_line_count);
 }
 
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
@@ -110,19 +119,22 @@ void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 	{
 		if (list->delimiter == COMMAND)
 			command = list->command_part;
-		else if (list->delimiter == INPUT && list->primary_input)
+		else if (list->delimiter == INPUT && shell->no_heredoc)
+		{
+			printf("primary input is input file? %d\n", shell->no_heredoc);
 			redirect_input(list->command_part);
+		}
 		else if (list->delimiter == OUTPUT)
 			redirect_output(list->command_part);
 		else if (list->delimiter == APPEND)
 			append_output(list->command_part);
 		else if (list->delimiter == HEREDOC)
 		{
-			printf("primary input is heredoc? %d\n", list->primary_input);
-			if (list->primary_input == true)
+			/* printf("primary input is heredoc? %d\n", shell->no_heredoc); */
+			if (shell->no_heredoc == false)
 				heredoc_input(shell, list->command_part);
-			else if (list->primary_input == false)
-				heredoc_execute(shell, list->command_part);
+			/* else if (shell->no_heredoc == false)
+				heredoc_execute(shell, list->command_part); */
 		}
 		list = list->next;
 	}
