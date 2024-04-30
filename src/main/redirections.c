@@ -8,15 +8,15 @@ void	append_output(char *output_file)
 
 	output_fd = open(output_file, O_WRONLY | O_APPEND);
 	dup2(output_fd, STDOUT_FILENO);
+	close(output_fd);
 }
 
-void	heredoc_input(t_minishell *shell, char *eof)
+void	heredoc(t_minishell *shell, char *eof)
 {
 	int input_fd;
 	char *input;
 	int	local_line_count;
-
-	(void)shell;
+;
 	local_line_count = 0;
 	input_fd = open("input.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 
@@ -38,30 +38,9 @@ void	heredoc_input(t_minishell *shell, char *eof)
 	}
 	add_to_line_count(shell, local_line_count);
 	close(input_fd);
-	input_fd = open("input.txt", O_RDONLY);
-	dup2(input_fd, STDIN_FILENO);
-	close(input_fd);
 }
 
-int	find_delimiter(t_minishell *shell, char c1, char c2)
-{
-	if (c1 == '<')
-	{
-		if (c2 == '<')
-		{
-			shell->no_heredoc = false;
-			return HEREDOC;
-		}
-		return INPUT;
-	}
-	else if (c1 == '>')
-	{
-		if (c2 == '>')
-			return APPEND;
-		return OUTPUT;
-	}
-	return (-1);
-}
+
 
 void	redirect_input(char *input_file)
 {
@@ -75,6 +54,7 @@ void	redirect_input(char *input_file)
 		perror(input_file);
 		exit(EXIT_FAILURE);
 	}
+	close(input_fd);
 }
 
 void	redirect_output(char *output_file)
@@ -85,30 +65,9 @@ void	redirect_output(char *output_file)
 	dup2(output_fd, STDOUT_FILENO);
 }
 
-void	heredoc_execute(t_minishell *shell, char *eof)
-{
-	char	*input;
-	int	local_line_count;
-
-	(void)shell;
-	local_line_count = 0;
-	input = readline("> ");
-	while (input && ft_strncmp(input, eof, ft_strlen(eof) +1) != 0)
-	{
-		local_line_count++;
-		input = readline("> ");
-	}
-	if (input)
-		local_line_count++;
-	if (!input)
-	{
-		write(2, "bash: warning: here-document at line ", 38);
-		write(2, shell->str_line_count, ft_strlen(shell->str_line_count));
-		write(2, " delimited by end-of-file (wanted `eof')\n", 42);
-	}
-	add_to_line_count(shell, local_line_count);
-}
-
+/*
+regarding input & heredoc: only if it is the most right delimiter, is _stdin will be true, and thus STDIN for the command should be redirected
+*/
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 {
 	char *command;
@@ -119,24 +78,38 @@ void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 	{
 		if (list->delimiter == COMMAND)
 			command = list->command_part;
-		else if (list->delimiter == INPUT && shell->no_heredoc)
-		{
-			printf("primary input is input file? %d\n", shell->no_heredoc);
+		else if (list->delimiter == INPUT && list->is_stdin)
 			redirect_input(list->command_part);
-		}
 		else if (list->delimiter == OUTPUT)
 			redirect_output(list->command_part);
 		else if (list->delimiter == APPEND)
 			append_output(list->command_part);
 		else if (list->delimiter == HEREDOC)
 		{
-			/* printf("primary input is heredoc? %d\n", shell->no_heredoc); */
-			if (shell->no_heredoc == false)
-				heredoc_input(shell, list->command_part);
-			/* else if (shell->no_heredoc == false)
-				heredoc_execute(shell, list->command_part); */
+			heredoc(shell, list->command_part);
+			if (list->is_stdin)
+				redirect_input("input.txt");
 		}
 		list = list->next;
 	}
 	execute_command(shell, command, envp);
+}
+int	find_delimiter(t_minishell *shell, char c1, char c2)
+{
+	(void)shell;
+	if (c1 == '<')
+	{
+		if (c2 == '<')
+		{
+			return HEREDOC;
+		}
+		return INPUT;
+	}
+	else if (c1 == '>')
+	{
+		if (c2 == '>')
+			return APPEND;
+		return OUTPUT;
+	}
+	return (-1);
 }

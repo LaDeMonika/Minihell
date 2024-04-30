@@ -57,6 +57,9 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	new->command_part = command_part;
 	new->delimiter = type;
 	new->next = NULL;
+	if (type == HEREDOC || type == INPUT)
+		new->is_stdin = true;
+
 
 	if (!*head)
 	{
@@ -66,8 +69,12 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
+		if (current->delimiter == INPUT || current->delimiter == HEREDOC)
+			current->is_stdin = false;
 		current = current->next;
 	}
+	if (current->delimiter == INPUT || current->delimiter == HEREDOC)
+			current->is_stdin = false;
 	current->next = new;
 }
 

@@ -29,6 +29,7 @@ typedef struct s_command_list
 {
     char *command_part;
     int delimiter;
+    bool    is_stdin;
     struct s_command_list  *next;
 }   t_command_list;
 
@@ -58,7 +59,6 @@ typedef struct s_minishell
     int pipe_fd[2];
     int line_count;
     char    *str_line_count;
-    bool    no_heredoc;
 }               t_minishell;
 
 /****************************ENUM****************************/
@@ -117,11 +117,10 @@ void	build_prompt(t_minishell *shell);
 
 //redirections
 void	append_output(char *output_file);
-void	heredoc_input(t_minishell *shell, char *eof);
+void	heredoc(t_minishell *shell, char *eof);
 int	find_delimiter(t_minishell *shell, char c1, char c2);
 void	redirect_input(char *input_file);
 void	redirect_output(char *output_file);
-void	heredoc_execute(t_minishell *shell, char *eof);
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals
