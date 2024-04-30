@@ -56,11 +56,13 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
+	printf("check before execve\n");
 	if (is_builtin == 1)
 	{
 		execve(path, command_array, envp);
 	}
 	// TODO: also set exit status and custom message for builtins
+	printf("check after execve\n");
 	custom_message = set_exit_status(&exit_status);
 	if (custom_message)
 		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);

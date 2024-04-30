@@ -69,11 +69,11 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
-		if (current->delimiter == INPUT || current->delimiter == HEREDOC)
+		if (new->is_stdin && (current->delimiter == INPUT || current->delimiter == HEREDOC))
 			current->is_stdin = false;
 		current = current->next;
 	}
-	if (current->delimiter == INPUT || current->delimiter == HEREDOC)
+	if (new->is_stdin && (current->delimiter == INPUT || current->delimiter == HEREDOC))
 			current->is_stdin = false;
 	current->next = new;
 }
@@ -246,6 +246,7 @@ void	handle_input(t_minishell *shell)
 		shell->pipes_total++;
 	handle_pipes(shell, STDIN_FILENO);
 }
+
 void	read_line_count(t_minishell *shell)
 {
 	int	line_count_fd;

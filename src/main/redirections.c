@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	append_output(char *output_file)
+
+void	redirect_output(char *output_file, int delimiter)
 {
 	int	output_fd;
 
-	output_fd = open(output_file, O_WRONLY | O_APPEND);
+	if (delimiter == OUTPUT)
+		output_fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else
+	 	output_fd = open(output_file, O_WRONLY | O_APPEND);
 	dup2(output_fd, STDOUT_FILENO);
 	close(output_fd);
 }
@@ -57,13 +61,7 @@ void	redirect_input(char *input_file)
 	close(input_fd);
 }
 
-void	redirect_output(char *output_file)
-{
-	int	output_fd;
 
-	output_fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	dup2(output_fd, STDOUT_FILENO);
-}
 
 /*
 regarding input & heredoc: only if it is the most right delimiter, is _stdin will be true, and thus STDIN for the command should be redirected
@@ -81,9 +79,9 @@ void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 		else if (list->delimiter == INPUT && list->is_stdin)
 			redirect_input(list->command_part);
 		else if (list->delimiter == OUTPUT)
-			redirect_output(list->command_part);
+			redirect_output(list->command_part, OUTPUT);
 		else if (list->delimiter == APPEND)
-			append_output(list->command_part);
+			redirect_output(list->command_part, APPEND);
 		else if (list->delimiter == HEREDOC)
 		{
 			heredoc(shell, list->command_part);
