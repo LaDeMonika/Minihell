@@ -6,7 +6,7 @@ void	child_sigint_handler(int sig)
 {
 	(void)sig;
 
-	//printf("child caught sigint\n");
+	write(2, "> ^C\n", 6);
 	write(2, "child caught signal\n", 21);
 	exit(130);
 }

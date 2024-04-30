@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 
-void	redirect_output(char *output_file, int delimiter)
+void	redirect_output(char *output_file, int delimiter, char **error)
 {
 	int	output_fd;
 
@@ -11,7 +11,17 @@ void	redirect_output(char *output_file, int delimiter)
 		output_fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
 	 	output_fd = open(output_file, O_WRONLY | O_APPEND);
-	dup2(output_fd, STDOUT_FILENO);
+	if (output_fd > 0)
+		dup2(output_fd, STDOUT_FILENO);
+	else
+	{
+		if (!(*error))
+		{
+			*error = ft_strjoin(output_file, ": ");
+			*error = ft_strjoin(*error,strerror(errno));
+		}
+	}
+
 	close(output_fd);
 }
 
@@ -38,7 +48,9 @@ void	heredoc(t_minishell *shell, char *eof)
 	{
 		write(2, "bash: warning: here-document at line ", 38);
 		write(2, shell->str_line_count, ft_strlen(shell->str_line_count));
-		write(2, " delimited by end-of-file (wanted `eof')\n", 42);
+		write(2, " delimited by end-of-file (wanted `", 36);
+		write(2, eof, ft_strlen(eof));
+		write(2, "')\n", 4);
 	}
 	add_to_line_count(shell, local_line_count);
 	close(input_fd);
@@ -46,17 +58,20 @@ void	heredoc(t_minishell *shell, char *eof)
 
 
 
-void	redirect_input(char *input_file)
+void	redirect_input(char *input_file, bool is_stdin, char **error)
 {
 	int	input_fd;
 
 	input_fd = open(input_file, O_RDONLY);
-	if (input_fd > 0)
+	if (input_fd > 0 && is_stdin)
 		dup2(input_fd, STDIN_FILENO);
-	else
+	else if (input_fd < 0)
 	{
-		perror(input_file);
-		exit(EXIT_FAILURE);
+		if (!(*error))
+		{
+			*error = ft_strjoin(input_file, ": ");
+			*error = ft_strjoin(*error,strerror(errno));
+		}
 	}
 	close(input_fd);
 }
@@ -69,26 +84,34 @@ regarding input & heredoc: only if it is the most right delimiter, is _stdin wil
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp)
 {
 	char *command;
+	char	*error;
 
 	command = NULL;
+	error = NULL;
 	(void)envp;
 	while (list)
 	{
 		if (list->delimiter == COMMAND)
 			command = list->command_part;
-		else if (list->delimiter == INPUT && list->is_stdin)
-			redirect_input(list->command_part);
+		else if (list->delimiter == INPUT)
+			redirect_input(list->command_part, list->is_stdin, &error);
 		else if (list->delimiter == OUTPUT)
-			redirect_output(list->command_part, OUTPUT);
+			redirect_output(list->command_part, OUTPUT, &error);
 		else if (list->delimiter == APPEND)
-			redirect_output(list->command_part, APPEND);
+			redirect_output(list->command_part, APPEND, &error);
 		else if (list->delimiter == HEREDOC)
 		{
 			heredoc(shell, list->command_part);
 			if (list->is_stdin)
-				redirect_input("input.txt");
+				redirect_input("input.txt", list->is_stdin, &error);
 		}
 		list = list->next;
+	}
+	if (error)
+	{
+		write(2, error, ft_strlen(error));
+		write(2, "\n", 1);
+		exit(EXIT_FAILURE);
 	}
 	execute_command(shell, command, envp);
 }

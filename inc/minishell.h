@@ -118,8 +118,8 @@ void	build_prompt(t_minishell *shell);
 //redirections
 void	heredoc(t_minishell *shell, char *eof);
 int	find_delimiter(t_minishell *shell, char c1, char c2);
-void	redirect_input(char *input_file);
-void	redirect_output(char *output_file, int delimiter);
+void	redirect_input(char *input_file, bool is_stdin, char **error);
+void	redirect_output(char *output_file, int delimiter, char **error);
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals
