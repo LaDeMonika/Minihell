@@ -59,6 +59,9 @@ typedef struct s_minishell
     int pipe_fd[2];
     int line_count;
     char    *str_line_count;
+    int stdin_copy;
+    int stderr_copy;
+    bool    error;
 }               t_minishell;
 
 /****************************ENUM****************************/
@@ -77,6 +80,14 @@ enum e_error
     ERR_CLOSE
 };
 
+/*get next line_might need for error printing*/
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
+
+char	*free_and_reset(char **ptr);
+char	*get_next_line(int fd);
+
 /*************************PROTOTYPES*************************/
 //********************src/main
 //command
@@ -86,7 +97,7 @@ void	extract_command_part(char *command, int start, int len,
 //main
 char	*find_command(char **input_array);
 void	custom_perror(char *prefix, char *custom_message);
-char	*set_exit_status(int *exit_status);
+char	*set_exit_status(t_minishell *shell, int *exit_status);
 void	list_add(t_command_list **head, char *command_part, int type);
 void	append_to_command(t_command_list **head, char *command_part);
 void	handle_delimiters(t_minishell *shell, char *command, char **envp);
@@ -118,8 +129,8 @@ void	build_prompt(t_minishell *shell);
 //redirections
 void	heredoc(t_minishell *shell, char *eof);
 int	find_delimiter(t_minishell *shell, char c1, char c2);
-void	redirect_input(char *input_file, bool is_stdin, char **error);
-void	redirect_output(char *output_file, int delimiter, char **error);
+void	redirect_input(char *input_file, bool is_stdin, bool *error);
+void	redirect_output(char *output_file, int delimiter, bool *error);
 void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
 
 //signals

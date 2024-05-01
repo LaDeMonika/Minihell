@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <unistd.h>
 
 char	*find_command(char **input_array)
 {
@@ -29,12 +30,13 @@ char	*find_command(char **input_array)
 
 void	custom_perror(char *prefix, char *custom_message)
 {
+	write(2, "error during execve\n", 17);
 	write(2, prefix, ft_strlen(prefix));
 	write(2, custom_message, ft_strlen(custom_message));
 	write(2, "\n", 1);
 }
 
-char	*set_exit_status(int *exit_status)
+char	*set_exit_status(t_minishell *shell, int *exit_status)
 {
 	*exit_status = EXIT_FAILURE;
 	if (errno == EACCES)
@@ -42,7 +44,7 @@ char	*set_exit_status(int *exit_status)
 	else if (errno == EFAULT || errno == ENOENT)
 	{
 		*exit_status = 127;
-		if (errno == EFAULT)
+		if (errno == EFAULT && !shell->error)
 			return ("command not found");
 	}
 	return (NULL);
@@ -160,6 +162,23 @@ void	handle_delimiters(t_minishell *shell, char *command, char **envp)
 	handle_redirections(shell, list, envp);
 }
 
+void	print_error_log(t_minishell *shell)
+{
+	int	stderr_file;
+	char	*line;
+
+	stderr_file = open("error.log", O_RDONLY);
+	dup2(shell->stderr_copy, STDERR_FILENO);
+	line = get_next_line(stderr_file);
+	while (line != NULL)
+	{
+		write(STDERR_FILENO, line, ft_strlen(line) + 1);
+		free(line);
+		line = get_next_line(stderr_file);
+	}
+	close(stderr_file);
+}
+
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd)
 {
@@ -180,6 +199,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 			shell->pipes_total--;
 		}
 		set_last_exit_status(shell);
+		print_error_log(shell);
 	}
 	close(shell->pipe_fd[0]);
 }
@@ -281,6 +301,8 @@ void	init_line_count(t_minishell *shell)
 	close(line_count_fd);
 }
 
+
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
@@ -294,6 +316,7 @@ int	main(int argc, char **argv, char **envp)
 	init_line_count(shell);
 	while (1)
 	{
+		shell->error = false;
 		set_signals_parent(shell);
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
@@ -302,14 +325,17 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 
+
 			add_history(shell->usr_input);
 			handle_input(shell);
 			shell->sa_sigint.sa_handler = sigint_handler;
 			sigaction(SIGINT, &shell->sa_sigint, NULL);
 			free(shell->usr_input);
+			//close(shell->stdin_copy);
 		}
 		free(shell->prompt);
 		shell->prompt = NULL;
 	}
+	close(shell->stderr_copy);
 	free(shell);
 }

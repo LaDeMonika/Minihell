@@ -14,12 +14,12 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - Implement error handling.
 
 ### Lilie's Task
-    - free
+    - free, close etc
     - error handling
     - add bash warning for EOF signal during heredoc: also what happens if there are several heredoc childs
+    - streamline error handling
 
-cases not working yet:
-lilin@c2r1p3:~/experimental/Minihell$ wc -l < a << b
-> a
-> b
-bash: a: No such file or directory
+not working commands yet:
+- wc -l c | wc -l << b > output
+- wc -l < a | wc -l << a
+- wc -l c | wc - l << a | head << b

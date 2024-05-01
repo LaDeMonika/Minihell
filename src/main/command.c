@@ -1,4 +1,6 @@
 #include "../../inc/minishell.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 char	*remove_quotes(char *command)
 {
@@ -56,16 +58,33 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
-	if (is_builtin == 1)
+	//dup2(shell->stderr_copy, STDERR_FILENO);
+	printf("command %s before checking condition for execve\n", command_array[0]);
+	if (is_builtin == 1 && !shell->error)
 	{
+		printf("command %s about to do execve\n", command_array[0]);
 		execve(path, command_array, envp);
 	}
 	// TODO: also set exit status and custom message for builtins
-	custom_message = set_exit_status(&exit_status);
+	//write(2, "execve skipped\n", 16);
+
+	/* if (shell->error)
+	{
+		write(2, "error before execve\n", 21);
+		write(2, shell->error, ft_strlen(shell->error));
+		write(2, "\n", 1);
+	} */
+	if (shell->error)
+		exit(EXIT_FAILURE);
+	dup2(shell->stderr_copy, STDERR_FILENO);
+	close(shell->stderr_copy);
+	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
 		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);
 	else
+	{
 		perror(ft_strjoin(command_array[0], ": "));
+	}
 	printf("command: %s errno: %d\n", command_array[0], errno);
 	printf("command: %s exit status: %d\n", command_array[0], exit_status);
 	exit(exit_status);
