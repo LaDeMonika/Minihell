@@ -60,6 +60,7 @@ typedef struct s_minishell
     int line_count;
     char    *str_line_count;
     int stdin_copy;
+    int stdout_copy;
     int stderr_copy;
     bool    error;
 }               t_minishell;
@@ -100,25 +101,30 @@ void	custom_perror(char *prefix, char *custom_message);
 char	*set_exit_status(t_minishell *shell, int *exit_status);
 void	list_add(t_command_list **head, char *command_part, int type);
 void	append_to_command(t_command_list **head, char *command_part);
-void	handle_delimiters(t_minishell *shell, char *command, char **envp);
+void	handle_delimiters(t_minishell *shell, char *command, char **envp, bool is_last_child);
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd);
 void	child(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd);
 void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 		int pipes_left, int read_fd);
-void	handle_pipes(t_minishell *shell, int read_fd);
 void	handle_input(t_minishell *shell);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
+
+//line count
+void	init_line_count(t_minishell *shell);
 void	add_to_line_count(t_minishell *shell, int new_lines);
 void	read_line_count(t_minishell *shell);
 
 //init_shell_struct
 void	init_shell_struct(t_minishell *shell, char **envp);
 
+
 //err
 void    ft_error_msg(char err);
 void	error_free_exit(t_minishell *shell, char err);
+void	print_error_log(t_minishell *shell);
+void    append_error_to_log(char *prefix, int errnum);
 
 //prompt
 char	*append_to_prompt(t_minishell *shell, char *s);
@@ -126,13 +132,15 @@ void    append_path(t_minishell *shell);
 void    append_hostname(t_minishell *shell);
 void	build_prompt(t_minishell *shell);
 
+//pipes
+void	handle_pipes(t_minishell *shell, int read_fd);
+
 //redirections
 void	heredoc(t_minishell *shell, char *eof);
 int	find_delimiter(t_minishell *shell, char c1, char c2);
 void	redirect_input(char *input_file, bool is_stdin, bool *error);
 void	redirect_output(char *output_file, int delimiter, bool *error);
-void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp);
-
+void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp, bool is_last_child);
 //signals
 void	child_sigint_handler(int sig);
 void	child_sigquit_handler(int sig);

@@ -50,6 +50,8 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 	return ('\0');
 }
 
+
+
 // only count outside of quotation marks
 static int	count_words(char *s, char sep, char quote_marker, int start_quote,
 		int end_quote)

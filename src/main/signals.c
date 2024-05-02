@@ -6,8 +6,8 @@ void	child_sigint_handler(int sig)
 {
 	(void)sig;
 
-	write(2, "> ^C\n", 6);
-	write(2, "child caught signal\n", 21);
+	write(2, "> ^C\n", 5);
+	write(2, "child caught signal\n", 20);
 	exit(130);
 }
 
@@ -15,7 +15,7 @@ void	child_sigquit_handler(int sig)
 {
 	(void)sig;
 
-	write(2, "^\\Quit (core dumped)\n", 22);
+	write(2, "^\\Quit (core dumped)\n", 21);
 	exit(131);
 }
 
@@ -50,12 +50,12 @@ void	set_last_exit_status(t_minishell *shell)
 		printf("before adding 128: %d\n", WTERMSIG(shell->status));
 		shell->last_exit_status = WTERMSIG(shell->status) + 128;
 	}
-	printf("exit status: %d\n", shell->last_exit_status);
+	/* printf("exit status: %d\n", shell->last_exit_status); */
 	if (WCOREDUMP(shell->status))
 	{
 
 		printf("some core was dumped\n");
-		write(2, "^\\Quit (core dumped)\n", 22);
+		write(2, "^\\Quit (core dumped)\n", 21);
 	}
 }
 

@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <unistd.h>
 
 static void    ft_puterror(const char *fault, const char *msg)
 {
@@ -49,4 +50,57 @@ void	error_free_exit(t_minishell *shell, char err)
         perror("malloc");
     free_all(shell);
 	exit(EXIT_FAILURE);
+}
+
+void	print_error_log(t_minishell *shell)
+{
+	int	error_log;
+	char	*line;
+
+    (void)shell;
+	error_log = open("error.log", O_RDONLY);
+	line = get_next_line(error_log);
+	while (line != NULL)
+	{
+		write(STDERR_FILENO, line, ft_strlen(line) + 1);
+		free(line);
+		line = get_next_line(error_log);
+	}
+	close(error_log);
+    error_log = open("error.log", O_WRONLY | O_TRUNC);
+    close(error_log);
+}
+
+
+void	custom_perror(char *prefix, char *custom_message)
+{
+	write(2, prefix, ft_strlen(prefix));
+	write(2, custom_message, ft_strlen(custom_message));
+	write(2, "\n", 1);
+}
+int ft_strlen2(char *s)
+{
+    int i;
+
+    i = 0;
+    while (s && s[i])
+    {
+        i++;
+    }
+    return (i);
+}
+
+void    append_error_to_log(char *prefix, int errnum)
+{
+    int error_log;
+    char    *error_message;
+
+    (void)prefix;
+    error_log = open("error.log", O_WRONLY | O_APPEND); 
+    write(error_log, prefix, ft_strlen(prefix));
+    write(error_log, ": ", 2);
+    error_message = strerror(errnum);
+    write(error_log, error_message, ft_strlen(error_message));
+    write(error_log, "\n", 1);
+    close(error_log);
 }

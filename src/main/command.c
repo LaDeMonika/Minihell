@@ -33,6 +33,47 @@ char	*remove_quotes(char *command)
 	return (new_str);
 }
 
+char	*find_command(char **input_array)
+{
+	char	*path;
+	char	**path_array;
+	int		i;
+	char	*command_path;
+	int		fd;
+
+	path = getenv("PATH");
+	if (!path)
+		return (ft_error_msg(ERR_PATH_NOT_FOUND), NULL);
+	path_array = ft_split(path, ':');
+	i = 0;
+	while (path_array[i])
+	{
+		command_path = ft_strjoin(path_array[i], "/");
+		command_path = ft_strjoin(command_path, input_array[0]);
+		fd = access(command_path, F_OK & X_OK);
+		if (fd == 0)
+		{
+			return (command_path);
+		}
+		i++;
+	}
+	return (NULL);
+}
+char	*set_exit_status(t_minishell *shell, int *exit_status)
+{
+	*exit_status = EXIT_FAILURE;
+	if (errno == EACCES)
+		*exit_status = 126;
+	else if (errno == EFAULT || errno == ENOENT)
+	{
+		*exit_status = 127;
+		if (errno == EFAULT && !shell->error)
+			return ("command not found");
+	}
+	return (NULL);
+}
+
+
 void	execute_command(t_minishell *shell, char *command, char **envp)
 {
 	int		is_builtin;
@@ -59,10 +100,8 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 	else
 		path = command_array[0];
 	//dup2(shell->stderr_copy, STDERR_FILENO);
-	printf("command %s before checking condition for execve\n", command_array[0]);
 	if (is_builtin == 1 && !shell->error)
 	{
-		printf("command %s about to do execve\n", command_array[0]);
 		execve(path, command_array, envp);
 	}
 	// TODO: also set exit status and custom message for builtins
@@ -76,8 +115,8 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 	} */
 	if (shell->error)
 		exit(EXIT_FAILURE);
-	dup2(shell->stderr_copy, STDERR_FILENO);
-	close(shell->stderr_copy);
+	/* dup2(shell->stderr_copy, STDERR_FILENO);
+	close(shell->stderr_copy); */
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
 		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);
@@ -85,30 +124,8 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 	{
 		perror(ft_strjoin(command_array[0], ": "));
 	}
-	printf("command: %s errno: %d\n", command_array[0], errno);
-	printf("command: %s exit status: %d\n", command_array[0], exit_status);
+	/* printf("command: %s errno: %d\n", command_array[0], errno);
+	printf("command: %s exit status: %d\n", command_array[0], exit_status); */
 	exit(exit_status);
 }
 
-void	extract_command_part(char *command, int start, int len,
-		int preceding_delimiter, t_command_list **list)
-{
-	char *command_part;
-	char *command_remainder;
-	int end_index;
-
-	command_part = ft_substr(command, start, len);
-	command_part = ft_strtrim(command_part, " ");
-	if (preceding_delimiter != COMMAND)
-	{
-		command_remainder = strchr(command_part, ' ');
-		if (command_remainder)
-		{
-			end_index = command_remainder - command_part;
-			command_remainder = strdup(command_remainder);
-			command_part[end_index] = '\0';
-			append_to_command(list, command_remainder);
-		}
-	}
-	list_add(list, command_part, preceding_delimiter);
-}

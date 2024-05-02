@@ -6,12 +6,16 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/01 19:33:59 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/02 21:09:34 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include <unistd.h>
+
+
+
+
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
@@ -26,7 +30,8 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	shell->line_count = 0;
 	shell->error = false;
 	shell->stdin_copy = dup(STDIN_FILENO);
-	shell->stderr_copy = dup(STDERR_FILENO);
+	/* shell->stdout_copy = dup(STDOUT_FILENO);
+	shell->stderr_copy = dup(STDERR_FILENO); */
 	//shell->fd_hostname = open("/etc/hostname", O_RDONLY);
 	//shell->bytes_read = read(fd_hostname, hostname_buffer, 254);
 	//close(fd_hostname);

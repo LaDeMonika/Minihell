@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 15:21:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/22 17:23:37 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/02 19:39:10 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,6 @@ int ft_is_builtin(t_minishell *shell, char **command_array)
         status = ft_exit(shell); */
     else
         status = 1;
-    printf("status: %d\n", status);
+    /* printf("status: %d\n", status); */
     return (status);
 }
