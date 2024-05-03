@@ -74,7 +74,7 @@ char	*set_exit_status(t_minishell *shell, int *exit_status)
 }
 
 
-void	execute_command(t_minishell *shell, char *command, char **envp)
+void	execute_command(t_minishell *shell, char *command)
 {
 	int		is_builtin;
 	char	**command_array;
@@ -91,7 +91,7 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 		command_array[i] = remove_quotes(command_array[i]);
 		i++;
 	}
-
+	
 	// builtins
 	is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
@@ -100,9 +100,12 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 	else
 		path = command_array[0];
 	//dup2(shell->stderr_copy, STDERR_FILENO);
-	if (is_builtin == 1 && !shell->error)
+	if (shell->error)
+		exit(EXIT_FAILURE);
+	if (is_builtin == 1)
 	{
-		execve(path, command_array, envp);
+		redirect_errors();
+		execve(path, command_array, shell->envp);
 	}
 	// TODO: also set exit status and custom message for builtins
 	//write(2, "execve skipped\n", 16);
@@ -113,16 +116,17 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 		write(2, shell->error, ft_strlen(shell->error));
 		write(2, "\n", 1);
 	} */
-	if (shell->error)
-		exit(EXIT_FAILURE);
+
 	/* dup2(shell->stderr_copy, STDERR_FILENO);
 	close(shell->stderr_copy); */
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
-		custom_perror(ft_strjoin(command_array[0], ": "), custom_message);
+		append_custom_error_to_log(command_array[0], custom_message);
+		/* custom_perror(ft_strjoin(command_array[0], ": "), custom_message); */
 	else
 	{
-		perror(ft_strjoin(command_array[0], ": "));
+		append_strerror_to_log(command_array[0], errno);
+		/* perror(ft_strjoin(command_array[0], ": ")); */
 	}
 	/* printf("command: %s errno: %d\n", command_array[0], errno);
 	printf("command: %s exit status: %d\n", command_array[0], exit_status); */

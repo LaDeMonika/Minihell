@@ -63,6 +63,8 @@ typedef struct s_minishell
     int stdout_copy;
     int stderr_copy;
     bool    error;
+    int heredoc_count;
+    t_command_list **list;
 }               t_minishell;
 
 /****************************ENUM****************************/
@@ -92,7 +94,7 @@ char	*get_next_line(int fd);
 /*************************PROTOTYPES*************************/
 //********************src/main
 //command
-void	execute_command(t_minishell *shell, char *command, char **envp);
+void	execute_command(t_minishell *shell, char *command);
 void	extract_command_part(char *command, int start, int len,
 		int preceding_delimiter, t_command_list **list);
 //main
@@ -101,7 +103,7 @@ void	custom_perror(char *prefix, char *custom_message);
 char	*set_exit_status(t_minishell *shell, int *exit_status);
 void	list_add(t_command_list **head, char *command_part, int type);
 void	append_to_command(t_command_list **head, char *command_part);
-void	handle_delimiters(t_minishell *shell, char *command, char **envp, bool is_last_child);
+t_command_list	*handle_delimiters(t_minishell *shell, char *command);
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd);
 void	child(t_minishell *shell, char **input_array, int pipes_left,
@@ -124,7 +126,10 @@ void	init_shell_struct(t_minishell *shell, char **envp);
 void    ft_error_msg(char err);
 void	error_free_exit(t_minishell *shell, char err);
 void	print_error_log(t_minishell *shell);
-void    append_error_to_log(char *prefix, int errnum);
+void    append_strerror_to_log(char *prefix, int errnum);
+void    append_custom_error_to_log(char *prefix, char *custom_error);
+void	redirect_errors();
+void	redirect_stdout_to_log();
 
 //prompt
 char	*append_to_prompt(t_minishell *shell, char *s);
@@ -136,11 +141,11 @@ void	build_prompt(t_minishell *shell);
 void	handle_pipes(t_minishell *shell, int read_fd);
 
 //redirections
-void	heredoc(t_minishell *shell, char *eof);
+void	heredoc(t_minishell *shell, char *eof, int i);
 int	find_delimiter(t_minishell *shell, char c1, char c2);
 void	redirect_input(char *input_file, bool is_stdin, bool *error);
 void	redirect_output(char *output_file, int delimiter, bool *error);
-void	handle_redirections(t_minishell *shell, t_command_list *list, char **envp, bool is_last_child);
+void	handle_redirections(t_minishell *shell, t_command_list *list, bool is_last_child, int i);
 //signals
 void	child_sigint_handler(int sig);
 void	child_sigquit_handler(int sig);
