@@ -61,13 +61,14 @@ char	*find_command(char **input_array)
 }
 char	*set_exit_status(t_minishell *shell, int *exit_status)
 {
+	(void)shell;
 	*exit_status = EXIT_FAILURE;
 	if (errno == EACCES)
 		*exit_status = 126;
 	else if (errno == EFAULT || errno == ENOENT)
 	{
 		*exit_status = 127;
-		if (errno == EFAULT && !shell->error)
+		if (errno == EFAULT)
 			return ("command not found");
 	}
 	return (NULL);
@@ -76,7 +77,7 @@ char	*set_exit_status(t_minishell *shell, int *exit_status)
 
 void	execute_command(t_minishell *shell, char *command)
 {
-	int		is_builtin;
+	//int		is_builtin;
 	char	**command_array;
 	char	*path;
 	int		exit_status;
@@ -91,45 +92,25 @@ void	execute_command(t_minishell *shell, char *command)
 		command_array[i] = remove_quotes(command_array[i]);
 		i++;
 	}
-	
+
 	// builtins
-	is_builtin = ft_is_builtin(shell, command_array);
+	//is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
 	if (strncmp(command_array[0], "./", 2) != 0)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
-	//dup2(shell->stderr_copy, STDERR_FILENO);
-	if (shell->error)
-		exit(EXIT_FAILURE);
-	if (is_builtin == 1)
-	{
-		redirect_errors();
-		execve(path, command_array, shell->envp);
-	}
+
+
+
+	execve(path, command_array, shell->envp);
+
 	// TODO: also set exit status and custom message for builtins
-	//write(2, "execve skipped\n", 16);
-
-	/* if (shell->error)
-	{
-		write(2, "error before execve\n", 21);
-		write(2, shell->error, ft_strlen(shell->error));
-		write(2, "\n", 1);
-	} */
-
-	/* dup2(shell->stderr_copy, STDERR_FILENO);
-	close(shell->stderr_copy); */
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
-		append_custom_error_to_log(command_array[0], custom_message);
-		/* custom_perror(ft_strjoin(command_array[0], ": "), custom_message); */
+		print_custom_error(command_array[0], custom_message);
 	else
-	{
-		append_strerror_to_log(command_array[0], errno);
-		/* perror(ft_strjoin(command_array[0], ": ")); */
-	}
-	/* printf("command: %s errno: %d\n", command_array[0], errno);
-	printf("command: %s exit status: %d\n", command_array[0], exit_status); */
+		print_errno(command_array[0]);
 	exit(exit_status);
 }
 

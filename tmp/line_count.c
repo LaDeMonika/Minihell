@@ -1,5 +1,5 @@
 #include "../../inc/minishell.h"
-
+/*
 void	read_line_count(t_minishell *shell)
 {
 	int	line_count_fd;
@@ -32,4 +32,4 @@ void	init_line_count(t_minishell *shell)
 	shell->str_line_count = "0";
 	bytes_written = write(line_count_fd, shell->str_line_count, 1);
 	close(line_count_fd);
-}
+} */

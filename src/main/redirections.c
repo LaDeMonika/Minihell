@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 
-void	redirect_output(char *output_file, int delimiter, bool *error)
+void	redirect_output(char *output_file, int delimiter)
 {
 	int	output_fd;
 
@@ -14,42 +14,35 @@ void	redirect_output(char *output_file, int delimiter, bool *error)
 	else
 	 	output_fd = open(output_file, O_WRONLY | O_APPEND);
 	if (output_fd > 0)
+	{
 		dup2(output_fd, STDOUT_FILENO);
+		close(output_fd);
+	}
 	else
 	{
-		if (!(*error))
-		{
-			append_strerror_to_log(output_file, errno);
-			*error = true;
-		}
+		print_errno(output_file);
+		exit(EXIT_FAILURE);
 	}
-
-	close(output_fd);
 }
 
 
 
 
-void	redirect_input(char *input_file, bool is_stdin, bool *error)
+void	redirect_input(char *input_file)
 {
 	int	input_fd;
 
-	/* printf("about to redirect?\n"); */
 	input_fd = open(input_file, O_RDONLY);
-	if (input_fd > 0 && is_stdin)
+	if (input_fd > 0)
+	{
 		dup2(input_fd, STDIN_FILENO);
+		close(input_fd);
+	}
 	else if (input_fd < 0)
 	{
-		/* printf("opening file failed\n"); */
-		if (!(*error))
-		{
-			*error = true;
-			/* printf("saving errno to error variable\n"); */
-			append_strerror_to_log(input_file, errno);
-		}
+		print_errno(input_file);
+		exit(EXIT_FAILURE);
 	}
-	close(input_fd);
-
 }
 
 
@@ -57,52 +50,28 @@ void	redirect_input(char *input_file, bool is_stdin, bool *error)
 /*
 regarding input & heredoc: only if it is the most right delimiter, is _stdin will be true, and thus STDIN for the command should be redirected
 */
-void	handle_redirections(t_minishell *shell, t_command_list *list, bool is_last_child, int i)
+void	handle_redirections(t_minishell *shell, t_command_list *list)
 {
 	char *command;
-	bool	output_redirect;
 
 	command = NULL;
-	shell->error = NULL;
-	output_redirect = false;
-	char *file_name;
-	/* redirect_errors(); */
-	file_name = ft_strjoin(ft_itoa(i), "_input.txt");
 	while (list)
 	{
 		if (list->delimiter == COMMAND)
-			command = list->command_part;
+			command = list->token;
 		else if (list->delimiter == INPUT)
-			redirect_input(list->command_part, list->is_stdin, &shell->error);
+			redirect_input(list->token);
 		else if (list->delimiter == OUTPUT)
 		{
-			redirect_output(list->command_part, OUTPUT, &shell->error);
-			output_redirect = true;
+			redirect_output(list->token, OUTPUT);
 		}
 		else if (list->delimiter == APPEND)
-			redirect_output(list->command_part, APPEND, &shell->error);
+			redirect_output(list->token, APPEND);
 		else if (list->delimiter == HEREDOC)
-		{
-			/* printf("stdin copy fd: %d\n", shell->stdin_copy);
-			printf("stderr copy fd: %d\n", shell->stderr_copy); */
-			/* dup2(shell->stdin_copy, STDIN_FILENO); */
-			/* if (!is_last_child)
-				dup2(shell->stdout_copy, STDOUT_FILENO); */
-			//heredoc(shell, list->command_part);
-			if (list->is_stdin)
-				redirect_input(file_name, list->is_stdin, &shell->error);
-			/* if (!is_last_child)
-				dup2(shell->pipe_fd[1], STDOUT_FILENO); */
-		}
+			redirect_input(shell->input_buffer);
+
 		list = list->next;
 	}
-	close(shell->stdin_copy);
-	//close(shell->stderr_copy);
-	close(shell->stdout_copy);
-	if (!is_last_child)
-		close(shell->pipe_fd[1]);
-	else if (is_last_child && !output_redirect)
-	 	redirect_stdout_to_log();
 	execute_command(shell, command);
 }
 int	find_delimiter(t_minishell *shell, char c1, char c2)
@@ -124,7 +93,7 @@ int	find_delimiter(t_minishell *shell, char c1, char c2)
 	}
 	return (-1);
 }
-void	append_to_command(t_command_list **head, char *command_part)
+void	append_to_command(t_command_list **head, char *token)
 {
 	t_command_list	*current;
 
@@ -132,8 +101,8 @@ void	append_to_command(t_command_list **head, char *command_part)
 	while (current)
 	{
 		if (current->delimiter == COMMAND)
-			current->command_part = ft_strjoin(current->command_part,
-					command_part);
+			current->token = ft_strjoin(current->token,
+					token);
 		current = current->next;
 	}
 }
@@ -155,19 +124,15 @@ void	skip_quotes(char *command, char quote_marker, int *i, int *len)
 }
 
 
-void	list_add(t_command_list **head, char *command_part, int type)
+void	list_add(t_command_list **head, char *token, int type)
 {
 	t_command_list	*new;
 	t_command_list	*current;
 
 	new = malloc(sizeof(t_command_list));
-	new->command_part = command_part;
+	new->token = token;
 	new->delimiter = type;
 	new->next = NULL;
-	if (type == HEREDOC || type == INPUT)
-		new->is_stdin = true;
-
-
 	if (!*head)
 	{
 		*head = new;
@@ -175,38 +140,32 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	}
 	current = *head;
 	while (current->next)
-	{
-		if (new->is_stdin && (current->delimiter == INPUT || current->delimiter == HEREDOC))
-			current->is_stdin = false;
 		current = current->next;
-	}
-	if (new->is_stdin && (current->delimiter == INPUT || current->delimiter == HEREDOC))
-			current->is_stdin = false;
 	current->next = new;
 }
 
 
-void	extract_command_part(char *command, int start, int len,
+void	extract_token(char *command, int start, int len,
 		int preceding_delimiter, t_command_list **list)
 {
-	char *command_part;
+	char *token;
 	char *command_remainder;
 	int end_index;
 
-	command_part = ft_substr(command, start, len);
-	command_part = ft_strtrim(command_part, " ");
+	token = ft_substr(command, start, len);
+	token = ft_strtrim(token, " ");
 	if (preceding_delimiter != COMMAND)
 	{
-		command_remainder = strchr(command_part, ' ');
+		command_remainder = strchr(token, ' ');
 		if (command_remainder)
 		{
-			end_index = command_remainder - command_part;
+			end_index = command_remainder - token;
 			command_remainder = strdup(command_remainder);
-			command_part[end_index] = '\0';
+			token[end_index] = '\0';
 			append_to_command(list, command_remainder);
 		}
 	}
-	list_add(list, command_part, preceding_delimiter);
+	list_add(list, token, preceding_delimiter);
 }
 
 /*
@@ -233,7 +192,7 @@ t_command_list	*handle_delimiters(t_minishell *shell, char *command)
 		succeeding_delimiter = find_delimiter(shell, command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			extract_command_part(command, start, len, preceding_delimiter,
+			extract_token(command, start, len, preceding_delimiter,
 				&list);
 			if (succeeding_delimiter == HEREDOC
 				|| succeeding_delimiter == APPEND)
@@ -256,8 +215,7 @@ t_command_list	*handle_delimiters(t_minishell *shell, char *command)
 	}
 	if (i != start)
 	{
-		extract_command_part(command, start, len, preceding_delimiter, &list);
+		extract_token(command, start, len, preceding_delimiter, &list);
 	}
 	return (list);
-	//handle_redirections(shell, list, envp, is_last_child);
 }

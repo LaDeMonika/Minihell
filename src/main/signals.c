@@ -1,5 +1,6 @@
 # include "../../inc/minishell.h"
 #include <readline/readline.h>
+#include <signal.h>
 #include <unistd.h>
 
 void	child_sigint_handler(int sig)
@@ -7,7 +8,7 @@ void	child_sigint_handler(int sig)
 	(void)sig;
 
 	write(2, "> ^C\n", 5);
-	write(2, "child caught signal\n", 20);
+	write(2, "child caught sigint\n", 20);
 	exit(130);
 }
 
@@ -23,6 +24,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 
+	write(2, "parent caught sigint\n", 21);
 	write(2, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -47,14 +49,11 @@ void	set_last_exit_status(t_minishell *shell)
 	else if (WIFSIGNALED(shell->status))
 	{
 		write(2, "\n", 1);
-		printf("before adding 128: %d\n", WTERMSIG(shell->status));
 		shell->last_exit_status = WTERMSIG(shell->status) + 128;
 	}
 	/* printf("exit status: %d\n", shell->last_exit_status); */
 	if (WCOREDUMP(shell->status))
 	{
-
-		printf("some core was dumped\n");
 		write(2, "^\\Quit (core dumped)\n", 21);
 	}
 }
@@ -74,4 +73,11 @@ void	set_signals_parent(t_minishell *shell)
 		error_free_exit(shell, ERR_SIGEMPTYSET);
 	if (sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
 		error_free_exit(shell, ERR_SIGACTION);
+}
+
+
+void	set_signals_heredoc(t_minishell *shell)
+{
+	shell->sa_sigint.sa_handler = SIG_DFL;
+	sigaction(SIGINT, &shell->sa_sigint, NULL);
 }

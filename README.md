@@ -19,11 +19,11 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - add bash warning for EOF signal during heredoc: also what happens if there are several heredoc childs
     - streamline error handling
 
+heredoc:
+- remove error log
+
 not working commands yet:
-- wc -l c | wc -l << b > output -> order is messed up
-- wc -l < a | wc -l << b -> order of output is messsed up
-- wc -l c | wc - l << a | head << b
-- wc -l << a | wc -l << b
+-
 
 seems to work now:
 - wc -l << t | grep i
@@ -31,3 +31,7 @@ seems to work now:
 - ls | grep i > output | wc -l < outputfdsafds
 - wc -l < a | wc -l << b | wc -l < t
 - wc -l c | wc -l << b
+- wc -l c | wc -l << b > output
+- wc -l < a | wc -l << b
+- wc -l << a | wc -l << b
+- wc -l c | wc - l << a | head << b

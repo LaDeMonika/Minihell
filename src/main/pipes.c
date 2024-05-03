@@ -21,17 +21,13 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 			shell->pipes_total--;
 		}
 		set_last_exit_status(shell);
-		print_error_log(shell);
 	}
 	close(shell->pipe_fd[0]);
 }
 
-void	child(t_minishell *shell, char **input_array, int pipes_left,
+void	child(t_minishell *shell, int pipes_left,
 		int read_fd)
 {
-	bool	is_last_child;
-
-	(void)input_array;
 	set_child_signals(shell);
 	close(shell->pipe_fd[0]);
 	if (read_fd > 0)
@@ -42,15 +38,9 @@ void	child(t_minishell *shell, char **input_array, int pipes_left,
 	if (pipes_left >= 1)
 	{
 		dup2(shell->pipe_fd[1], STDOUT_FILENO);
-		is_last_child = false;
 	}
-	else
-	{
-		is_last_child = true;
-	}
-	//close(shell->pipe_fd[1]);
-	//handle_delimiters(shell, input_array[0], shell->envp, is_last_child);
-	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left], is_last_child, shell->pipes_total - pipes_left);
+	close(shell->pipe_fd[1]);
+	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left]);
 }
 
 void	handle_pipes_recursive(t_minishell *shell, char **input_array,
@@ -68,7 +58,7 @@ void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 	}
 	else if (shell->pid[pipes_left] == 0)
 	{
-		child(shell, input_array, pipes_left, read_fd);
+		child(shell, pipes_left, read_fd);
 	}
 }
 

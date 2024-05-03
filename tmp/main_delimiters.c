@@ -83,13 +83,13 @@ int	find_delimiter(char c1, char c2)
 	return (-1);
 }
 
-void	list_add(t_command_list **head, char *command_part, int type)
+void	list_add(t_command_list **head, char *token, int type)
 {
 	t_command_list	*new;
 	t_command_list *current;
 
 	new = malloc(sizeof(t_command_list));
-	new->command_part = command_part;
+	new->token = token;
 	new->delimiter = type;
 	new->next = NULL;
 
@@ -101,7 +101,7 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
-		printf("command_part: %s type: %d\n", current->command_part, current->delimiter);
+		printf("token: %s type: %d\n", current->token, current->delimiter);
 		current = current->next;
 
 	}
@@ -133,7 +133,7 @@ void	handle_delimiters(char *command, char **envp)
 	int	preceding_delimiter;
 	int	succeeding_delimiter;
 	bool	delimiter_found;
-	char *command_part;
+	char *token;
 	t_command_list	*list;
 	int	start;
 	int	len;
@@ -151,16 +151,16 @@ void	handle_delimiters(char *command, char **envp)
 		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			command_part = ft_substr(command, start, len);
-			printf("gonna add command part: %s start: %d len: %d\n", command_part, start, len);
+			token = ft_substr(command, start, len);
+			printf("gonna add command part: %s start: %d len: %d\n", token, start, len);
 			if (!delimiter_found)
 			{
-				list_add(&list, command_part, COMMAND);
+				list_add(&list, token, COMMAND);
 				delimiter_found = true;
 			}
 			else
 			{
-				list_add(&list, command_part, preceding_delimiter);
+				list_add(&list, token, preceding_delimiter);
 			}
 			if (succeeding_delimiter == HEREDOC || succeeding_delimiter == APPEND)
 				start = i + 2;
@@ -178,14 +178,14 @@ void	handle_delimiters(char *command, char **envp)
 	}
 	if (i != start)
 	{
-		command_part = ft_substr(command, start, len);
-		printf("gonna add command part: %s start: %d len: %d\n", command_part, start, len);
-		list_add(&list, command_part, preceding_delimiter);
+		token = ft_substr(command, start, len);
+		printf("gonna add command part: %s start: %d len: %d\n", token, start, len);
+		list_add(&list, token, preceding_delimiter);
 	}
 	//if no delimiter is found, this function will just return and execute directly
 	while (list)
 	{
-		printf("print command part: %s type: %d\n", list->command_part, list->delimiter);
+		printf("print command part: %s type: %d\n", list->token, list->delimiter);
 		list = list->next;
 	}
 }

@@ -27,9 +27,8 @@
 /**************************STRUCT****************************/
 typedef struct s_command_list
 {
-    char *command_part;
+    char *token;
     int delimiter;
-    bool    is_stdin;
     struct s_command_list  *next;
 }   t_command_list;
 
@@ -58,12 +57,8 @@ typedef struct s_minishell
     int pipes_total;
     int pipe_fd[2];
     int line_count;
-    char    *str_line_count;
-    int stdin_copy;
-    int stdout_copy;
-    int stderr_copy;
-    bool    error;
-    int heredoc_count;
+    char *input_buffer;
+    int heredoc_exit_status;
     t_command_list **list;
 }               t_minishell;
 
@@ -95,28 +90,25 @@ char	*get_next_line(int fd);
 //********************src/main
 //command
 void	execute_command(t_minishell *shell, char *command);
-void	extract_command_part(char *command, int start, int len,
+void	extract_token(char *command, int start, int len,
 		int preceding_delimiter, t_command_list **list);
 //main
 char	*find_command(char **input_array);
 void	custom_perror(char *prefix, char *custom_message);
 char	*set_exit_status(t_minishell *shell, int *exit_status);
-void	list_add(t_command_list **head, char *command_part, int type);
-void	append_to_command(t_command_list **head, char *command_part);
+void	list_add(t_command_list **head, char *token, int type);
+void	append_to_command(t_command_list **head, char *token);
 t_command_list	*handle_delimiters(t_minishell *shell, char *command);
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd);
-void	child(t_minishell *shell, char **input_array, int pipes_left,
+void	child(t_minishell *shell, int pipes_left,
 		int read_fd);
 void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 		int pipes_left, int read_fd);
 void	handle_input(t_minishell *shell);
 char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
 
-//line count
-void	init_line_count(t_minishell *shell);
-void	add_to_line_count(t_minishell *shell, int new_lines);
-void	read_line_count(t_minishell *shell);
+
 
 //init_shell_struct
 void	init_shell_struct(t_minishell *shell, char **envp);
@@ -126,8 +118,8 @@ void	init_shell_struct(t_minishell *shell, char **envp);
 void    ft_error_msg(char err);
 void	error_free_exit(t_minishell *shell, char err);
 void	print_error_log(t_minishell *shell);
-void    append_strerror_to_log(char *prefix, int errnum);
-void    append_custom_error_to_log(char *prefix, char *custom_error);
+void    print_errno(char *prefix);
+void    print_custom_error(char *prefix, char *custom_error);
 void	redirect_errors();
 void	redirect_stdout_to_log();
 
@@ -140,12 +132,16 @@ void	build_prompt(t_minishell *shell);
 //pipes
 void	handle_pipes(t_minishell *shell, int read_fd);
 
+//hereoc
+void	process_heredocs(t_minishell *shell);
+void	heredoc(t_minishell *shell, char *eof, char *input_buffer);
+
 //redirections
-void	heredoc(t_minishell *shell, char *eof, int i);
+
 int	find_delimiter(t_minishell *shell, char c1, char c2);
-void	redirect_input(char *input_file, bool is_stdin, bool *error);
-void	redirect_output(char *output_file, int delimiter, bool *error);
-void	handle_redirections(t_minishell *shell, t_command_list *list, bool is_last_child, int i);
+void	redirect_input(char *input_file);
+void	redirect_output(char *output_file, int delimiter);
+void	handle_redirections(t_minishell *shell, t_command_list *list);
 //signals
 void	child_sigint_handler(int sig);
 void	child_sigquit_handler(int sig);
@@ -153,6 +149,7 @@ void	sigint_handler(int sig);
 void	set_child_signals(t_minishell *shell);
 void	set_last_exit_status(t_minishell *shell);
 void	set_signals_parent(t_minishell *shell);
+void	set_signals_heredoc(t_minishell *shell);
 
 //********************src/builtins
 int ft_is_builtin(t_minishell *shell, char **command_array);

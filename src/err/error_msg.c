@@ -52,82 +52,19 @@ void	error_free_exit(t_minishell *shell, char err)
 	exit(EXIT_FAILURE);
 }
 
-void	print_error_log(t_minishell *shell)
+void    print_errno(char *prefix)
 {
-	int	error_log;
-	char	*line;
-
-    (void)shell;
-    dup2(shell->stderr_copy, STDERR_FILENO);
-	error_log = open("error.log", O_RDONLY);
-	line = get_next_line(error_log);
-	while (line != NULL)
-	{
-		write(STDERR_FILENO, line, ft_strlen(line) + 1);
-		free(line);
-		line = get_next_line(error_log);
-	}
-	close(error_log);
-    error_log = open("error.log", O_WRONLY | O_TRUNC);
-    close(error_log);
-}
-void	redirect_errors()
-{
-	int	stderr_file;
-
-	stderr_file = open("error.log", O_WRONLY | O_APPEND);
-	dup2(stderr_file, STDERR_FILENO);
-	close(stderr_file);
-}
-void	redirect_stdout_to_log()
-{
-	int	stdout_file;
-
-	stdout_file = open("error.log", O_WRONLY | O_APPEND);
-	dup2(stdout_file, STDOUT_FILENO);
-	close(stdout_file);
+    write(STDERR_FILENO, "bash: ", 6);
+    write(STDERR_FILENO, prefix, ft_strlen(prefix));
+    write(STDERR_FILENO, ": ", 2);
+    perror(NULL);
 }
 
-void	custom_perror(char *prefix, char *custom_message)
+void    print_custom_error(char *prefix, char *custom_error)
 {
-	write(2, prefix, ft_strlen(prefix));
-	write(2, custom_message, ft_strlen(custom_message));
-	write(2, "\n", 1);
-}
-int ft_strlen2(char *s)
-{
-    int i;
-
-    i = 0;
-    while (s && s[i])
-    {
-        i++;
-    }
-    return (i);
-}
-
-void    append_strerror_to_log(char *prefix, int errnum)
-{
-    int error_log;
-    char    *error_message;
-
-    error_log = open("error.log", O_WRONLY | O_APPEND);
-    write(error_log, prefix, ft_strlen(prefix));
-    write(error_log, ": ", 2);
-    error_message = strerror(errnum);
-    write(error_log, error_message, ft_strlen(error_message));
-    write(error_log, "\n", 1);
-    close(error_log);
-}
-
-void    append_custom_error_to_log(char *prefix, char *custom_error)
-{
-    int error_log;
-
-    error_log = open("error.log", O_WRONLY | O_APPEND);
-    write(error_log, prefix, ft_strlen(prefix));
-    write(error_log, ": ", 2);
-    write(error_log, custom_error, ft_strlen(custom_error));
-    write(error_log, "\n", 1);
-    close(error_log);
+    write(STDERR_FILENO, "bash: ", 6);
+    write(STDERR_FILENO, prefix, ft_strlen(prefix));
+    write(STDERR_FILENO, ": ", 2);
+    write(STDERR_FILENO, custom_error, ft_strlen(custom_error));
+    write(STDERR_FILENO, "\n", 1);
 }
