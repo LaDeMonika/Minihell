@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split_ignore_quotes.c                           :+:      :+:    :+:   */
+/*   split_by_pipes.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/22 20:26:13 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/03 21:55:26 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ static int	put_words(char *s, char sep, char **array, char quote_marker, int sta
 	return (0);
 }
 
-char	**ft_split_ignore_quotes(char *s, char c)
+char	**split_by_pipes(char *s, char c)
 {
 	int		words;
 	char	**array;

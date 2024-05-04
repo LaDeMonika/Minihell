@@ -20,7 +20,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		{
 			shell->pipes_total--;
 		}
-		set_last_exit_status(shell);
+		set_child_status(shell, &shell->last_exit_status);
 	}
 	close(shell->pipe_fd[0]);
 }

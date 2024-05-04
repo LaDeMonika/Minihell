@@ -108,9 +108,9 @@ void	execute_command(t_minishell *shell, char *command)
 	// TODO: also set exit status and custom message for builtins
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
-		print_custom_error(command_array[0], custom_message);
+		print_error(command_array[0], custom_message);
 	else
-		print_errno(command_array[0]);
+		print_error(command_array[0], NULL);
 	exit(exit_status);
 }
 

@@ -3,19 +3,18 @@
 
 /**************************INCLUDES**************************/
 # include "../libft/libft.h"
-# include <unistd.h>
-# include <fcntl.h>
-# include <stdlib.h>
-# include <stdio.h>
-# include <limits.h>
-# include <sys/wait.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <signal.h>
-# include <fcntl.h>
-# include <linux/limits.h>
-# include <stdbool.h>
 # include <errno.h>
+# include <fcntl.h>
+# include <limits.h>
+# include <linux/limits.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
 /**************************DEFINES***************************/
 # define INPUT 0
@@ -23,143 +22,139 @@
 # define HEREDOC 2
 # define APPEND 3
 # define COMMAND 4
+# define INVALID_PIPE 5
 
 /**************************STRUCT****************************/
 typedef struct s_command_list
 {
-    char *token;
-    int delimiter;
-    struct s_command_list  *next;
-}   t_command_list;
+	char					*token;
+	int						delimiter;
+	struct s_command_list	*next;
+}							t_command_list;
 
 typedef struct s_minishell
 {
-    char    *user;
-    char    *usr_input;
-    char    *prompt;
-    int     len_prompt;
-    int     *pid;
-    int     exit_status;
-    char    **path_array; // Array of paths
-    char    *home_dir;
-    char    *current_dir; // Current working directory
-    char    *command_path; // Path to the command
-    char    **envp; // Environment variables
-    char    **input_array; // Array of input arguments
-    char    **command_history; // Array of command history
-    int     history_index; // Index of the command history
-    int     last_exit_status; // Exit status of the last command
-    int     fd_hostname; // File descriptor for hostname
-    int     fd; // File descriptor
-    int status;
-    struct sigaction    sa_sigint;
-    struct sigaction    sa_sigquit;
-    int pipes_total;
-    int pipe_fd[2];
-    int line_count;
-    char *input_buffer;
-    int heredoc_exit_status;
-    t_command_list **list;
-}               t_minishell;
+	char					*user;
+	char					*usr_input;
+	char					*prompt;
+	int						len_prompt;
+	int						*pid;
+	int						exit_status;
+	char **path_array; // Array of paths
+	char					*home_dir;
+	char *current_dir;      // Current working directory
+	char *command_path;     // Path to the command
+	char **envp;            // Environment variables
+	char **input_array;     // Array of input arguments
+	char **command_history; // Array of command history
+	int history_index;      // Index of the command history
+	int last_exit_status;   // Exit status of the last command
+	int fd_hostname;        // File descriptor for hostname
+	int fd;                 // File descriptor
+	int						status;
+	struct sigaction		sa_sigint;
+	struct sigaction		sa_sigquit;
+	int						pipes_total;
+	int						pipe_fd[2];
+	int						line_count;
+	char					*input_file;
+	int						parsing_exit_status;
+	t_command_list			**list;
+    int pre_redirector;
+    int post_redirector;
+}							t_minishell;
 
 /****************************ENUM****************************/
-enum e_error
+enum						e_error
 {
-    ERR_MALLOC,
-    ERR_TOO_MANY_ARGS,
-    ERR_TOO_FEW_ARGS,
-    ERR_INVALID_ARG,
-    ERR_PATH_NOT_FOUND,
-    NOT_BUILTIN,
-    ERR_SIGEMPTYSET,
-    ERR_SIGACTION,
-    ERR_OPEN,
-    ERR_READ,
-    ERR_CLOSE
+	ERR_MALLOC,
+	ERR_TOO_MANY_ARGS,
+	ERR_TOO_FEW_ARGS,
+	ERR_INVALID_ARG,
+	ERR_PATH_NOT_FOUND,
+	NOT_BUILTIN,
+	ERR_SIGEMPTYSET,
+	ERR_SIGACTION,
+	ERR_OPEN,
+	ERR_READ,
+	ERR_CLOSE
 };
-
-/*get next line_might need for error printing*/
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
-# endif
-
-char	*free_and_reset(char **ptr);
-char	*get_next_line(int fd);
 
 /*************************PROTOTYPES*************************/
 //********************src/main
-//command
-void	execute_command(t_minishell *shell, char *command);
-void	extract_token(char *command, int start, int len,
-		int preceding_delimiter, t_command_list **list);
-//main
-char	*find_command(char **input_array);
-void	custom_perror(char *prefix, char *custom_message);
-char	*set_exit_status(t_minishell *shell, int *exit_status);
-void	list_add(t_command_list **head, char *token, int type);
-void	append_to_command(t_command_list **head, char *token);
-t_command_list	*handle_delimiters(t_minishell *shell, char *command);
-void	parent(t_minishell *shell, char **input_array, int pipes_left,
-		int read_fd);
-void	child(t_minishell *shell, int pipes_left,
-		int read_fd);
-void	handle_pipes_recursive(t_minishell *shell, char **input_array,
-		int pipes_left, int read_fd);
-void	handle_input(t_minishell *shell);
-char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
+// command
+void						execute_command(t_minishell *shell, char *command);
+void						extract_token(char *command, int start, int len,
+								int pre_redirector, t_command_list **list);
+// main
+char						*find_command(char **input_array);
+void						custom_perror(char *prefix, char *custom_message);
+char						*set_exit_status(t_minishell *shell,
+								int *exit_status);
+void						list_add(t_command_list **head, char *token,
+								int type);
+void						append_to_command(t_command_list **head,
+								char *token);
+void	tokenize(t_minishell *shell, char *command, t_command_list **list);
+void						parent(t_minishell *shell, char **input_array,
+								int pipes_left, int read_fd);
+void						child(t_minishell *shell, int pipes_left,
+								int read_fd);
+void						handle_pipes_recursive(t_minishell *shell,
+								char **input_array, int pipes_left,
+								int read_fd);
+void						handle_input(t_minishell *shell);
 
+// init_shell_struct
+void						init_shell_struct(t_minishell *shell, char **envp);
 
+// err
+void						ft_error_msg(char err);
+void						error_free_exit(t_minishell *shell, char err);
+void						print_error(char *prefix, char *custom_error);
 
-//init_shell_struct
-void	init_shell_struct(t_minishell *shell, char **envp);
+// prompt
+char						*append_to_prompt(t_minishell *shell, char *s);
+void						append_path(t_minishell *shell);
+void						append_hostname(t_minishell *shell);
+void						build_prompt(t_minishell *shell);
 
+// pipes
+void						handle_pipes(t_minishell *shell, int read_fd);
 
-//err
-void    ft_error_msg(char err);
-void	error_free_exit(t_minishell *shell, char err);
-void	print_error_log(t_minishell *shell);
-void    print_errno(char *prefix);
-void    print_custom_error(char *prefix, char *custom_error);
-void	redirect_errors();
-void	redirect_stdout_to_log();
+// hereoc
+void						parse_input(t_minishell *shell);
+void						heredoc(t_minishell *shell, char *eof,
+								char *input_buffer);
 
-//prompt
-char	*append_to_prompt(t_minishell *shell, char *s);
-void    append_path(t_minishell *shell);
-void    append_hostname(t_minishell *shell);
-void	build_prompt(t_minishell *shell);
+// redirections
 
-//pipes
-void	handle_pipes(t_minishell *shell, int read_fd);
-
-//hereoc
-void	process_heredocs(t_minishell *shell);
-void	heredoc(t_minishell *shell, char *eof, char *input_buffer);
-
-//redirections
-
-int	find_delimiter(t_minishell *shell, char c1, char c2);
-void	redirect_input(char *input_file);
-void	redirect_output(char *output_file, int delimiter);
-void	handle_redirections(t_minishell *shell, t_command_list *list);
-//signals
-void	child_sigint_handler(int sig);
-void	child_sigquit_handler(int sig);
-void	sigint_handler(int sig);
-void	set_child_signals(t_minishell *shell);
-void	set_last_exit_status(t_minishell *shell);
-void	set_signals_parent(t_minishell *shell);
-void	set_signals_heredoc(t_minishell *shell);
+int	find_redirector(t_minishell *shell, char *command, int i);
+void						redirect_input(char *input_file);
+void						redirect_output(char *output_file, int delimiter);
+void						handle_redirections(t_minishell *shell,
+								t_command_list *list);
+// signals
+void						child_sigint_handler(int sig);
+void						child_sigquit_handler(int sig);
+void						sigint_handler(int sig);
+void						set_child_signals(t_minishell *shell);
+void						set_child_status(t_minishell *shell, int *status);
+void						set_signals_parent(t_minishell *shell);
+void						ignore_sigint(t_minishell *shell);
 
 //********************src/builtins
-int ft_is_builtin(t_minishell *shell, char **command_array);
-int ft_echo(char **command_array);
+int							ft_is_builtin(t_minishell *shell,
+								char **command_array);
+int							ft_echo(char **command_array);
 
 //********************src/utils
-//utils_00
-char	*append_affix(char *old_s, int start, int len, char *new_s);
-char    *check_env_variables(t_minishell *shell, char *s);
-char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c);
-//utils_01
+// utils_00
+char						*append_affix(char *old_s, int start, int len,
+								char *new_s);
+char						*check_env_variables(t_minishell *shell, char *s);
+char						**split_by_pipes(t_minishell *shell,
+								char *s, char c);
+// utils_01
 
 #endif

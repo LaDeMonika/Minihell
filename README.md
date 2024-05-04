@@ -23,7 +23,7 @@ heredoc:
 - remove error log
 
 not working commands yet:
--
+- echo " fdasf " "
 
 seems to work now:
 - wc -l << t | grep i

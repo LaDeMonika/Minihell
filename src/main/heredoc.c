@@ -4,119 +4,128 @@
 
 void	heredoc_EOF(t_minishell *shell, char *eof)
 {
-	char *str_line_count;
+	char	*str_line_count;
+
 	write(STDERR_FILENO, "bash: warning: here-document at line ", 37);
 	str_line_count = ft_itoa(shell->line_count);
-	/* write(STDERR_FILENO, shell->str_line_count,
-		ft_strlen(shell->str_line_count)); */
-	write(STDERR_FILENO, str_line_count,
-		ft_strlen(str_line_count));
+	write(STDERR_FILENO, str_line_count, ft_strlen(str_line_count));
 	write(STDERR_FILENO, " delimited by end-of-file (wanted `", 35);
 	write(STDERR_FILENO, eof, ft_strlen(eof));
 	write(STDERR_FILENO, "')\n", 3);
 }
-void	set_heredoc_exit_status(t_minishell *shell)
+/*writes input to input_file and sends for each input a newline character to pipe*/
+void	write_to_file(t_minishell *shell, char *eof, char *input_file,
+		int pipe_fd[2])
 {
-	if (WIFEXITED(shell->status))
-	{
-		shell->heredoc_exit_status = WEXITSTATUS(shell->status);
-	}
-	else if (WIFSIGNALED(shell->status))
-	{
-		write(2, "\n", 1);
-		printf("before adding 128: %d\n", WTERMSIG(shell->status));
-		shell->heredoc_exit_status = WTERMSIG(shell->status) + 128;
-	}
-	/* printf("exit status: %d\n", shell->last_exit_status); */
-	if (WCOREDUMP(shell->status))
-	{
+	int		file_fd;
+	char	*input;
 
-		printf("some core was dumped\n");
-		write(2, "^\\Quit (core dumped)\n", 21);
+	close(pipe_fd[0]);
+	set_child_signals(shell);
+	file_fd = open(input_file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	input = readline("> ");
+	while (input && ft_strncmp(input, eof, ft_strlen(eof) + 1) != 0)
+	{
+		write(pipe_fd[1], "\n", 1);
+		write(file_fd, input, ft_strlen(input));
+		write(file_fd, "\n", 1);
+		input = readline("> ");
 	}
+	if (input)
+		write(pipe_fd[1], "\n", 1);
+	if (!input)
+		heredoc_EOF(shell, eof);
+	close(pipe_fd[1]);
+	exit(EXIT_SUCCESS);
 }
 
-void	heredoc(t_minishell *shell, char *eof, char *input_buffer)
+/*heredoc will read input in a child. local line count will increase by 1 for each line and added to global line count in the parent*/
+void	heredoc(t_minishell *shell, char *eof, char *input_file)
 {
-	int		buffer_fd;
-	char	*input;
-	int		local_line_count;
-	int		heredoc_pid;
-	int	heredoc_fd[2];
+	int		pid;
+	int		pipe_fd[2];
 	char	read_buffer[1];
-	int	bytes_read;
+	int		bytes_read;
 
-
-	local_line_count = 0;
-	buffer_fd = open(input_buffer, O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	pipe(heredoc_fd);
-	heredoc_pid = fork();
-	if (heredoc_pid == 0)
+	pipe(pipe_fd);
+	pid = fork();
+	if (pid == 0)
 	{
-		close(heredoc_fd[0]);
-		set_child_signals(shell);
-		input = readline("> ");
-		while (input && ft_strncmp(input, eof, ft_strlen(eof) + 1) != 0)
-		{
-			write(heredoc_fd[1], "\n", 1);
-			//local_line_count++;
-			write(buffer_fd, input, ft_strlen(input));
-			write(buffer_fd, "\n", 1);
-			input = readline("> ");
-		}
-		if (input)
-			write(heredoc_fd[1], "\n", 1);
-			//local_line_count++;
-		if (!input)
-			heredoc_EOF(shell, eof);
-		close(heredoc_fd[1]);
-		exit(EXIT_SUCCESS);
+		write_to_file(shell, eof, input_file, pipe_fd);
 	}
 	else
 	{
-		close(heredoc_fd[1]);
-		shell->sa_sigint.sa_handler = SIG_IGN;
-		sigaction(SIGINT, &shell->sa_sigint, NULL);
-		waitpid(heredoc_pid, &shell->status, 0);
-		bytes_read = read(heredoc_fd[0], read_buffer, 1);
+		close(pipe_fd[1]);
+		ignore_sigint(shell);
+		waitpid(pid, &shell->status, 0);
+		bytes_read = read(pipe_fd[0], read_buffer, 1);
 		while (bytes_read > 0)
 		{
-			local_line_count++;
-			bytes_read = read(heredoc_fd[0], read_buffer, 1);
+			shell->line_count++;
+			bytes_read = read(pipe_fd[0], read_buffer, 1);
 		}
-		shell->line_count += local_line_count;
-		//add_to_line_count(shell, local_line_count);
-		set_heredoc_exit_status(shell);
+		set_child_status(shell, &shell->parsing_exit_status);
 		set_signals_parent(shell);
-		close(heredoc_fd[0]);
+		close(pipe_fd[0]);
 	}
-
 }
-/*i represent the index in the input array after splitting along the pipes*/
-void	process_heredoc(t_minishell *shell, t_command_list *list,
-		char *input_buffer)
+
+void	error_parsing_input(t_minishell *shell, t_command_list *this, t_command_list *next)
 {
-	while (list)
+	char	*unexpected_token;
+
+	unexpected_token = NULL;
+	if (this->delimiter == INVALID_PIPE)
+		unexpected_token = "´|'";
+	else if (this->next)
 	{
-		if (list->delimiter== HEREDOC)
-			heredoc(shell, list->token, input_buffer);
-		list = list->next;
+		if (this->next->delimiter == INPUT)
+			unexpected_token = "´<'";
+		else if (this->next->delimiter == HEREDOC)
+			unexpected_token = "´<<'";
+		else if (this->next->delimiter == OUTPUT)
+			unexpected_token = "´>'";
+		else if (this->next->delimiter == APPEND)
+			unexpected_token = "´>>'";
+		else if (this->next->delimiter == INVALID_PIPE)
+			unexpected_token = "´|'";
 	}
+	else if (next)
+	{
+		unexpected_token = "´|'";
+	}
+	else
+		unexpected_token = "´newline'";
+	write(STDERR_FILENO, "bash: syntax error near unexpected token ", 41);
+	write(STDERR_FILENO, unexpected_token, ft_strlen(unexpected_token));
+	write(STDERR_FILENO, "\n", 1);
+	shell->parsing_exit_status = 2;
 }
 /*creates a list for each piped token and takes input for each heredoc*/
-void	process_heredocs(t_minishell *shell)
+void	parse_input(t_minishell *shell)
 {
-	int i;
+	int				i;
+	t_command_list	*list;
 
-	shell->heredoc_exit_status = 0;
-
-	shell->list = malloc(sizeof(t_command_list *) * (shell->pipes_total + 1));
+	shell->parsing_exit_status = 0;
 	i = 0;
 	while (shell->input_array[i])
 	{
-		shell->input_buffer = ft_strjoin(ft_itoa(i), "_input.txt");
-		shell->list[i] = handle_delimiters(shell, shell->input_array[i]);
-		process_heredoc(shell, shell->list[i], shell->input_buffer);
+		shell->input_file = ft_strjoin(ft_itoa(i), "_input.txt");
+		list = shell->list[i];
+		while (list)
+		{
+			if (!list->token || !(*list->token))
+			{
+				error_parsing_input(shell, list, shell->list[i + 1]);
+				return ;
+			}
+			else if (list->delimiter == HEREDOC)
+			{
+				heredoc(shell, list->token, shell->input_file);
+			}
+			list = list->next;
+		}
 		i++;
 	}
 }

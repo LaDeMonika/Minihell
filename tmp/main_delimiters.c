@@ -62,7 +62,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-int	find_delimiter(char c1, char c2)
+int	find_redirector(char c1, char c2)
 {
 	if (c1 == '<')
 	{
@@ -127,7 +127,7 @@ void	redirect_input(char *input_file)
 	}
 } */
 
-void	handle_delimiters(char *command, char **envp)
+void	tokenize(char *command, char **envp)
 {
 	int	i;
 	int	preceding_delimiter;
@@ -148,7 +148,7 @@ void	handle_delimiters(char *command, char **envp)
 
 	while (command[i])
 	{
-		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
+		succeeding_delimiter = find_redirector(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
 			token = ft_substr(command, start, len);
@@ -195,11 +195,11 @@ int	main(int argc, char **argv, char **envp)
 	/* t_command_list *list;
 
 	list = NULL; */
-	//check if handle_delimiters finds command:
+	//check if tokenize finds command:
 	char *command;
 
 	command = argv[1];
-	handle_delimiters(command, envp);
+	tokenize(command, envp);
 
 
 }
