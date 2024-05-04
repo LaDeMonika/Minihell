@@ -1,5 +1,8 @@
 #!/bin/bash
 
+cd ..
+make
+
 #files for storing outputs
 output_bash="output.bash.txt"
 output_minishell="output_minishell.txt"
@@ -7,15 +10,15 @@ output_minishell="output_minishell.txt"
 #piping
 command="ls | grep m | grep n | grep i"
 eval $command > $output_bash
-echo "$command" | ./../minishell | sed '1d;$d' > $output_minishell
+echo "$command" | ./minishell | sed '1d;$d' > $output_minishell
 
 diff_output=$(diff $output_bash $output_minishell)
-echo "piping test: command "$command""
+echo "test command: "$command""
 if $diff_output; then
 	echo "output OK"
 else
 	echo "output difference:"
-	echo "$diff:output"
+	echo "$diff_output"
 fi
 echo ""
 
