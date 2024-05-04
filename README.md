@@ -22,16 +22,3 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 heredoc:
 - remove error log
 
-not working commands yet:
-- echo " fdasf " "
-
-seems to work now:
-- wc -l << t | grep i
-- wc -l << t | wc -l < a
-- ls | grep i > output | wc -l < outputfdsafds
-- wc -l < a | wc -l << b | wc -l < t
-- wc -l c | wc -l << b
-- wc -l c | wc -l << b > output
-- wc -l < a | wc -l << b
-- wc -l << a | wc -l << b
-- wc -l c | wc - l << a | head << b

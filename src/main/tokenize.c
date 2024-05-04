@@ -79,7 +79,7 @@ void	extract_token(char *command, int start, int len, int pre_redirector,
 	int		end_index;
 
 	token = ft_substr(command, start, len);
-	//token = ft_strtrim(token, " ");
+	token = ft_strtrim(token, " ");
 	if (pre_redirector != COMMAND)
 	{
 		command_remainder = strchr(token, ' ');

@@ -1,1 +1,15 @@
-0
+0_input.txt
+1_input.txt
+2_input.txt
+inc
+input
+input2
+input3
+input.txt
+libft
+Makefile
+minishell
+output_minishell.txt
+readline.supp
+test_commands_with_heredoc.txt
+utils_test
