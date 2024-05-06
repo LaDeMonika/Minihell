@@ -1,6 +1,0 @@
-main_delimiters.c
-main_env_variables.c
-main_list.c
-minishell_monika_backup.c
-output_minishell.txt
-exit status: 0

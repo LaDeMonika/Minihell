@@ -14,6 +14,11 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - Implement error handling.
 
 ### Lilie's Task
-    - free
+    - free, close etc
     - error handling
-    - add bash warning for EOF signal during heredoc
+    - add bash warning for EOF signal during heredoc: also what happens if there are several heredoc childs
+    - streamline error handling
+
+heredoc:
+- remove error log
+

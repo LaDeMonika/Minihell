@@ -6,11 +6,17 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 15:02:44 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/03 21:32:30 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+#include <stdio.h>
+#include <unistd.h>
+
+
+
+
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
@@ -22,7 +28,11 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	//shell->prompt = ft_strjoin(shell->user, "@");
 	//shell->prompt = ft_strjoin("fake_", shell->prompt);
 	shell->pipes_total = 0;
-
+	shell->line_count = 0;
+	shell->input_file = NULL;
+	shell->line_count = 0;
+	/* shell->stdout_copy = dup(STDOUT_FILENO);
+	shell->stderr_copy = dup(STDERR_FILENO); */
 	//shell->fd_hostname = open("/etc/hostname", O_RDONLY);
 	//shell->bytes_read = read(fd_hostname, hostname_buffer, 254);
 	//close(fd_hostname);

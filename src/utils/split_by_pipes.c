@@ -1,6 +1,7 @@
 #include "../../inc/minishell.h"
 #include "../../libft/libft.h"
 #include <bits/types/struct_itimerspec.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 /*if there was an odd number of quotes, this will add a heredoc at the end with first quote as EOF marker*/
@@ -11,7 +12,8 @@ static char	*add_heredoc(char *s, char quote_marker)
 
 	end_quote[0] = quote_marker;
 	end_quote[1] = '\0';
-	new_s = ft_strjoin((const char *)s, "<<");
+	new_s = ft_strjoin((const char *)s, end_quote);
+	new_s = ft_strjoin(new_s, "<<");
 	new_s = ft_strjoin(new_s, end_quote);
 	return (new_s);
 }
@@ -51,6 +53,8 @@ static char	find_quote(char *s, int *start, int *end, int *markers)
 	return ('\0');
 }
 
+
+
 // only count outside of quotation marks
 static int	count_words(char *s, char sep, char quote_marker, int start_quote,
 		int end_quote)
@@ -60,8 +64,11 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote,
 
 	i = 0;
 	words = 0;
-	while (s[i] && s[i] == sep)
+	if (s[i] == sep)
+	{
 		i++;
+		words++;
+	}
 	while (s[i])
 	{
 		if (quote_marker != '\0' && i == start_quote)
@@ -92,6 +99,12 @@ static char	*put_word(char *s, int start, int len)
 		word[i] = s[start + i];
 		i++;
 	}
+	word = ft_strtrim(word, " ");
+	if (!word || !(*word))
+	{
+		word = malloc(sizeof(char));
+		word = "|";
+	}
 	return (word);
 }
 
@@ -118,6 +131,13 @@ static int	put_words(char *s, char sep, char **array, char quote_marker,
 
 	i = 0;
 	word = 0;
+	if (s[i] == sep)
+	{
+		array[word] = malloc(sizeof(char));
+		array[word] = "|";
+		i++;
+		word++;
+	}
 	while (s[i])
 	{
 		if (s[i] != sep)
@@ -205,7 +225,7 @@ char *check_env_variables(t_minishell *shell, char *s)
 	return (new_s);
 }
 
-char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
+char	**split_by_pipes(t_minishell *shell, char *s, char c)
 {
 	int		words;
 	char	**array;
@@ -221,7 +241,6 @@ char	**ft_split_ignore_quotes(t_minishell *shell, char *s, char c)
 		s = check_env_variables(shell, s);
 	if (quote_marker != '\0' && markers % 2 != 0)
 		s = add_heredoc(s, quote_marker);
-
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
