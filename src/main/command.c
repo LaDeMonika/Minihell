@@ -1,18 +1,32 @@
 #include "../../inc/minishell.h"
 
-char	*remove_quotes(char *command)
+char	*remove_outer_quotes(char *command)
 {
-	char *new_str;
-	int	new_len;
-	int	i;
-	int	j;
+	char	*new_str;
+	int		new_len;
+	int		i;
+	int		j;
+	char	quote_type;
 
 	i = 0;
 	new_len = 0;
+	quote_type = '\0';
 	while (command[i])
 	{
-		if (command[i] != '"' && command[i] != '\'')
+		if (command[i] == '"' && command[i] != '\'')
+		{
 			new_len++;
+		}
+		else
+		{
+			if (quote_type)
+			{
+				if (command[i] != quote_type)
+					new_len++;
+			}
+			else
+				quote_type = command[i];
+		}
 		i++;
 	}
 	new_str = malloc(sizeof(char) * (new_len + 1));
@@ -38,17 +52,17 @@ void	execute_command(t_minishell *shell, char *command, char **envp)
 	char	*path;
 	int		exit_status;
 	char	*custom_message;
-	int	i;
+	int		i;
 
+	// int		is_builtin;
 	(void)shell;
 	command_array = ft_split(command, ' ');
 	i = 0;
 	while (command_array[i])
 	{
-		command_array[i] = remove_quotes(command_array[i]);
+		command_array[i] = remove_outer_quotes(command_array[i]);
 		i++;
 	}
-
 	// builtins
 	is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;

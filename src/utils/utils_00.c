@@ -3,6 +3,7 @@
 #include <bits/types/struct_itimerspec.h>
 #include <stdlib.h>
 
+/*if there was an odd number of quotes, this will add a heredoc at the end with first quote as EOF marker*/
 static char	*add_heredoc(char *s, char quote_marker)
 {
 	char	*new_s;
