@@ -12,7 +12,6 @@ char	*remove_outer_quotes(char *command)
 	int		j;
 	char	quote_type;
 
-	printf("old string: %s\n", command);
 	i = 0;
 	new_len = 0;
 	quote_type = '\0';
@@ -39,7 +38,6 @@ char	*remove_outer_quotes(char *command)
 		i++;
 	}
 	new_str[j] = '\0';
-	printf("new string: %s\n", new_str);
 	return (new_str);
 }
 

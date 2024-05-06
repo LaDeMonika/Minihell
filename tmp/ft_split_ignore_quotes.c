@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 
-static char	*add_heredoc(char *s, char quote_marker)
+static char	*add_heredoc_if_necessary(char *s, char quote_marker)
 {
 	char	*new_s;
 
@@ -215,7 +215,7 @@ char	**split_skip_quotes(char *s, char c)
 		return (NULL);
 	quote_marker = find_quote(s, &start_quote, &end_quote);
 	if (quote_marker != '\0' && end_quote == -1)
-		s = add_heredoc(s, quote_marker);
+		s = add_heredoc_if_necessary(s, quote_marker);
 
 	if (quote_marker == '"')
 		s = check_env_variables(s);

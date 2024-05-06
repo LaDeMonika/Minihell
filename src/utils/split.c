@@ -90,7 +90,11 @@ static int	put_words(char *s, char sep, char **array, int words)
 		|| (sep == '|' && (s[i] == sep || !s[i + 1]))
 		|| (sep == ' ' && s[i] != sep && (!s[i + 1] || s[i + 1] == sep)))
 		{
-			array[word] = put_word(s, start, i - start + 1, sep);
+			/* printf("at index %d will make a word with start: %d and len: %d\n", i, start, i - start); */
+			if (sep == '|' && s[i] == sep)
+				array[word] = put_word(s, start, i - start, sep);
+			else if (s[i] != sep)
+				array[word] = put_word(s, start, i - start + 1, sep);
 			if (!array[word])
 				return (free_array(array, word), -1);
 			word++;
@@ -115,6 +119,7 @@ char	**split_skip_quotes(t_minishell *shell, char *s, char c)
 	if (!s || !s[0])
 		return (NULL);
 	words = count_words(s, c);
+	/* printf("number of words when splitting by %c: %d\n", c, words); */
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
 	if (!array)
@@ -125,6 +130,7 @@ char	**split_skip_quotes(t_minishell *shell, char *s, char c)
 	int i = 0;
 	while (array[i])
 	{
+		/* printf("word at index %d: %s\n", i, array[i]); */
 		i++;
 	}
 	return (array);

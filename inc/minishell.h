@@ -136,6 +136,7 @@ void						redirect_input(char *input_file);
 void						redirect_output(char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
 								t_command_list *list);
+char						*remove_outer_quotes(char *command);
 // signals
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
@@ -145,9 +146,9 @@ void						set_child_status(t_minishell *shell, int *status);
 void						set_signals_parent(t_minishell *shell);
 void						ignore_sigint(t_minishell *shell);
 
-// env variables
-char						*overwrite_env_variables(t_minishell *shell,
-								char *s);
+// preprocess
+char						*add_heredoc_if_necessary(char *old_s);
+char						*expand_env_variables(t_minishell *shell, char *s);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,

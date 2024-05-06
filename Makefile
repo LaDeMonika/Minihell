@@ -7,7 +7,7 @@ LIBFTNAME = $(LIBFTDIR)/libft.a
 LIBS =  -L$(LIBFTDIR) -lft
 EXT_LIBS = -lreadline
 
-SRCS = main/minishell.c main/init_shell.c main/redirections.c main/signals.c main/prompt.c main/command.c main/pipes.c main/heredoc.c main/tokenize.c main/env_variables.c
+SRCS = main/minishell.c main/init_shell.c main/redirections.c main/signals.c main/prompt.c main/command.c main/pipes.c main/heredoc.c main/tokenize.c main/preprocess.c
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c
 

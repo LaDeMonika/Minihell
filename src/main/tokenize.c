@@ -69,6 +69,7 @@ void	list_add(t_command_list **head, char *token, int type)
 	while (current->next)
 		current = current->next;
 	current->next = new;
+	/* printf("token with type %d and argument %s added\n", new->delimiter, new->token);*/
 }
 
 void	extract_token(char *command, int start, int len, int pre_redirector,
@@ -80,6 +81,7 @@ void	extract_token(char *command, int start, int len, int pre_redirector,
 
 	token = ft_substr(command, start, len);
 	token = ft_strtrim(token, " ");
+	token = remove_outer_quotes(token);
 	if (pre_redirector != COMMAND)
 	{
 		command_remainder = strchr(token, ' ');
