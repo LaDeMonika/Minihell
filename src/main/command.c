@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -88,10 +89,8 @@ char	*set_exit_status(t_minishell *shell, int *exit_status)
 	return (NULL);
 }
 
-
 void	execute_command(t_minishell *shell, char *command)
 {
-	//int		is_builtin;
 	char	**command_array;
 	char	*path;
 	int		exit_status;
@@ -108,17 +107,13 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	// builtins
-	//is_builtin = ft_is_builtin(shell, command_array);
+	// is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
 	if (strncmp(command_array[0], "./", 2) != 0)
 		path = find_command(command_array);
 	else
 		path = command_array[0];
-
-
-
 	execve(path, command_array, shell->envp);
-
 	// TODO: also set exit status and custom message for builtins
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
@@ -127,4 +122,3 @@ void	execute_command(t_minishell *shell, char *command)
 		print_error(command_array[0], NULL);
 	exit(exit_status);
 }
-
