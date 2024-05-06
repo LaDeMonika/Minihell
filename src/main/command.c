@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+/*first determine new string length and then create new string without outer quotes*/
 char	*remove_outer_quotes(char *command)
 {
 	char	*new_str;
@@ -11,25 +12,18 @@ char	*remove_outer_quotes(char *command)
 	int		j;
 	char	quote_type;
 
+	printf("old string: %s\n", command);
 	i = 0;
 	new_len = 0;
 	quote_type = '\0';
 	while (command[i])
 	{
-		if (command[i] == '"' && command[i] != '\'')
-		{
+		if ((command[i] != '"' && command[i] != '\''))
 			new_len++;
-		}
-		else
-		{
-			if (quote_type)
-			{
-				if (command[i] != quote_type)
-					new_len++;
-			}
-			else
-				quote_type = command[i];
-		}
+		else if (!quote_type)
+			quote_type = command[i];
+		else if (command[i] != quote_type)
+			new_len++;
 		i++;
 	}
 	new_str = malloc(sizeof(char) * (new_len + 1));
@@ -37,7 +31,7 @@ char	*remove_outer_quotes(char *command)
 	j = 0;
 	while (command[i])
 	{
-		if (command[i] != '"' && command[i] != '\'')
+		if (command[i] != quote_type)
 		{
 			new_str[j] = command[i];
 			j++;
@@ -45,6 +39,7 @@ char	*remove_outer_quotes(char *command)
 		i++;
 	}
 	new_str[j] = '\0';
+	printf("new string: %s\n", new_str);
 	return (new_str);
 }
 
@@ -99,7 +94,7 @@ void	execute_command(t_minishell *shell, char *command)
 
 	// int		is_builtin;
 	(void)shell;
-	command_array = ft_split(command, ' ');
+	command_array = split_skip_quotes(shell, command, ' ');
 	i = 0;
 	while (command_array[i])
 	{

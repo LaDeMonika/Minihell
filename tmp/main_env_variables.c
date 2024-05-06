@@ -67,7 +67,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (s);
 }
 
-char	*append_affix(char *old_s, int start, int len, char *new_s)
+char	*append_substring(char *old_s, int start, int len, char *new_s)
 {
 	char	*affix;
 
@@ -97,7 +97,7 @@ char *check_env_variables(char *s)
 	{
 		if (s[i] == '$')
 		{
-			new_s = append_affix(s, start, i, new_s);
+			new_s = append_substring(s, start, i, new_s);
 			start = i + 1;
 			while (s[i] && s[i] != ' ')
 				i++;
@@ -119,7 +119,7 @@ char *check_env_variables(char *s)
 		i++;
 	}
 	if (s[start])
-		append_affix(s, start, i, new_s);
+		append_substring(s, start, i, new_s);
 	return (new_s);
 }
 

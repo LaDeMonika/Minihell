@@ -60,8 +60,8 @@ typedef struct s_minishell
 	char					*input_file;
 	int						parsing_exit_status;
 	t_command_list			**list;
-    int pre_redirector;
-    int post_redirector;
+	int						pre_redirector;
+	int						post_redirector;
 }							t_minishell;
 
 /****************************ENUM****************************/
@@ -95,7 +95,8 @@ void						list_add(t_command_list **head, char *token,
 								int type);
 void						append_to_command(t_command_list **head,
 								char *token);
-void	tokenize(t_minishell *shell, char *command, t_command_list **list);
+void						tokenize(t_minishell *shell, char *command,
+								t_command_list **list);
 void						parent(t_minishell *shell, char **input_array,
 								int pipes_left, int read_fd);
 void						child(t_minishell *shell, int pipes_left,
@@ -129,7 +130,8 @@ void						heredoc(t_minishell *shell, char *eof,
 
 // redirections
 
-int	find_redirector(t_minishell *shell, char *command, int i);
+int							find_redirector(t_minishell *shell, char *command,
+								int i);
 void						redirect_input(char *input_file);
 void						redirect_output(char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
@@ -143,6 +145,10 @@ void						set_child_status(t_minishell *shell, int *status);
 void						set_signals_parent(t_minishell *shell);
 void						ignore_sigint(t_minishell *shell);
 
+// env variables
+char						*overwrite_env_variables(t_minishell *shell,
+								char *s);
+
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,
 								char **command_array);
@@ -150,11 +156,11 @@ int							ft_echo(char **command_array);
 
 //********************src/utils
 // utils_00
-char						*append_affix(char *old_s, int start, int len,
+char						*append_substring(char *old_s, int start, int len,
 								char *new_s);
 char						*check_env_variables(t_minishell *shell, char *s);
-char						**split_by_pipes(t_minishell *shell,
-								char *s, char c);
+char						**split_skip_quotes(t_minishell *shell, char *s,
+								char c);
 // utils_01
 
 #endif

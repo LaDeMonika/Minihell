@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_by_pipes.c                           :+:      :+:    :+:   */
+/*   split_skip_quotes.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -80,7 +80,7 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote, in
 	return (words);
 }
 
-char	*append_affix(char *old_s, int start, int len, char *new_s)
+char	*append_substring(char *old_s, int start, int len, char *new_s)
 {
 	char	*affix;
 
@@ -107,7 +107,7 @@ char *check_env_variables(char *s)
 	{
 		if (s[i] == '$')
 		{
-			new_s = append_affix(s, start, i, new_s);
+			new_s = append_substring(s, start, i, new_s);
 			start = i + 1;
 			while (s[i] && s[i] != ' ')
 				i++;
@@ -126,7 +126,7 @@ char *check_env_variables(char *s)
 		i++;
 	}
 	if (s[start])
-		append_affix(s, start, i, new_s);
+		append_substring(s, start, i, new_s);
 	return (new_s);
 }
 
@@ -203,7 +203,7 @@ static int	put_words(char *s, char sep, char **array, char quote_marker, int sta
 	return (0);
 }
 
-char	**split_by_pipes(char *s, char c)
+char	**split_skip_quotes(char *s, char c)
 {
 	int		words;
 	char	**array;

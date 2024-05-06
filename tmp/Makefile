@@ -18,7 +18,7 @@ EXT_LIBS = -lreadline
 
 .PHONY: all re clean fclean makelibft
 ========
-SRCS = main/minishell.c main/init_shell.c main/redirections.c main/split_by_pipes.c
+SRCS = main/minishell.c main/init_shell.c main/redirections.c main/split_skip_quotes.c
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c
 
