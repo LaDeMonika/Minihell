@@ -28,6 +28,7 @@ void	redirect_input(char *input_file)
 {
 	int	input_fd;
 
+
 	input_fd = open(input_file, O_RDONLY);
 	if (input_fd > 0)
 	{

@@ -64,6 +64,21 @@ static void	free_array(char **array, int word)
 	free(array);
 	array = NULL;
 }
+
+int	skip_outer_quotes(char *s, int	i)
+{
+	char	outer_quote;
+	
+	if (s[i] == '"' || s[i] == '\'')
+	{
+		outer_quote = s[i];
+		i++;
+		while (s[i] && s[i] != outer_quote)
+			i++;
+	}
+	return (i);
+}
+
 /*
 put word until separator, and skip quotes
 if sep is | and a word is missing, then fill the word with | */
@@ -72,20 +87,14 @@ static int	put_words(char *s, char sep, char **array, int words)
 	int	i;
 	int	start;
 	int	word;
-	char	outer_quote;
+
 
 	i = 0;
 	start = 0;
 	word = 0;
 	while (s[i])
 	{
-		if (s[i] == '"' || s[i] == '\'')
-		{
-			outer_quote = s[i];
-			i++;
-			while (s[i] && s[i] != outer_quote)
-				i++;
-		}
+		i = skip_outer_quotes(s, i);
 		if (!s[i]
 		|| (sep == '|' && (s[i] == sep || !s[i + 1]))
 		|| (sep == ' ' && s[i] != sep && (!s[i + 1] || s[i + 1] == sep)))

@@ -162,6 +162,7 @@ char						*append_substring(char *old_s, int start, int len,
 char						*check_env_variables(t_minishell *shell, char *s);
 char						**split_skip_quotes(t_minishell *shell, char *s,
 								char c);
+int							skip_outer_quotes(char *s, int i);
 // utils_01
 
 #endif
