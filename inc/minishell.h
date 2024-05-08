@@ -132,10 +132,9 @@ void						heredoc(t_minishell *shell, char *eof,
 
 int							find_redirector(t_minishell *shell, char *command,
 								int i);
-void						redirect_input(char *input_file);
+void	redirect_input(char *input_file, int read_fd);
 void						redirect_output(char *output_file, int delimiter);
-void						handle_redirections(t_minishell *shell,
-								t_command_list *list);
+void	handle_redirections(t_minishell *shell, t_command_list *list, int read_fd);
 char						*remove_outer_quotes(char *command);
 // signals
 void						child_sigint_handler(int sig);

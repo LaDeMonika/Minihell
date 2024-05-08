@@ -76,32 +76,33 @@ void	error_parsing_input(t_minishell *shell, t_command_list *this, t_command_lis
 
 	unexpected_token = NULL;
 	if (this->delimiter == INVALID_PIPE)
-		unexpected_token = "´|'";
+		unexpected_token = "`|'";
 	else if (this->next)
 	{
 		if (this->next->delimiter == INPUT)
-			unexpected_token = "´<'";
+			unexpected_token = "`<'";
 		else if (this->next->delimiter == HEREDOC)
-			unexpected_token = "´<<'";
+			unexpected_token = "`<<'";
 		else if (this->next->delimiter == OUTPUT)
-			unexpected_token = "´>'";
+			unexpected_token = "`>'";
 		else if (this->next->delimiter == APPEND)
-			unexpected_token = "´>>'";
+			unexpected_token = "`>>'";
 		else if (this->next->delimiter == INVALID_PIPE)
-			unexpected_token = "´|'";
+			unexpected_token = "`|'";
 	}
 	else if (next)
 	{
-		unexpected_token = "´|'";
+		unexpected_token = "`|'";
 	}
 	else
-		unexpected_token = "´newline'";
+		unexpected_token = "`newline'";
 	write(STDERR_FILENO, "bash: syntax error near unexpected token ", 41);
 	write(STDERR_FILENO, unexpected_token, ft_strlen(unexpected_token));
 	write(STDERR_FILENO, "\n", 1);
 	shell->parsing_exit_status = 2;
 }
-/*creates a list for each piped token and takes input for each heredoc*/
+/*creates a list for each piped token and takes input for each heredoc
+if the redirection syntax is wrong, it will print an error*/
 void	parse_input(t_minishell *shell)
 {
 	int				i;
@@ -115,7 +116,7 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[i];
 		while (list)
 		{
-			if (!list->token || !(*list->token))
+			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
 				return ;

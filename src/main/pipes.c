@@ -40,7 +40,7 @@ void	child(t_minishell *shell, int pipes_left,
 		dup2(shell->pipe_fd[1], STDOUT_FILENO);
 	}
 	close(shell->pipe_fd[1]);
-	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left]);
+	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left], read_fd);
 }
 
 void	handle_pipes_recursive(t_minishell *shell, char **input_array,

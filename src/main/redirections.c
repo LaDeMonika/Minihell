@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +12,7 @@ void	redirect_output(char *output_file, int delimiter)
 	if (delimiter == OUTPUT)
 		output_fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
-		output_fd = open(output_file, O_WRONLY | O_APPEND);
+		output_fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (output_fd > 0)
 	{
 		dup2(output_fd, STDOUT_FILENO);
@@ -24,11 +25,26 @@ void	redirect_output(char *output_file, int delimiter)
 	}
 }
 
-void	redirect_input(char *input_file)
+void	temporary_input_redirect(int read_fd)
 {
-	int	input_fd;
+	int	temp_fd;
+	char	buffer[1000];
 
+	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"), O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	while (read_fd > 0 && read(STDIN_FILENO, buffer, 1000) > 0)
+	{
+		write(temp_fd, buffer, 1000);
+	}
+	dup2(temp_fd, STDIN_FILENO);
+}
 
+void	redirect_input(char *input_file, int read_fd)
+{
+	int		input_fd;
+
+	//(void)read_fd;
+	if (read_fd > 0)
+		temporary_input_redirect(read_fd);
 	input_fd = open(input_file, O_RDONLY);
 	if (input_fd > 0)
 	{
@@ -42,21 +58,24 @@ void	redirect_input(char *input_file)
 	}
 }
 
+
+
 /*
 regarding input & heredoc: only if it is the most right delimiter,
 	is _stdin will be true, and thus STDIN for the command should be redirected
 */
-void	handle_redirections(t_minishell *shell, t_command_list *list)
+void	handle_redirections(t_minishell *shell, t_command_list *list, int read_fd)
 {
 	char	*command;
 
 	command = NULL;
+
 	while (list)
 	{
 		if (list->delimiter == COMMAND)
 			command = list->token;
 		else if (list->delimiter == INPUT)
-			redirect_input(list->token);
+			redirect_input(list->token, read_fd);
 		else if (list->delimiter == OUTPUT)
 		{
 			redirect_output(list->token, OUTPUT);
@@ -64,7 +83,7 @@ void	handle_redirections(t_minishell *shell, t_command_list *list)
 		else if (list->delimiter == APPEND)
 			redirect_output(list->token, APPEND);
 		else if (list->delimiter == HEREDOC)
-			redirect_input(shell->input_file);
+			redirect_input(shell->input_file, read_fd);
 		list = list->next;
 	}
 	execute_command(shell, command);
