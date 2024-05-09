@@ -66,13 +66,14 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 
 /*if there was an odd number of quotes,
 	this will add a heredoc at the end with first quote as EOF marker*/
-char	*append_heredoc_on_missing_quote(char *old_s)
+char	*append_heredoc_on_missing_quote(t_minishell *shell, char *old_s)
 {
 	int		i;
 	char	quote_type;
 	char	*new_s;
 	char	closing_quote[2];
 
+	(void)shell;
 	new_s = old_s;
 	i = 0;
 	while (old_s[i])
@@ -87,7 +88,8 @@ char	*append_heredoc_on_missing_quote(char *old_s)
 			{
 				closing_quote[0] = quote_type;
 				closing_quote[1] = '\0';
-				new_s = ft_strjoin(old_s, closing_quote);
+				new_s = append_to_prompt(shell, old_s, closing_quote);
+				//new_s = ft_strjoin(old_s, closing_quote);
 				new_s = ft_strjoin(new_s, "<<");
 				new_s = ft_strjoin(new_s, closing_quote);
 			}

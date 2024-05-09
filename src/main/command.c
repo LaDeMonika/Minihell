@@ -17,11 +17,14 @@ char	*remove_outer_quotes(char *command)
 	quote_type = '\0';
 	while (command[i])
 	{
-		if ((command[i] != '"' && command[i] != '\''))
-			new_len++;
-		else if (!quote_type)
-			quote_type = command[i];
-		else if (command[i] != quote_type)
+		if (command[i] == '"' || command[i] == '\'')
+		{
+			if (!quote_type)
+				quote_type = command[i];
+			else if (command[i] != quote_type)
+				new_len++;
+		}
+		else
 			new_len++;
 		i++;
 	}

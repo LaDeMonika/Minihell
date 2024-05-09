@@ -6,23 +6,23 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/09 18:37:27 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/09 20:37:26 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include <linux/limits.h>
 
-char	*append_to_prompt(t_minishell *shell, char *s)
+char	*append_to_prompt(t_minishell *shell, char *prompt, char *s)
 {
 	char	*tmp_prompt;
 
-	tmp_prompt = shell->prompt;
-	shell->prompt = ft_strjoin(shell->prompt, s);
-	if (!shell->prompt)
+	tmp_prompt = prompt;
+	prompt = ft_strjoin(prompt, s);
+	if (!prompt)
 		free_exit(shell, ERR_MALLOC);
 	free_and_reset((void **)&tmp_prompt);
-	return (shell->prompt);
+	return (prompt);
 }
 
 /*
@@ -40,11 +40,11 @@ void    append_path(t_minishell *shell)
 	{
 		ft_strlcpy(new_path, pwd + ft_strlen(home), ft_strlen(pwd)
 			- ft_strlen(home) + 1);
-        append_to_prompt(shell, "~");
-		append_to_prompt(shell, new_path);
+        shell->prompt = append_to_prompt(shell, shell->prompt, "~");
+		shell->prompt = append_to_prompt(shell, shell->prompt, new_path);
 	}
 	else
-		append_to_prompt(shell, pwd);
+		shell->prompt = append_to_prompt(shell, shell->prompt, pwd);
 }
 
 void    append_hostname(t_minishell *shell)
@@ -63,15 +63,15 @@ void    append_hostname(t_minishell *shell)
 	hostname_remainder = strchr(hostname, '.');
 	if (hostname_remainder)
 		hostname[hostname_remainder - hostname] = '\0';
-	append_to_prompt(shell, hostname);
+	shell->prompt = append_to_prompt(shell, shell->prompt, hostname);
 }
 
 void	build_prompt(t_minishell *shell)
 {
-    append_to_prompt(shell, getenv("USER"));
-	append_to_prompt(shell, "@@");
+    shell->prompt = append_to_prompt(shell, shell->prompt, getenv("USER"));
+	shell->prompt = append_to_prompt(shell, shell->prompt, "@@");
     append_hostname(shell);
-	append_to_prompt(shell, ":");
+	shell->prompt = append_to_prompt(shell, shell->prompt, ":");
 	append_path(shell);
-    append_to_prompt(shell, "$ ");
+    shell->prompt = append_to_prompt(shell, shell->prompt, "$ ");
 }

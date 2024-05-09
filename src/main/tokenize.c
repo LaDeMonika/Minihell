@@ -72,6 +72,27 @@ void	list_add(t_command_list **head, char *token, int type)
 	/* printf("token with type %d and argument %s added\n", new->delimiter,
 		new->token);*/
 }
+bool	has_unclosed_quote(char *s)
+{
+	int	i;
+	char	quote_type;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == '"' || s[i] == '\'')
+		{
+			quote_type = s[i];
+			i++;
+			while (s[i] && s[i] != quote_type)
+				i++;
+			if (!s[i])
+				return (true);
+		}
+		i++;
+	}
+	return (false);
+}
 
 /*
 extracts whatever everything between redirection symbols, start of string or end of string
@@ -116,7 +137,8 @@ void	extract_token(char *command, int start, int len, int pre_redirector,
 			token[end_index] = '\0';
 			append_to_command(list, command_arg);
 		}
-		token = remove_outer_quotes(token);
+		if (!has_unclosed_quote(token))
+			token = remove_outer_quotes(token);
 	}
 	list_add(list, token, pre_redirector);
 }

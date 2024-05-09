@@ -7,7 +7,7 @@ void	handle_input(t_minishell *shell)
 
 	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,"exit ", 5) == 0)
 		free_exit(shell, '\0');
-	shell->usr_input = append_heredoc_on_missing_quote(shell->usr_input);
+	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
 	shell->input_array = split_skip_quotes(shell, shell->usr_input, '|');
 	shell->pipes_total = 0;

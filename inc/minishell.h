@@ -133,7 +133,8 @@ void						free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 
 // prompt
-char						*append_to_prompt(t_minishell *shell, char *s);
+char						*append_to_prompt(t_minishell *shell, char *prompt,
+								char *s);
 void						append_path(t_minishell *shell);
 void						append_hostname(t_minishell *shell);
 void						build_prompt(t_minishell *shell);
@@ -164,7 +165,8 @@ void						set_child_exit_status(t_minishell *shell,
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
-char						*append_heredoc_on_missing_quote(char *old_s);
+char						*append_heredoc_on_missing_quote(t_minishell *shell,
+								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
 
 //********************src/builtins
