@@ -36,15 +36,16 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
 
-	(void)argc;
 	(void)argv;
+	if (argc > 1)
+		return (ft_error_msg(ERR_TOO_MANY_ARGS), 1);
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
 		return (ft_error_msg(ERR_MALLOC), 1);
 	init_shell_struct(shell, envp);
 	while (1)
 	{
-		set_signals_parent(shell);
+		set_signals(shell, PARENT_NO_CHILD);
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
 		shell->line_count++;

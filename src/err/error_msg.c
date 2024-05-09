@@ -1,22 +1,30 @@
 #include "../../inc/minishell.h"
 #include <unistd.h>
 
-static void	ft_puterror(const char *fault, const char *msg)
+/* static void	ft_puterror(const char *fault, const char *msg)
 {
 	if (fault && ft_strlen(fault))
 		printf("Error: %s\n", fault);
 	if (msg && ft_strlen(msg))
 		printf("Expected: %s\n", msg);
 	printf("\n");
+} */
+
+static void	ft_puterror(const char *fault, const char *msg)
+{
+	if (fault && ft_strlen(fault))
+		write(STDERR_FILENO, fault, ft_strlen(fault));
+	if (msg && ft_strlen(msg))
+		write(STDERR_FILENO, msg, ft_strlen(msg));
 }
 
 void	ft_error_msg(char err)
 {
 	if (err == ERR_MALLOC)
-		ft_puterror("Memory allocation failed", "");
+		perror("malloc");
 	else if (err == ERR_TOO_MANY_ARGS)
-		ft_puterror("Too many arguments", "Please try again");
-	else if (err == ERR_TOO_FEW_ARGS)
+		ft_puterror("Too many arguments\n", "Please try again\n");
+	/* else if (err == ERR_TOO_FEW_ARGS)
 		ft_puterror("Too few arguments", "Please try again");
 	else if (err == ERR_INVALID_ARG)
 		ft_puterror("Invalid argument", "Please try again");
@@ -25,7 +33,7 @@ void	ft_error_msg(char err)
 	else if (err == NOT_BUILTIN)
 		ft_puterror("Command not found", "");
 	else
-		ft_puterror("Unknown error", "");
+		ft_puterror("Unknown error", ""); */
 }
 
 void	free_all(t_minishell *shell)

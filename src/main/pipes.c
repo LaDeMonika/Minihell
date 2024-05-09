@@ -4,8 +4,7 @@
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd)
 {
-	shell->sa_sigint.sa_handler = SIG_IGN;
-	sigaction(SIGINT, &shell->sa_sigint, NULL);
+	set_signals(shell, PARENT_WITH_CHILD);
 	close(shell->pipe_fd[1]);
 	if (read_fd > 0)
 		close(read_fd);
@@ -28,7 +27,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 void	child(t_minishell *shell, int pipes_left,
 		int read_fd)
 {
-	set_child_signals(shell);
+	set_signals(shell, CHILD);
 	close(shell->pipe_fd[0]);
 	if (read_fd > 0)
 	{

@@ -17,12 +17,17 @@
 # include <unistd.h>
 
 /**************************DEFINES***************************/
+//token delimiters
 # define INPUT 0
 # define OUTPUT 1
 # define HEREDOC 2
 # define APPEND 3
 # define COMMAND 4
 # define INVALID_PIPE 5
+//signal handling modes
+# define PARENT_NO_CHILD 0
+# define PARENT_WITH_CHILD 1
+# define CHILD 2
 
 /**************************STRUCT****************************/
 typedef struct s_command_list
@@ -132,18 +137,17 @@ void						heredoc(t_minishell *shell, char *eof,
 
 int							find_redirector(t_minishell *shell, char *command,
 								int i);
-void	redirect_input(char *input_file, int read_fd);
+void						redirect_input(char *input_file, int read_fd);
 void						redirect_output(char *output_file, int delimiter);
-void	handle_redirections(t_minishell *shell, t_command_list *list, int read_fd);
+void						handle_redirections(t_minishell *shell,
+								t_command_list *list, int read_fd);
 char						*remove_outer_quotes(char *command);
 // signals
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
-void						sigint_handler(int sig);
-void						set_child_signals(t_minishell *shell);
+void						parent_sigint_handler(int sig);
 void						set_child_status(t_minishell *shell, int *status);
-void						set_signals_parent(t_minishell *shell);
-void						ignore_sigint(t_minishell *shell);
+void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
 char						*add_heredoc_if_necessary(char *old_s);
