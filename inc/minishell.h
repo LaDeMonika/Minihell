@@ -17,19 +17,7 @@
 # include <unistd.h>
 
 /**************************DEFINES***************************/
-// token delimiters
-# define INPUT 0
-# define OUTPUT 1
-# define HEREDOC 2
-# define APPEND 3
-# define COMMAND 4
-# define INVALID_PIPE 5
-// signal handling modes
-# define PARENT_WITHOUT_CHILD 0
-# define PARENT_WITH_CHILD 1
-# define CHILD 2
-# define HEREDOC_CHILD 3
-# define PARENT_WITH_HEREDOC 4
+
 /**************************STRUCT****************************/
 typedef struct s_command_list
 {
@@ -73,6 +61,7 @@ typedef struct s_minishell
 /****************************ENUM****************************/
 enum						e_error
 {
+	NO_ERROR,
 	ERR_MALLOC,
 	ERR_TOO_MANY_ARGS,
 	ERR_TOO_FEW_ARGS,
@@ -86,14 +75,36 @@ enum						e_error
 	ERR_CLOSE
 };
 
+// token delimiters
+enum						e_token_delimiter
+{
+	INPUT,
+	OUTPUT,
+	HEREDOC,
+	APPEND,
+	COMMAND,
+	INVALID_PIPE
+};
+
+// signal handling modes
+enum						e_signal_handling_mode
+{
+	PARENT_WITHOUT_CHILD,
+	PARENT_WITH_CHILD,
+	CHILD,
+	HEREDOC_CHILD,
+	PARENT_WITH_HEREDOC
+};
+
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
+char						*find_command(t_minishell *shell,
+								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
 void						extract_token(char *command, int start, int len,
 								int pre_redirector, t_command_list **list);
 // main
-char						*find_command(char **input_array);
 void						custom_perror(char *prefix, char *custom_message);
 char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
@@ -116,8 +127,9 @@ void						handle_input(t_minishell *shell);
 void						init_shell_struct(t_minishell *shell, char **envp);
 
 // err
-void						ft_error_msg(char err);
-void						error_free_exit(t_minishell *shell, char err);
+void						free_exit(t_minishell *shell, int err);
+void						free_and_reset(void **ptr);
+void						free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 
 // prompt
@@ -152,11 +164,8 @@ void						set_child_exit_status(t_minishell *shell,
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
-char						*add_heredoc_if_necessary(char *old_s);
+char						*append_heredoc_on_missing_quote(char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
-
-// error handling
-void						free_and_reset(void **ptr);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,

@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/20 17:27:32 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/09 18:37:27 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@ char	*append_to_prompt(t_minishell *shell, char *s)
 	tmp_prompt = shell->prompt;
 	shell->prompt = ft_strjoin(shell->prompt, s);
 	if (!shell->prompt)
-		error_free_exit(shell, ERR_MALLOC);
-	if (tmp_prompt)
-		free(tmp_prompt);
+		free_exit(shell, ERR_MALLOC);
+	free_and_reset((void **)&tmp_prompt);
 	return (shell->prompt);
 }
 
@@ -56,11 +55,11 @@ void    append_hostname(t_minishell *shell)
 
     hostname_file = open("/etc/hostname", O_RDONLY);
 	if (hostname_file == -1)
-		error_free_exit(shell, ERR_OPEN);
+		free_exit(shell, ERR_OPEN);
 	if (read(hostname_file, hostname, 254) == -1)
-		error_free_exit(shell, ERR_READ);
+		free_exit(shell, ERR_READ);
 	if (close(hostname_file) == -1)
-		error_free_exit(shell, ERR_CLOSE);
+		free_exit(shell, ERR_CLOSE);
 	hostname_remainder = strchr(hostname, '.');
 	if (hostname_remainder)
 		hostname[hostname_remainder - hostname] = '\0';

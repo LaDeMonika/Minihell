@@ -1,40 +1,6 @@
 #include "../../inc/minishell.h"
+#include <stdlib.h>
 #include <unistd.h>
-
-/* static void	ft_puterror(const char *fault, const char *msg)
-{
-	if (fault && ft_strlen(fault))
-		printf("Error: %s\n", fault);
-	if (msg && ft_strlen(msg))
-		printf("Expected: %s\n", msg);
-	printf("\n");
-} */
-
-static void	ft_puterror(const char *fault, const char *msg)
-{
-	if (fault && ft_strlen(fault))
-		write(STDERR_FILENO, fault, ft_strlen(fault));
-	if (msg && ft_strlen(msg))
-		write(STDERR_FILENO, msg, ft_strlen(msg));
-}
-
-void	ft_error_msg(char err)
-{
-	if (err == ERR_MALLOC)
-		perror("malloc");
-	else if (err == ERR_TOO_MANY_ARGS)
-		ft_puterror("Too many arguments\n", "Please try again\n");
-	/* else if (err == ERR_TOO_FEW_ARGS)
-		ft_puterror("Too few arguments", "Please try again");
-	else if (err == ERR_INVALID_ARG)
-		ft_puterror("Invalid argument", "Please try again");
-	else if (err == ERR_PATH_NOT_FOUND)
-		ft_puterror("Path not found", "");
-	else if (err == NOT_BUILTIN)
-		ft_puterror("Command not found", "");
-	else
-		ft_puterror("Unknown error", ""); */
-}
 
 void	free_and_reset(void **ptr)
 {
@@ -47,25 +13,32 @@ void	free_and_reset(void **ptr)
 
 void	free_all(t_minishell *shell)
 {
-	if (shell->prompt)
-		free(shell->prompt);
+	free_and_reset((void **)&shell->prompt);
+	free_and_reset((void **)&shell->usr_input);
+	free_and_reset((void **)shell);
 }
 
-void	error_free_exit(t_minishell *shell, char err)
+void	free_exit(t_minishell *shell, int err)
 {
-	if (err == ERR_SIGEMPTYSET)
+	free_all(shell);
+	if (err == ERR_TOO_MANY_ARGS)
+		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
+	else if (err == ERR_MALLOC)
+		perror("malloc");
+	else if (err == ERR_SIGEMPTYSET)
 		perror("sigemptyset");
 	else if (err == ERR_SIGACTION)
 		perror("sigaction");
+	else if (err == ERR_PATH_NOT_FOUND)
+		perror("getenv");
 	else if (err == ERR_OPEN)
 		perror("open");
 	else if (err == ERR_READ)
 		perror("read");
 	else if (err == ERR_CLOSE)
 		perror("close");
-	else if (err == ERR_MALLOC)
-		perror("malloc");
-	free_all(shell);
+	if (err == NO_ERROR)
+		exit(EXIT_SUCCESS);
 	exit(EXIT_FAILURE);
 }
 

@@ -66,7 +66,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 
 /*if there was an odd number of quotes,
 	this will add a heredoc at the end with first quote as EOF marker*/
-char	*add_heredoc_if_necessary(char *old_s)
+char	*append_heredoc_on_missing_quote(char *old_s)
 {
 	int		i;
 	char	quote_type;

@@ -41,7 +41,7 @@ char	*remove_outer_quotes(char *command)
 	return (new_str);
 }
 
-char	*find_command(char **input_array)
+char	*find_command(t_minishell *shell, char **input_array)
 {
 	char	*path;
 	char	**path_array;
@@ -51,7 +51,7 @@ char	*find_command(char **input_array)
 
 	path = getenv("PATH");
 	if (!path)
-		return (ft_error_msg(ERR_PATH_NOT_FOUND), NULL);
+		return (free_exit(shell, ERR_PATH_NOT_FOUND), NULL);
 	path_array = ft_split(path, ':');
 	i = 0;
 	while (path_array[i])
@@ -103,7 +103,7 @@ void	execute_command(t_minishell *shell, char *command)
 	// is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
 	if (strncmp(command_array[0], "./", 2) != 0)
-		path = find_command(command_array);
+		path = find_command(shell, command_array);
 	else
 		path = command_array[0];
 	execve(path, command_array, shell->envp);

@@ -1,16 +1,13 @@
 #include "../../inc/minishell.h"
 #include <unistd.h>
 
-
-
 void	handle_input(t_minishell *shell)
 {
 	int	i;
 
-	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,
-			"exit ", 5) == 0)
-		exit(EXIT_SUCCESS);
-	shell->usr_input = add_heredoc_if_necessary(shell->usr_input);
+	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,"exit ", 5) == 0)
+		free_exit(shell, '\0');
+	shell->usr_input = append_heredoc_on_missing_quote(shell->usr_input);
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
 	shell->input_array = split_skip_quotes(shell, shell->usr_input, '|');
 	shell->pipes_total = 0;
@@ -37,11 +34,12 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	*shell;
 
 	(void)argv;
-	if (argc > 1)
-		return (ft_error_msg(ERR_TOO_MANY_ARGS), 1);
+	shell = NULL;
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
-		return (ft_error_msg(ERR_MALLOC), 1);
+		return (free_exit(shell, ERR_MALLOC), 1);
+	if (argc > 1)
+		return (free_exit(shell, ERR_TOO_MANY_ARGS), 1);
 	init_shell_struct(shell, envp);
 	while (1)
 	{
@@ -50,14 +48,14 @@ int	main(int argc, char **argv, char **envp)
 		shell->usr_input = readline(shell->prompt);
 		shell->line_count++;
 		if (!shell->usr_input)
-			return (0);
+			return (free_all(shell), 0);
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
-			free(shell->usr_input);
+			free_and_reset((void **)&shell->usr_input);
 		}
-		free_and_reset((void**)&shell->prompt);
+		free_and_reset((void **)&shell->prompt);
 	}
-	free(shell);
+	free_all(shell);
 }
