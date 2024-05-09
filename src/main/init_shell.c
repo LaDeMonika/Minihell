@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/03 21:32:30 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/09 15:47:50 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 {
     shell->envp = envp;
 	shell->prompt = NULL;
+	shell->usr_input = NULL;
     //shell->last_exit_status = 0;
 	shell->pid = NULL;
     //shell->user = getenv("USER");

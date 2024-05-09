@@ -36,6 +36,15 @@ void	ft_error_msg(char err)
 		ft_puterror("Unknown error", ""); */
 }
 
+void	free_and_reset(void **ptr)
+{
+	if (*ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
+}
+
 void	free_all(t_minishell *shell)
 {
 	if (shell->prompt)

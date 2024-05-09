@@ -155,6 +155,9 @@ void						set_signals(t_minishell *shell, int mode);
 char						*add_heredoc_if_necessary(char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
 
+// error handling
+void						free_and_reset(void **ptr);
+
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,
 								char **command_array);

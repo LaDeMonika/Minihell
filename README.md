@@ -18,7 +18,7 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - error handling
     - streamline error handling
     - questions: sigpipe handling?
-    - cat | cat | ls doesn't work anymore! 
+
 
 
 

@@ -49,15 +49,15 @@ int	main(int argc, char **argv, char **envp)
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
 		shell->line_count++;
-		if (shell->usr_input)
-		/* if (ft_strncmp(shell->usr_input, "\0", 1) != 0) */
+		if (!shell->usr_input)
+			return (0);
+		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
 			free(shell->usr_input);
 		}
-		free(shell->prompt);
-		shell->prompt = NULL;
+		free_and_reset((void**)&shell->prompt);
 	}
 	free(shell);
 }
