@@ -27,24 +27,24 @@ void	redirect_output(char *output_file, int delimiter)
 
 void	temporary_input_redirect(int read_fd)
 {
-	int	temp_fd;
-	char	buffer[1000];
+	int		temp_fd;
+	char	buffer[1];
 
-	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"), O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	while (read_fd > 0 && read(STDIN_FILENO, buffer, 1000) > 0)
-	{
-		write(temp_fd, buffer, 1000);
-	}
+	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"),
+			O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	while ((read(STDIN_FILENO, buffer, 1)) > 0)
+		write(temp_fd, buffer, 1);
+	close(temp_fd);
+	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"), O_RDONLY);
 	dup2(temp_fd, STDIN_FILENO);
+	close(temp_fd);
 }
 
 void	redirect_input(char *input_file, int read_fd)
 {
-	int		input_fd;
+	int	input_fd;
 
-	//(void)read_fd;
-	if (read_fd > 0)
-		temporary_input_redirect(read_fd);
+	(void)read_fd;
 	input_fd = open(input_file, O_RDONLY);
 	if (input_fd > 0)
 	{
@@ -58,18 +58,18 @@ void	redirect_input(char *input_file, int read_fd)
 	}
 }
 
-
-
 /*
 regarding input & heredoc: only if it is the most right delimiter,
 	is _stdin will be true, and thus STDIN for the command should be redirected
 */
-void	handle_redirections(t_minishell *shell, t_command_list *list, int read_fd)
+void	handle_redirections(t_minishell *shell, t_command_list *list,
+		int read_fd)
 {
 	char	*command;
 
 	command = NULL;
-
+	if (read_fd > 0)
+		temporary_input_redirect(read_fd);
 	while (list)
 	{
 		if (list->delimiter == COMMAND)

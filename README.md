@@ -16,9 +16,8 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 ### Lilie's Task
     - free, close etc
     - error handling
-    - add bash warning for EOF signal during heredoc: also what happens if there are several heredoc childs
     - streamline error handling
+    - questions: sigpipe handling?
 
-heredoc:
-- remove error log
+
 
