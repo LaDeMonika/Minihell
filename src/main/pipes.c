@@ -17,9 +17,18 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 	{
 		while ((waitpid(shell->pid[shell->pipes_total], &shell->status, 0)) > 0)
 		{
+			/* if (WIFSIGNALED(shell->status))
+			{
+				write(2, "\n", 1);
+			}
+			if (WCOREDUMP(shell->status))
+			{
+				write(2, "^\\Quit (core dumped)\n", 21);
+			} */
+			set_child_exit_status(shell, &shell->last_exit_status, shell->pipes_total);
 			shell->pipes_total--;
 		}
-		set_child_status(shell, &shell->last_exit_status);
+		//set_child_exit_status(shell, &shell->last_exit_status, shell->pipes_total);
 	}
 	close(shell->pipe_fd[0]);
 }

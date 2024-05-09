@@ -17,17 +17,18 @@
 # include <unistd.h>
 
 /**************************DEFINES***************************/
-//token delimiters
+// token delimiters
 # define INPUT 0
 # define OUTPUT 1
 # define HEREDOC 2
 # define APPEND 3
 # define COMMAND 4
 # define INVALID_PIPE 5
-//signal handling modes
+// signal handling modes
 # define PARENT_NO_CHILD 0
 # define PARENT_WITH_CHILD 1
 # define CHILD 2
+# define HEREDOC_CHILD 3
 
 /**************************STRUCT****************************/
 typedef struct s_command_list
@@ -146,7 +147,8 @@ char						*remove_outer_quotes(char *command);
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
 void						parent_sigint_handler(int sig);
-void						set_child_status(t_minishell *shell, int *status);
+void						set_child_exit_status(t_minishell *shell,
+								int *child_status, int remaining_children);
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess

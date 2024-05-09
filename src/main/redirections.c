@@ -68,8 +68,8 @@ void	handle_redirections(t_minishell *shell, t_command_list *list,
 	char	*command;
 
 	command = NULL;
-	if (read_fd > 0)
-		temporary_input_redirect(read_fd);
+	/* if (read_fd > 0)
+		temporary_input_redirect(read_fd); */
 	while (list)
 	{
 		if (list->delimiter == COMMAND)

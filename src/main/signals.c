@@ -3,8 +3,8 @@
 void	child_sigint_handler(int sig)
 {
 	(void)sig;
-	write(2, "> ^C\n", 5);
 	write(2, "child caught sigint\n", 20);
+	write(2, "> ^C\n", 5);
 	exit(130);
 }
 
@@ -24,21 +24,18 @@ void	parent_sigint_handler(int sig)
 	rl_redisplay();
 }
 
-void	set_child_status(t_minishell *shell, int *child_status)
+void	set_child_exit_status(t_minishell *shell, int *child_status,
+		int remaining_children)
 {
 	if (WIFEXITED(shell->status))
-	{
 		*child_status = WEXITSTATUS(shell->status);
-	}
 	else if (WIFSIGNALED(shell->status))
 	{
-		write(2, "\n", 1);
 		*child_status = WTERMSIG(shell->status) + 128;
+		if (WCOREDUMP(shell->status) && remaining_children == 0)
+			write(2, "Quit (core dumped)\n", 19);
 	}
-	if (WCOREDUMP(shell->status))
-	{
-		write(2, "^\\Quit (core dumped)\n", 21);
-	}
+
 }
 
 void	set_signals(t_minishell *shell, int mode)
@@ -69,5 +66,14 @@ void	set_signals(t_minishell *shell, int mode)
 		sigaction(SIGINT, &shell->sa_sigint, NULL);
 		shell->sa_sigquit.sa_handler = child_sigquit_handler;
 		sigaction(SIGQUIT, &shell->sa_sigquit, NULL);
+	}
+	else if (mode == HEREDOC_CHILD)
+	{
+		shell->sa_sigquit.sa_handler = SIG_IGN;
+		shell->sa_sigquit.sa_flags = 0;
+		if (sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
+			error_free_exit(shell, ERR_SIGEMPTYSET);
+		if (sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
+			error_free_exit(shell, ERR_SIGACTION);
 	}
 }

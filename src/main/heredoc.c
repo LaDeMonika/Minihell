@@ -21,7 +21,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	char	*input;
 
 	close(pipe_fd[0]);
-	set_signals(shell, CHILD);
+	set_signals(shell, HEREDOC_CHILD);
 	file_fd = open(input_file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	input = readline("> ");
 	while (input && ft_strncmp(input, eof, ft_strlen(eof) + 1) != 0)
@@ -64,7 +64,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 			shell->line_count++;
 			bytes_read = read(pipe_fd[0], read_buffer, 1);
 		}
-		set_child_status(shell, &shell->parsing_exit_status);
+		set_child_exit_status(shell, &shell->parsing_exit_status, 0);
 		set_signals(shell, PARENT_NO_CHILD);
 		close(pipe_fd[0]);
 	}
