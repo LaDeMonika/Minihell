@@ -45,7 +45,7 @@ int	main(int argc, char **argv, char **envp)
 	init_shell_struct(shell, envp);
 	while (1)
 	{
-		set_signals(shell, PARENT_NO_CHILD);
+		set_signals(shell, PARENT_WITHOUT_CHILD);
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
 		shell->line_count++;

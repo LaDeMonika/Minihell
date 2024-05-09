@@ -65,7 +65,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 			bytes_read = read(pipe_fd[0], read_buffer, 1);
 		}
 		set_child_exit_status(shell, &shell->parsing_exit_status, 0);
-		set_signals(shell, PARENT_NO_CHILD);
+		set_signals(shell, PARENT_WITHOUT_CHILD);
 		close(pipe_fd[0]);
 	}
 }

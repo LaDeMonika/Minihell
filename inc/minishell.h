@@ -25,11 +25,11 @@
 # define COMMAND 4
 # define INVALID_PIPE 5
 // signal handling modes
-# define PARENT_NO_CHILD 0
+# define PARENT_WITHOUT_CHILD 0
 # define PARENT_WITH_CHILD 1
 # define CHILD 2
 # define HEREDOC_CHILD 3
-
+# define PARENT_WITH_HEREDOC 4
 /**************************STRUCT****************************/
 typedef struct s_command_list
 {
