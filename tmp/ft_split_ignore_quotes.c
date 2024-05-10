@@ -17,11 +17,11 @@
 
 static char	*append_heredoc_on_missing_quote(char *s, char quote_marker)
 {
-	char	*new_s;
+	char	*new_str;
 
-	new_s = ft_strjoin((const char*)s, "<<");
-	new_s = ft_strjoin(s, &quote_marker);
-	return (new_s);
+	new_str = ft_strjoin((const char*)s, "<<");
+	new_str = ft_strjoin(s, &quote_marker);
+	return (new_str);
 }
 
 static char	find_quote(char *s, int *start, int *end)
@@ -80,16 +80,16 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote, in
 	return (words);
 }
 
-char	*append_substring(char *old_s, int start, int len, char *new_s)
+char	*extract_substr_and_append(char *old_s, int start, int len, char *new_str)
 {
 	char	*affix;
 
 	affix = ft_substr(old_s, start, len - start);
-	if (new_s)
-		new_s = ft_strjoin(new_s, affix);
+	if (new_str)
+		new_str = ft_strjoin(new_str, affix);
 	else
-		new_s = affix;
-	return (new_s);
+		new_str = affix;
+	return (new_str);
 }
 
 char *check_env_variables(char *s)
@@ -98,27 +98,27 @@ char *check_env_variables(char *s)
 	int	start;
 	char	*env_key;
 	char	*env_value;
-	char	*new_s;
+	char	*new_str;
 
 	i = 0;
 	start = 0;
-	new_s = NULL;
+	new_str = NULL;
 	while (s[i])
 	{
 		if (s[i] == '$')
 		{
-			new_s = append_substring(s, start, i, new_s);
+			new_str = extract_substr_and_append(s, start, i, new_str);
 			start = i + 1;
 			while (s[i] && s[i] != ' ')
 				i++;
 			env_key = ft_substr(s, start, i - start);
 			env_value = getenv(env_key);
 			if (env_value)
-				new_s = ft_strjoin(new_s, env_value);
+				new_str = ft_strjoin(new_str, env_value);
 			else
 			{
-			 	new_s = ft_strjoin(new_s, "$");
-				new_s = ft_strjoin(new_s, env_key);
+			 	new_str = ft_strjoin(new_str, "$");
+				new_str = ft_strjoin(new_str, env_key);
 			}
 			start = i;
 
@@ -126,8 +126,8 @@ char *check_env_variables(char *s)
 		i++;
 	}
 	if (s[start])
-		append_substring(s, start, i, new_s);
-	return (new_s);
+		extract_substr_and_append(s, start, i, new_str);
+	return (new_str);
 }
 
 static char	*put_word(char *s, int start, int len)

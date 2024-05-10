@@ -22,9 +22,9 @@ int	find_redirector(t_minishell *shell, char *command, int i)
 	}
 	return (-1);
 }
-void	append_to_command(t_command_list **head, char *token)
+void	append_to_command(t_token_list **head, char *token)
 {
-	t_command_list	*current;
+	t_token_list	*current;
 
 	current = *head;
 	while (current)
@@ -51,12 +51,12 @@ void	skip_quotes(char *command, char quote_marker, int *i, int *len)
 	}
 }
 
-void	list_add(t_command_list **head, char *token, int type)
+void	list_add(t_token_list **head, char *token, int type)
 {
-	t_command_list	*new;
-	t_command_list	*current;
+	t_token_list	*new;
+	t_token_list	*current;
 
-	new = malloc(sizeof(t_command_list));
+	new = malloc(sizeof(t_token_list));
 	new->token = token;
 	new->delimiter = type;
 	new->next = NULL;
@@ -99,7 +99,7 @@ extracts whatever everything between redirection symbols, start of string or end
 if token is not a command argument, also remove outer quotes
 */
 void	extract_token(char *command, int start, int len, int pre_redirector,
-		t_command_list **list)
+		t_token_list **list)
 {
 	char	*token;
 	char	*command_arg;
@@ -157,7 +157,7 @@ void	adjust_indexes(int *i, int *start, int *len, int redirector)
 find delimiter and add those parts to a linked list with info of delimiter kind
 if no delimiter is found, it will only add the command to list
 */
-void	tokenize(t_minishell *shell, char *command, t_command_list **list)
+void	tokenize(t_minishell *shell, char *command, t_token_list **list)
 {
 	int		i;
 	int		start;

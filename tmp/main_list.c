@@ -1,11 +1,11 @@
 #include "inc/minishell.h"
 
-void	list_add(t_command_list **head, char *token, int type)
+void	list_add(t_token_list **head, char *token, int type)
 {
-	t_command_list	*new;
-	t_command_list *current;
+	t_token_list	*new;
+	t_token_list *current;
 
-	new = malloc(sizeof(t_command_list));
+	new = malloc(sizeof(t_token_list));
 	new->token = token;
 	new->delimiter = type;
 	new->next = NULL;
@@ -27,7 +27,7 @@ void	list_add(t_command_list **head, char *token, int type)
 
 int	main()
 {
-	t_command_list *list;
+	t_token_list *list;
 	char	*token;
 	int	type;
 

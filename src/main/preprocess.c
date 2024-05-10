@@ -1,101 +1,157 @@
 #include "../../inc/minishell.h"
 
-/*extract from old_s a substring and append it to new_s*/
-char	*append_substring(char *old_s, int start, int len, char *new_s)
+char	*ft_getpid(t_minishell *shell)
 {
-	char	*affix;
+	int		fd;
+	char	buffer[1];
+	char	*pid;
+	int		i;
 
-	affix = ft_substr(old_s, start, len);
-	new_s = ft_strjoin(new_s, affix);
-	return (new_s);
+	pid = NULL;
+	pid = malloc(sizeof(char) * 11);
+	if (!pid)
+		return (free_exit(shell, ERR_MALLOC), NULL);
+	i = 0;
+	fd = open("/proc/self/stat", O_RDONLY);
+	if (fd > 0)
+	{
+		while (read(fd, buffer, 1) > 0)
+		{
+			if (buffer[0] != ' ')
+			{
+				pid[i] = buffer[0];
+				i++;
+			}
+			else
+			{
+				pid[i] = '\0';
+				close(fd);
+				return (pid);
+			}
+		}
+	}
+	else
+		return (free(pid), free_exit(shell, ERR_OPEN), NULL);
 }
 
-/*if environment value exists to key, then replace it with the value*/
-char	*get_env_value(t_minishell *shell, char *old_s, int *start, int *i)
+/*if environment value exists to key, then replace it with the value
+returns mallocated string that has to be freed*/
+char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 {
 	char	*env_key;
 	char	*env_value;
 
 	env_key = NULL;
 	env_value = NULL;
-	*start = *i + 1;
-	while (old_s[*i] && old_s[*i] != ' ' && old_s[*i] != '"')
-		(*i)++;
-	if (old_s[*start] == '?')
-		env_value = ft_itoa(shell->last_exit_status);
+	(*i)++;
+	*start = *i;
+	if (ft_isalnum(base[*i]))
+	{
+		while (ft_isalnum(base[*i]))
+			(*i)++;
+		env_key = ft_substr(base, *start, *i - *start);
+		*start = *i;
+		(*i)--;
+		env_value = ft_strdup(getenv(env_key));
+		free(env_key);
+	}
 	else
 	{
-		env_key = ft_substr(old_s, *start, *i - *start);
-		env_value = getenv(env_key);
+		(*start)++;
+		if (!base[*i] || base[*i] == ' ')
+			env_value = ft_strdup("$");
+		else if (base[*i] == '$')
+			env_value = ft_getpid(shell);
+		else if (base[*i] == '?')
+			env_value = ft_itoa(shell->last_exit_status);
 	}
-	*start = *i;
 	return (env_value);
 }
 
-/*skip over everything in single quotes and overwrite an environment variable if value exists*/
+int	skip_between_quotes(char *str, int i, char quote_type)
+{
+	i++;
+	while (str[i] && str[i] != quote_type)
+		i++;
+	return (i);
+}
+
+/*extract from base a substring and append it to new_str*/
+char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
+		char *new_str)
+{
+	char	*suffix;
+
+	suffix = ft_substr(base, 0, len);
+	new_str = append_suffix(shell, new_str, suffix);
+	free(suffix);
+	return (new_str);
+}
+
+/*skip over everything in single quotes and if you find an environment variable,
+	overwrite it with its value*/
 char	*expand_env_variables(t_minishell *shell, char *s)
 {
 	int		i;
 	int		start;
-	char	*new_s;
+	char	*new_str;
 	char	*env_value;
 
 	i = 0;
 	start = 0;
-	new_s = NULL;
+	new_str = NULL;
 	while (s[i])
 	{
 		if (s[i] == '\'')
-		{
-			i++;
-			while (s[i] && s[i] != '\'')
-				i++;
-		}
+			i = skip_between_quotes(s, i, '\'');
 		else if (s[i] == '$')
 		{
-			new_s = append_substring(s, start, i - start, new_s);
+			new_str = extract_substr_and_append(shell, s + start, i - start,
+					new_str);
 			env_value = get_env_value(shell, s, &start, &i);
-			new_s = ft_strjoin(new_s, env_value);
+			new_str = append_suffix(shell, new_str, env_value);
+			free(env_value);
 		}
 		i++;
 	}
 	if (i != start)
-		new_s = append_substring(s, start, i, new_s);
-	return (new_s);
+		new_str = extract_substr_and_append(shell, s + start, i - start,
+				new_str);
+	return (new_str);
+}
+
+char	*append_heredoc(t_minishell *shell, char *base, char quote_type)
+{
+	char	quote[2];
+	char	*new_str;
+
+	quote[0] = quote_type;
+	quote[1] = '\0';
+	new_str = NULL;
+	new_str = append_suffix(shell, base, quote);
+	new_str = append_suffix(shell, new_str, "<<");
+	new_str = append_suffix(shell, new_str, quote);
+	return (new_str);
 }
 
 /*if there was an odd number of quotes,
 	this will add a heredoc at the end with first quote as EOF marker*/
-char	*append_heredoc_on_missing_quote(t_minishell *shell, char *old_s)
+char	*append_heredoc_on_missing_quote(t_minishell *shell, char *base)
 {
 	int		i;
 	char	quote_type;
-	char	*new_s;
-	char	closing_quote[2];
 
-	(void)shell;
-	new_s = old_s;
 	i = 0;
-	while (old_s[i])
+	while (base[i])
 	{
-		if (old_s[i] == '"' || old_s[i] == '\'')
+		if (base[i] == '"' || base[i] == '\'')
 		{
-			quote_type = old_s[i];
-			i++;
-			while (old_s[i] && old_s[i] != quote_type)
-				i++;
-			if (!old_s[i])
-			{
-				closing_quote[0] = quote_type;
-				closing_quote[1] = '\0';
-				new_s = append_to_prompt(shell, old_s, closing_quote);
-				//new_s = ft_strjoin(old_s, closing_quote);
-				new_s = ft_strjoin(new_s, "<<");
-				new_s = ft_strjoin(new_s, closing_quote);
-			}
+			quote_type = base[i];
+			i = skip_between_quotes(base, i, quote_type);
+			if (!base[i])
+				return (append_heredoc(shell, base, quote_type));
 		}
-		if (old_s[i])
-			i++;
+		i++;
 	}
-	return (new_s);
+	return (base);
 }

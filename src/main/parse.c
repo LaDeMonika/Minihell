@@ -70,7 +70,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 	}
 }
 
-void	error_parsing_input(t_minishell *shell, t_command_list *this, t_command_list *next)
+void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *next)
 {
 	char	*unexpected_token;
 
@@ -106,7 +106,7 @@ if the redirection syntax is wrong, it will print an error*/
 void	parse_input(t_minishell *shell)
 {
 	int				i;
-	t_command_list	*list;
+	t_token_list	*list;
 
 	shell->parsing_exit_status = 0;
 	i = 0;

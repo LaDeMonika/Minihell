@@ -2,20 +2,36 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	free_and_reset(void **ptr)
+void	free_and_reset_ptr(void **ptr)
 {
-	if (*ptr)
+	if (ptr && *ptr)
 	{
 		free(*ptr);
 		*ptr = NULL;
 	}
 }
 
+void	free_and_reset_array(void ***array)
+{
+	int	i;
+
+	i = 0;
+	while (array && *array && (*array)[i])
+	{
+		free(((*array))[i]);
+		(*array)[i] = NULL;
+		i++;
+	}
+	free_and_reset_ptr(*array);
+}
+
 void	free_all(t_minishell *shell)
 {
-	free_and_reset((void **)&shell->prompt);
-	free_and_reset((void **)&shell->usr_input);
-	free_and_reset((void **)shell);
+	free_and_reset_ptr((void **)&shell->prompt);
+	free_and_reset_ptr((void **)&shell->usr_input);
+	free_and_reset_array((void ***)&shell->input_array);
+	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_ptr((void **)&shell);
 }
 
 void	free_exit(t_minishell *shell, int err)

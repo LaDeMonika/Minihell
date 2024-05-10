@@ -24,7 +24,7 @@ typedef struct s_command_list
 	char					*token;
 	int						delimiter;
 	struct s_command_list	*next;
-}							t_command_list;
+}							t_token_list;
 
 typedef struct s_minishell
 {
@@ -53,7 +53,7 @@ typedef struct s_minishell
 	int						line_count;
 	char					*input_file;
 	int						parsing_exit_status;
-	t_command_list			**list;
+	t_token_list			**list;
 	int						pre_redirector;
 	int						post_redirector;
 }							t_minishell;
@@ -96,6 +96,8 @@ enum						e_signal_handling_mode
 	PARENT_WITH_HEREDOC
 };
 
+
+
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
@@ -103,17 +105,17 @@ char						*find_command(t_minishell *shell,
 								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
 void						extract_token(char *command, int start, int len,
-								int pre_redirector, t_command_list **list);
+								int pre_redirector, t_token_list **list);
 // main
 void						custom_perror(char *prefix, char *custom_message);
 char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
-void						list_add(t_command_list **head, char *token,
+void						list_add(t_token_list **head, char *token,
 								int type);
-void						append_to_command(t_command_list **head,
+void						append_to_command(t_token_list **head,
 								char *token);
 void						tokenize(t_minishell *shell, char *command,
-								t_command_list **list);
+								t_token_list **list);
 void						parent(t_minishell *shell, char **input_array,
 								int pipes_left, int read_fd);
 void						child(t_minishell *shell, int pipes_left,
@@ -128,13 +130,13 @@ void						init_shell_struct(t_minishell *shell, char **envp);
 
 // err
 void						free_exit(t_minishell *shell, int err);
-void						free_and_reset(void **ptr);
+void	free_and_reset_ptr(void **ptr);
+void	free_and_reset_array(void ***array);
 void						free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 
 // prompt
-char						*append_to_prompt(t_minishell *shell, char *prompt,
-								char *s);
+char	*append_suffix(t_minishell *shell, char *base, char *suffix);
 void						append_path(t_minishell *shell);
 void						append_hostname(t_minishell *shell);
 void						build_prompt(t_minishell *shell);
@@ -154,7 +156,7 @@ int							find_redirector(t_minishell *shell, char *command,
 void						redirect_input(char *input_file, int read_fd);
 void						redirect_output(char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
-								t_command_list *list, int read_fd);
+								t_token_list *list, int read_fd);
 char						*remove_outer_quotes(char *command);
 // signals
 void						child_sigint_handler(int sig);
@@ -165,6 +167,8 @@ void						set_child_exit_status(t_minishell *shell,
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
+char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
+		char *new_str);
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
@@ -176,8 +180,7 @@ int							ft_echo(char **command_array);
 
 //********************src/utils
 // utils_00
-char						*append_substring(char *old_s, int start, int len,
-								char *new_s);
+
 char						*check_env_variables(t_minishell *shell, char *s);
 char						**split_skip_quotes(t_minishell *shell, char *s,
 								char c);

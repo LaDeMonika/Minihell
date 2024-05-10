@@ -83,12 +83,12 @@ int	find_redirector(char c1, char c2)
 	return (-1);
 }
 
-void	list_add(t_command_list **head, char *token, int type)
+void	list_add(t_token_list **head, char *token, int type)
 {
-	t_command_list	*new;
-	t_command_list *current;
+	t_token_list	*new;
+	t_token_list *current;
 
-	new = malloc(sizeof(t_command_list));
+	new = malloc(sizeof(t_token_list));
 	new->token = token;
 	new->delimiter = type;
 	new->next = NULL;
@@ -117,7 +117,7 @@ void	redirect_input(char *input_file)
 
 	dup2(input_fd, STDIN_FILENO);
 }
-/* void	handle_redirections(t_command_list *list, char **envp)
+/* void	handle_redirections(t_token_list *list, char **envp)
 {
 	(void)envp;
 	while (list)
@@ -134,7 +134,7 @@ void	tokenize(char *command, char **envp)
 	int	succeeding_delimiter;
 	bool	delimiter_found;
 	char *token;
-	t_command_list	*list;
+	t_token_list	*list;
 	int	start;
 	int	len;
 
@@ -192,7 +192,7 @@ void	tokenize(char *command, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
-	/* t_command_list *list;
+	/* t_token_list *list;
 
 	list = NULL; */
 	//check if tokenize finds command:

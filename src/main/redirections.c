@@ -62,7 +62,7 @@ void	redirect_input(char *input_file, int read_fd)
 regarding input & heredoc: only if it is the most right delimiter,
 	is _stdin will be true, and thus STDIN for the command should be redirected
 */
-void	handle_redirections(t_minishell *shell, t_command_list *list,
+void	handle_redirections(t_minishell *shell, t_token_list *list,
 		int read_fd)
 {
 	char	*command;

@@ -6,7 +6,7 @@
 /*first determine new string length and then create new string without outer quotes*/
 char	*remove_outer_quotes(char *command)
 {
-	char	*new_str;
+	char	*new_strtr;
 	int		new_len;
 	int		i;
 	int		j;
@@ -28,20 +28,20 @@ char	*remove_outer_quotes(char *command)
 			new_len++;
 		i++;
 	}
-	new_str = malloc(sizeof(char) * (new_len + 1));
+	new_strtr = malloc(sizeof(char) * (new_len + 1));
 	i = 0;
 	j = 0;
 	while (command[i])
 	{
 		if (command[i] != quote_type)
 		{
-			new_str[j] = command[i];
+			new_strtr[j] = command[i];
 			j++;
 		}
 		i++;
 	}
-	new_str[j] = '\0';
-	return (new_str);
+	new_strtr[j] = '\0';
+	return (new_strtr);
 }
 
 char	*find_command(t_minishell *shell, char **input_array)

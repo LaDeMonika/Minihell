@@ -67,19 +67,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (s);
 }
 
-char	*append_substring(char *old_s, int start, int len, char *new_s)
+char	*extract_substr_and_append(char *old_s, int start, int len, char *new_str)
 {
 	char	*affix;
 
-	printf("new s before join: %s\n", new_s);
+	printf("new s before join: %s\n", new_str);
 	affix = ft_substr(old_s, start, len - start);
 	printf("affix: %s\n", affix);
-	if (new_s)
-		new_s = ft_strjoin(new_s, affix);
+	if (new_str)
+		new_str = ft_strjoin(new_str, affix);
 	else
-		new_s = affix;
-	printf("new s after join: %s\n\n", new_s);
-	return (new_s);
+		new_str = affix;
+	printf("new s after join: %s\n\n", new_str);
+	return (new_str);
 }
 
 char *check_env_variables(char *s)
@@ -88,16 +88,16 @@ char *check_env_variables(char *s)
 	int	start;
 	char	*env_key;
 	char	*env_value;
-	char	*new_s;
+	char	*new_str;
 
 	i = 0;
 	start = 0;
-	new_s = NULL;
+	new_str = NULL;
 	while (s[i])
 	{
 		if (s[i] == '$')
 		{
-			new_s = append_substring(s, start, i, new_s);
+			new_str = extract_substr_and_append(s, start, i, new_str);
 			start = i + 1;
 			while (s[i] && s[i] != ' ')
 				i++;
@@ -107,11 +107,11 @@ char *check_env_variables(char *s)
 			env_value = getenv(env_key);
 			printf("env value: %s\n\n", env_value);
 			if (env_value)
-				new_s = ft_strjoin(new_s, env_value);
+				new_str = ft_strjoin(new_str, env_value);
 			else
 			{
-			 	new_s = ft_strjoin(new_s, "$");
-				new_s = ft_strjoin(new_s, env_key);
+			 	new_str = ft_strjoin(new_str, "$");
+				new_str = ft_strjoin(new_str, env_key);
 			}
 			start = i;
 
@@ -119,8 +119,8 @@ char *check_env_variables(char *s)
 		i++;
 	}
 	if (s[start])
-		append_substring(s, start, i, new_s);
-	return (new_s);
+		extract_substr_and_append(s, start, i, new_str);
+	return (new_str);
 }
 
 int	main(void)
