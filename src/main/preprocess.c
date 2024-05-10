@@ -44,20 +44,20 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 	env_key = NULL;
 	env_value = NULL;
 	(*i)++;
-	*start = *i;
 	if (ft_isalnum(base[*i]))
 	{
+		*start = *i;
 		while (ft_isalnum(base[*i]))
 			(*i)++;
 		env_key = ft_substr(base, *start, *i - *start);
-		*start = *i;
-		(*i)--;
 		env_value = ft_strdup(getenv(env_key));
 		free(env_key);
+		*start = *i;
+		(*i)--;
 	}
 	else
 	{
-		(*start)++;
+		*start = *i + 1;
 		if (!base[*i] || base[*i] == ' ')
 			env_value = ft_strdup("$");
 		else if (base[*i] == '$')

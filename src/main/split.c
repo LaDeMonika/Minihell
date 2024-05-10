@@ -1,35 +1,26 @@
 #include "../../inc/minishell.h"
-#include "../../libft/libft.h"
-#include <bits/types/struct_itimerspec.h>
-#include <stdbool.h>
-#include <stdlib.h>
-
 
 /*
 if sep is pipe start word count at one and at one for every pipe
-if sep is space, then start word count at zero and only add for space before other character or null-terminator*/
+if sep is space,
+	then start word count at zero and only add for space before other character or null-terminator*/
 static int	count_words(char *s, char sep)
 {
-	int	i;
-	int	words;
+	int		i;
+	int		words;
 	char	quote_type;
 
 	i = 0;
 	if (sep == '|')
 		words = 1;
 	else
-	 	words = 0;
+		words = 0;
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\'')
-		{
-			quote_type = s[i];
-			i++;
-			while (s[i] && s[i] != quote_type)
-				i++;
-		}
+			i = skip_between_quotes(s, i, s[i]);
 		if ((sep == '|' && s[i] == sep)
-		|| (sep == ' ' && s[i] != sep && (!s[i + 1] || s[i + 1] == sep)))
+		|| (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1] )))
 			words++;
 		i++;
 	}
@@ -65,41 +56,29 @@ static void	free_array(char **array, int word)
 	array = NULL;
 }
 
-int	skip_outer_quotes(char *s, int	i)
-{
-	char	outer_quote;
-	
-	if (s[i] == '"' || s[i] == '\'')
-	{
-		outer_quote = s[i];
-		i++;
-		while (s[i] && s[i] != outer_quote)
-			i++;
-	}
-	return (i);
-}
 
 /*
 put word until separator, and skip quotes
-if sep is | and a word is missing, then fill the word with | */
+if sep is | and a word is missing, then replace word with | */
 static int	put_words(char *s, char sep, char **array, int words)
 {
 	int	i;
 	int	start;
 	int	word;
 
-
 	i = 0;
 	start = 0;
 	word = 0;
 	while (s[i])
 	{
-		i = skip_outer_quotes(s, i);
+		if (s[i] == '"' || s[i] == '\'')
+			i = skip_between_quotes(s, i, s[i]);
 		if (!s[i]
 		|| (sep == '|' && (s[i] == sep || !s[i + 1]))
-		|| (sep == ' ' && s[i] != sep && (!s[i + 1] || s[i + 1] == sep)))
+		|| (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1])))
 		{
-			/* printf("at index %d will make a word with start: %d and len: %d\n", i, start, i - start); */
+			/* printf("at index %d will make a word with start: %d and len:
+				%d\n", i, start, i - start); */
 			if (sep == '|' && s[i] == sep)
 				array[word] = put_word(s, start, i - start, sep);
 			else if (s[i] != sep)
@@ -123,25 +102,19 @@ char	**split_skip_quotes(t_minishell *shell, char *s, char c)
 {
 	int		words;
 	char	**array;
+	int		i;
 
-	(void)shell;
 	if (!s || !s[0])
 		return (NULL);
 	words = count_words(s, c);
-	/* printf("number of words when splitting by %c: %d\n", c, words); */
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
 	if (!array)
-		return (NULL);
+		return (free_exit(shell, ERR_MALLOC), NULL);
 	array[words] = NULL;
 	if (put_words(s, c, array, words) == -1)
 		return (NULL);
-	int i = 0;
-	while (array[i])
-	{
-		/* printf("word at index %d: %s\n", i, array[i]); */
-		i++;
-	}
+	i = 0;
 	return (array);
 }
 /* int	main(void)
@@ -151,9 +124,7 @@ char	**split_skip_quotes(t_minishell *shell, char *s, char c)
 	int i = 0;
 	while (array[i])
 	{
-		printf("%s\n", array[i]);
-		free(array[i]);
+		printf("word at index %d: %s\n", i, array[i]);
 		i++;
 	}
-	free(array);
 } */

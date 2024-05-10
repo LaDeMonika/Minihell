@@ -1,11 +1,11 @@
 #include "../../inc/minishell.h"
-#include <unistd.h>
 
 void	handle_input(t_minishell *shell)
 {
 	int	i;
 
-	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,"exit ", 5) == 0)
+	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,
+			"exit ", 5) == 0)
 		free_exit(shell, NO_ERROR);
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
