@@ -10,7 +10,7 @@ char	*ft_getpid(t_minishell *shell)
 	pid = NULL;
 	pid = malloc(sizeof(char) * 11);
 	if (!pid)
-		return (free_exit(shell, ERR_MALLOC), NULL);
+		return (error_free_all(shell, ERR_MALLOC), NULL);
 	i = 0;
 	fd = open("/proc/self/stat", O_RDONLY);
 	if (fd > 0)
@@ -31,7 +31,9 @@ char	*ft_getpid(t_minishell *shell)
 		}
 	}
 	else
-		return (free(pid), free_exit(shell, ERR_OPEN), NULL);
+		return (free(pid), error_free_all(shell, ERR_OPEN), NULL);
+	close(fd);
+	return (free(pid), error_free_all(shell, ERR_GETPID), NULL);
 }
 
 /*if environment value exists to key, then replace it with the value
@@ -49,8 +51,8 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 		*start = *i;
 		while (ft_isalnum(base[*i]))
 			(*i)++;
-		env_key = ft_substr(base, *start, *i - *start);
-		env_value = ft_strdup(getenv(env_key));
+		env_key = ft_substr(shell, base, *start, *i - *start);
+		env_value = ft_strdup(shell, getenv(env_key));
 		free(env_key);
 		*start = *i;
 		(*i)--;
@@ -59,22 +61,15 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 	{
 		*start = *i + 1;
 		if (!base[*i] || base[*i] == ' ')
-			env_value = ft_strdup("$");
+			env_value = ft_strdup(shell, "$");
 		else if (base[*i] == '$')
 			env_value = ft_getpid(shell);
 		else if (base[*i] == '?')
-			env_value = ft_itoa(shell->last_exit_status);
+			env_value = ft_itoa(shell, shell->last_exit_status);
 	}
 	return (env_value);
 }
 
-int	skip_between_quotes(char *str, int i, char quote_type)
-{
-	i++;
-	while (str[i] && str[i] != quote_type)
-		i++;
-	return (i);
-}
 
 /*extract from base a substring and append it to new_str*/
 char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
@@ -82,7 +77,7 @@ char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
 {
 	char	*suffix;
 
-	suffix = ft_substr(base, 0, len);
+	suffix = ft_substr(shell, base, 0, len);
 	new_str = append_suffix(shell, new_str, suffix);
 	free(suffix);
 	return (new_str);

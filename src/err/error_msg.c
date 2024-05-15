@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -34,7 +35,7 @@ void	free_all(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell);
 }
 
-void	free_exit(t_minishell *shell, int err)
+void	error_free_all(t_minishell *shell, int err)
 {
 	free_all(shell);
 	if (err == ERR_TOO_MANY_ARGS)
@@ -53,6 +54,8 @@ void	free_exit(t_minishell *shell, int err)
 		perror("read");
 	else if (err == ERR_CLOSE)
 		perror("close");
+	else if (err == ERR_GETPID)
+		write(STDERR_FILENO, "Error getting pid\n", 18);
 	if (err == NO_ERROR)
 		exit(EXIT_SUCCESS);
 	exit(EXIT_FAILURE);

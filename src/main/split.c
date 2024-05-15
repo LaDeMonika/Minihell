@@ -6,9 +6,8 @@ if sep is space,
 	then start word count at zero and only add for space before other character or null-terminator*/
 static int	count_words(char *s, char sep)
 {
-	int		i;
-	int		words;
-	char	quote_type;
+	int	i;
+	int	words;
 
 	i = 0;
 	if (sep == '|')
@@ -19,48 +18,38 @@ static int	count_words(char *s, char sep)
 	{
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_quotes(s, i, s[i]);
-		if ((sep == '|' && s[i] == sep)
-		|| (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1] )))
+		if ((sep == '|' && s[i] == sep) || (sep == ' ' && s[i] != sep && (s[i
+					+ 1] == ' ' || !s[i + 1])))
 			words++;
 		i++;
 	}
 	return (words);
 }
-/*if sep is | and word is empty than substitute empty word with |*/
-static char	*put_word(char *s, int start, int len, char sep)
+/*
+if sep i ' ' then increase len by one so that it also puts the current char*/
+static char	*replace_empty_word(t_minishell *shell, char *word, char sep)
 {
-	char	*word;
+	char	*temp;
 
-	word = ft_substr(s, start, len);
-	word = ft_strtrim(word, " ");
+	temp = word;
+	word = ft_strtrim(shell, word, " ");
+	free(temp);
 	if (sep == '|' && (!word || !(*word)))
 	{
 		free(word);
 		word = malloc(sizeof(char) * 2);
+		if (!word)
+			return (NULL);
 		word = "|";
 	}
 	return (word);
-}
-
-static void	free_array(char **array, int word)
-{
-	int	i;
-
-	i = 0;
-	while (i < word)
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-	array = NULL;
 }
 
 
 /*
 put word until separator, and skip quotes
 if sep is | and a word is missing, then replace word with | */
-static int	put_words(char *s, char sep, char **array, int words)
+bool	put_words(t_minishell *shell, char *s, char sep, char **array)
 {
 	int	i;
 	int	start;
@@ -73,54 +62,48 @@ static int	put_words(char *s, char sep, char **array, int words)
 	{
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_quotes(s, i, s[i]);
-		if (!s[i]
-		|| (sep == '|' && (s[i] == sep || !s[i + 1]))
-		|| (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1])))
+		if (!s[i] || (sep == '|' && (s[i] == sep || !s[i + 1])) || (sep == ' '
+				&& s[i] != sep && (s[i + 1] == sep || !s[i + 1])))
 		{
-			/* printf("at index %d will make a word with start: %d and len:
-				%d\n", i, start, i - start); */
-			if (sep == '|' && s[i] == sep)
-				array[word] = put_word(s, start, i - start, sep);
-			else if (s[i] != sep)
-				array[word] = put_word(s, start, i - start + 1, sep);
-			if (!array[word])
-				return (free_array(array, word), -1);
+			if (sep == ' ' || (sep == '|' && (!s[i + 1] || i == 0)))
+				array[word] = ft_substr(shell, s, start, i - start + 1);
+			else
+				array[word] = ft_substr(shell, s, start, i - start);
+			array[word] = replace_empty_word(shell, array[word], sep);
 			word++;
 			start = i + 1;
 		}
 		i++;
 	}
-	if (word < words && sep == '|')
-	{
-		array[word] = malloc(sizeof(char) * 2);
-		array[word] = "|";
-	}
-	return (0);
+	return (true);
 }
 
-char	**split_skip_quotes(t_minishell *shell, char *s, char c)
+char	**split_skip_quotes(t_minishell *shell, char *s, char sep)
 {
 	int		words;
 	char	**array;
-	int		i;
+	int	i;
 
-	if (!s || !s[0])
-		return (NULL);
-	words = count_words(s, c);
+	words = count_words(shell->usr_input, sep);
 	array = NULL;
 	array = malloc((words + 1) * sizeof(char *));
 	if (!array)
-		return (free_exit(shell, ERR_MALLOC), NULL);
-	array[words] = NULL;
-	if (put_words(s, c, array, words) == -1)
-		return (NULL);
+		error_free_all(shell, ERR_MALLOC);
 	i = 0;
+	while (i < words + 1)
+	{
+		array[i] = NULL;
+		i++;
+	}
+	if (!put_words(shell, s, sep, array))
+		error_free_all(shell, ERR_MALLOC);
 	return (array);
 }
 /* int	main(void)
 {
 	char **array = ft_split("echo \"ls -l | grep m\" | grep i", '|');
 
+	printf("amount of words: %d\n", words);
 	int i = 0;
 	while (array[i])
 	{

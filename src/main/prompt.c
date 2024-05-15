@@ -6,24 +6,14 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/10 14:25:16 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/14 18:28:46 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include <linux/limits.h>
 
-char	*append_suffix(t_minishell *shell, char *base, char *suffix)
-{
-	char	*new_str;
 
-	new_str = base;
-	new_str = ft_strjoin(base, suffix);
-	if (!new_str)
-		free_exit(shell, ERR_MALLOC);
-	free_and_reset_ptr((void **)&base);
-	return (new_str);
-}
 
 /*
 if current directory includes the home path, then replace home by ~
@@ -38,8 +28,7 @@ void    append_path(t_minishell *shell)
 	home = getenv("HOME");
 	if (ft_strnstr(pwd, home, ft_strlen(home)))
 	{
-		ft_strlcpy(new_path, pwd + ft_strlen(home), ft_strlen(pwd)
-			- ft_strlen(home) + 1);
+		ft_strlcpy(new_path, pwd + ft_strlen(home), ft_strlen(pwd) - ft_strlen(home) + 1);
         shell->prompt = append_suffix(shell, shell->prompt, "~");
 		shell->prompt = append_suffix(shell, shell->prompt, new_path);
 	}
@@ -55,12 +44,12 @@ void    append_hostname(t_minishell *shell)
 
     hostname_file = open("/etc/hostname", O_RDONLY);
 	if (hostname_file == -1)
-		free_exit(shell, ERR_OPEN);
+		error_free_all(shell, ERR_OPEN);
 	if (read(hostname_file, hostname, 254) == -1)
-		free_exit(shell, ERR_READ);
+		error_free_all(shell, ERR_READ);
 	if (close(hostname_file) == -1)
-		free_exit(shell, ERR_CLOSE);
-	hostname_remainder = strchr(hostname, '.');
+		error_free_all(shell, ERR_CLOSE);
+	hostname_remainder = ft_strchr(hostname, '.');
 	if (hostname_remainder)
 		hostname[hostname_remainder - hostname] = '\0';
 	shell->prompt = append_suffix(shell, shell->prompt, hostname);

@@ -25,17 +25,17 @@ void	redirect_output(char *output_file, int delimiter)
 	}
 }
 
-void	temporary_input_redirect(int read_fd)
+void	temporary_input_redirect(t_minishell *shell, int read_fd)
 {
 	int		temp_fd;
 	char	buffer[1];
 
-	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"),
+	temp_fd = open(ft_strjoin(shell, ft_itoa(shell, read_fd), "_temp_input"),
 			O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	while ((read(STDIN_FILENO, buffer, 1)) > 0)
 		write(temp_fd, buffer, 1);
 	close(temp_fd);
-	temp_fd = open(ft_strjoin(ft_itoa(read_fd), "_temp_input"), O_RDONLY);
+	temp_fd = open(ft_strjoin(shell, ft_itoa(shell, read_fd), "_temp_input"), O_RDONLY);
 	dup2(temp_fd, STDIN_FILENO);
 	close(temp_fd);
 }
@@ -67,11 +67,13 @@ void	handle_redirections(t_minishell *shell, t_token_list *list,
 {
 	char	*command;
 
+
 	command = NULL;
 	/* if (read_fd > 0)
 		temporary_input_redirect(read_fd); */
 	while (list)
 	{
+
 		if (list->delimiter == COMMAND)
 			command = list->token;
 		else if (list->delimiter == INPUT)
@@ -86,5 +88,6 @@ void	handle_redirections(t_minishell *shell, t_token_list *list,
 			redirect_input(shell->input_file, read_fd);
 		list = list->next;
 	}
+
 	execute_command(shell, command);
 }

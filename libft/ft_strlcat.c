@@ -6,13 +6,13 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 18:14:53 by lilin             #+#    #+#             */
-/*   Updated: 2023/09/14 22:33:41 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/14 19:05:20 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdio.h>
-
+/*
 size_t	ft_strlcat(char	*dst, const char	*src, size_t	size)
 {
 	size_t	dstlen;
@@ -34,3 +34,4 @@ size_t	ft_strlcat(char	*dst, const char	*src, size_t	size)
 	dst[dstlen + i] = '\0';
 	return (dstlen + srclen);
 }
+ */

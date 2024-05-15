@@ -72,7 +72,8 @@ enum						e_error
 	ERR_SIGACTION,
 	ERR_OPEN,
 	ERR_READ,
-	ERR_CLOSE
+	ERR_CLOSE,
+	ERR_GETPID
 };
 
 // token delimiters
@@ -102,7 +103,7 @@ enum						e_signal_handling_mode
 char						*find_command(t_minishell *shell,
 								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
-void						extract_token(char *command, int start, int len,
+void						extract_token(t_minishell *shell, char *command, int start, int len,
 								int pre_redirector, t_token_list **list);
 // main
 void						custom_perror(char *prefix, char *custom_message);
@@ -110,7 +111,7 @@ char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
 void						list_add(t_token_list **head, char *token,
 								int type);
-void						append_to_command(t_token_list **head, char *token);
+void						append_to_command(t_minishell *shell, t_token_list **head, char *token);
 void						tokenize(t_minishell *shell, char *command,
 								t_token_list **list);
 void						parent(t_minishell *shell, char **input_array,
@@ -126,7 +127,7 @@ void						handle_input(t_minishell *shell);
 void						init_shell_struct(t_minishell *shell, char **envp);
 
 // err
-void						free_exit(t_minishell *shell, int err);
+void						error_free_all(t_minishell *shell, int err);
 void						free_and_reset_ptr(void **ptr);
 void						free_and_reset_array(void ***array);
 void						free_all(t_minishell *shell);
@@ -172,6 +173,8 @@ char						*append_heredoc_on_missing_quote(t_minishell *shell,
 char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_quotes(char *str, int i,
 								char quote_type);
+char						*check_env_variables(t_minishell *shell, char *s);
+char	**split_skip_quotes(t_minishell *shell, char *s, char sep);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,
@@ -179,11 +182,27 @@ int							ft_is_builtin(t_minishell *shell,
 int							ft_echo(char **command_array);
 
 //********************src/utils
-// utils_00
+// strings_1
+char						*ft_strtrim(t_minishell *shell, char const *s1,
+								char const *set);
+char						*ft_strjoin(t_minishell *shell, char const *s1,
+								char const *s2);
+char						*ft_strchr(const char *s, int c);
+char						*ft_strnstr(const char *big, const char *little,
+								size_t len);
+size_t						ft_strlcpy(char *dst, const char *src, size_t size);
 
-char						*check_env_variables(t_minishell *shell, char *s);
-char						**split_skip_quotes(t_minishell *shell, char *s,
-								char c);
+// strings_2
+char						*ft_substr(t_minishell *shell, char const *s,
+								unsigned int start, size_t len);
+size_t						ft_strlen(const char *s);
+int							ft_strncmp(const char *s1, const char *s2,
+								size_t n);
+int							ft_isalnum(int c);
+char						*ft_strdup(t_minishell *shell, const char *s);
+
+//strings_3
+char	*ft_itoa(t_minishell *shell, int n);
 // utils_01
 
 #endif

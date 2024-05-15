@@ -54,13 +54,13 @@ char	*find_command(t_minishell *shell, char **input_array)
 
 	path = getenv("PATH");
 	if (!path)
-		return (free_exit(shell, ERR_PATH_NOT_FOUND), NULL);
+		return (error_free_all(shell, ERR_PATH_NOT_FOUND), NULL);
 	path_array = ft_split(path, ':');
 	i = 0;
 	while (path_array[i])
 	{
-		command_path = ft_strjoin(path_array[i], "/");
-		command_path = ft_strjoin(command_path, input_array[0]);
+		command_path = ft_strjoin(shell, path_array[i], "/");
+		command_path = ft_strjoin(shell, command_path, input_array[0]);
 		fd = access(command_path, F_OK & X_OK);
 		if (fd == 0)
 		{

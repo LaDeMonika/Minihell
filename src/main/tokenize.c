@@ -22,7 +22,7 @@ int	find_redirector(t_minishell *shell, char *command, int i)
 	}
 	return (-1);
 }
-void	append_to_command(t_token_list **head, char *token)
+void	append_to_command(t_minishell *shell, t_token_list **head, char *token)
 {
 	t_token_list	*current;
 
@@ -30,7 +30,7 @@ void	append_to_command(t_token_list **head, char *token)
 	while (current)
 	{
 		if (current->delimiter == COMMAND)
-			current->token = ft_strjoin(current->token, token);
+			current->token = ft_strjoin(shell, current->token, token);
 		current = current->next;
 	}
 }
@@ -69,8 +69,7 @@ void	list_add(t_token_list **head, char *token, int type)
 	while (current->next)
 		current = current->next;
 	current->next = new;
-	/* printf("token with type %d and argument %s added\n", new->delimiter,
-		new->token);*/
+
 }
 bool	has_unclosed_quote(char *s)
 {
@@ -98,7 +97,7 @@ bool	has_unclosed_quote(char *s)
 extracts whatever everything between redirection symbols, start of string or end of string
 if token is not a command argument, also remove outer quotes
 */
-void	extract_token(char *command, int start, int len, int pre_redirector,
+void	extract_token(t_minishell *shell, char *command, int start, int len, int pre_redirector,
 		t_token_list **list)
 {
 	char	*token;
@@ -107,8 +106,8 @@ void	extract_token(char *command, int start, int len, int pre_redirector,
 	int	i;
 	char	outer_quote;
 
-	token = ft_substr(command, start, len);
-	token = ft_strtrim(token, " ");
+	token = ft_substr(shell, command, start, len);
+	token = ft_strtrim(shell, token, " ");
 	if (pre_redirector != COMMAND)
 	{
 		i = 0;
@@ -135,7 +134,7 @@ void	extract_token(char *command, int start, int len, int pre_redirector,
 			end_index = command_arg - token;
 			command_arg = strdup(command_arg);
 			token[end_index] = '\0';
-			append_to_command(list, command_arg);
+			append_to_command(shell, list, command_arg);
 		}
 		if (!has_unclosed_quote(token))
 			token = remove_outer_quotes(token);
@@ -174,7 +173,7 @@ void	tokenize(t_minishell *shell, char *command, t_token_list **list)
 		shell->post_redirector = find_redirector(shell, command, i);
 		if (shell->post_redirector > -1)
 		{
-			extract_token(command, start, len, shell->pre_redirector, list);
+			extract_token(shell, command, start, len, shell->pre_redirector, list);
 			adjust_indexes(&i, &start, &len, shell->post_redirector);
 			shell->pre_redirector = shell->post_redirector;
 			redirector_processed = false;
@@ -188,5 +187,5 @@ void	tokenize(t_minishell *shell, char *command, t_token_list **list)
 		}
 	}
 	if (i != start || !redirector_processed)
-		extract_token(command, start, len, shell->pre_redirector, list);
+		extract_token(shell, command, start, len, shell->pre_redirector, list);
 }

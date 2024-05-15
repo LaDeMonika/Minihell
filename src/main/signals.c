@@ -52,7 +52,7 @@ void	set_signals(t_minishell *shell, int mode)
 	if (mode == CHILD || mode == HEREDOC_CHILD)
 		is_child = true;
 	if (sigemptyset(&shell->sa_sigint.sa_mask) == -1 || sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
-		free_exit(shell, ERR_SIGEMPTYSET);
+		error_free_all(shell, ERR_SIGEMPTYSET);
 	shell->sa_sigint.sa_flags = 0;
 	shell->sa_sigquit.sa_flags = 0;
 	if (mode == PARENT_WITHOUT_CHILD)
@@ -70,5 +70,5 @@ void	set_signals(t_minishell *shell, int mode)
 		shell->sa_sigquit.sa_handler = child_sigquit_handler;
 	}
 	if (sigaction(SIGINT, &shell->sa_sigint, NULL) == -1 || sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
-		free_exit(shell, ERR_SIGACTION);
+		error_free_all(shell, ERR_SIGACTION);
 }

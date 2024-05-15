@@ -15,8 +15,9 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 	}
 	else
 	{
-		while ((waitpid(shell->pid[shell->pipes_total], &shell->status, 0)) > 0)
+		while (shell->pipes_total >= 0)
 		{
+			waitpid(shell->pid[shell->pipes_total], &shell->status, 0);
 			set_child_exit_status(shell, &shell->last_exit_status, shell->pipes_total);
 			shell->pipes_total--;
 		}

@@ -7,7 +7,7 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	char	*str_line_count;
 
 	write(STDERR_FILENO, "bash: warning: here-document at line ", 37);
-	str_line_count = ft_itoa(shell->line_count);
+	str_line_count = ft_itoa(shell, shell->line_count);
 	write(STDERR_FILENO, str_line_count, ft_strlen(str_line_count));
 	write(STDERR_FILENO, " delimited by end-of-file (wanted `", 35);
 	write(STDERR_FILENO, eof, ft_strlen(eof));
@@ -100,6 +100,7 @@ void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *n
 	write(STDERR_FILENO, unexpected_token, ft_strlen(unexpected_token));
 	write(STDERR_FILENO, "\n", 1);
 	shell->parsing_exit_status = 2;
+
 }
 /*creates a list for each piped token and takes input for each heredoc
 if the redirection syntax is wrong, it will print an error*/
@@ -112,10 +113,11 @@ void	parse_input(t_minishell *shell)
 	i = 0;
 	while (shell->input_array[i])
 	{
-		shell->input_file = ft_strjoin(ft_itoa(i), "_input.txt");
+		shell->input_file = ft_strjoin(shell, ft_itoa(shell, i), "_input.txt");
 		list = shell->list[i];
 		while (list)
 		{
+			/* printf("parsing token: %s with delimiter: %d\n", list->token, list->delimiter); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
