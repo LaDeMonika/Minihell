@@ -54,13 +54,25 @@ char	*ft_itoa(t_minishell *shell, int n)
 	write_number(n, str, len);
 	return (str);
 }
-int	skip_between_quotes(char *str, int i, char quote_type)
+/* int	skip_between_quotes(char *str, int i, char metaquote)
 {
 	i++;
-	while (str[i] && str[i] != quote_type)
+	while (str[i] && str[i] != metaquote)
 		i++;
 	return (i);
+} */
+
+int	skip_between_quotes(char *str, int i, char metaquote)
+{
+	int	old_i;
+
+	old_i = i;
+	i++;
+	while (str[i] && str[i] != metaquote)
+		i++;
+	return (i - old_i);
 }
+
 /*appends suffix to base and frees base afterwards*/
 char	*append_suffix(t_minishell *shell, char *base, char *suffix)
 {

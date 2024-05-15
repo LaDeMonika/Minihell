@@ -3,45 +3,57 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-/*first determine new string length and then create new string without outer quotes*/
-char	*remove_outer_quotes(char *command)
+int	count_literal_chars(char *str, char *metaquote)
 {
-	char	*new_strtr;
+	int	i;
+	int	len;
+
+	i = 0;
+	len = 0;
+	*metaquote = '\0';
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			if (!(*metaquote))
+				*metaquote = str[i];
+			else if (str[i] != *metaquote)
+				len++;
+		}
+		else
+			len++;
+		i++;
+	}
+	return (len);
+}
+
+/*first determine new string length and then create new string without outer quotes*/
+char	*remove_metaquotes(t_minishell *shell, char *command)
+{
+	char	*new_str;
 	int		new_len;
 	int		i;
 	int		j;
-	char	quote_type;
+	char	metaquote;
 
-	i = 0;
-	new_len = 0;
-	quote_type = '\0';
-	while (command[i])
-	{
-		if (command[i] == '"' || command[i] == '\'')
-		{
-			if (!quote_type)
-				quote_type = command[i];
-			else if (command[i] != quote_type)
-				new_len++;
-		}
-		else
-			new_len++;
-		i++;
-	}
-	new_strtr = malloc(sizeof(char) * (new_len + 1));
+	new_len = count_literal_chars(command, &metaquote);
+	new_str = malloc(sizeof(char) * (new_len + 1));
+	if (!new_str)
+		return (error_free_all(shell, ERR_MALLOC), NULL);
 	i = 0;
 	j = 0;
 	while (command[i])
 	{
-		if (command[i] != quote_type)
+		if (command[i] != metaquote)
 		{
-			new_strtr[j] = command[i];
+			new_str[j] = command[i];
 			j++;
 		}
 		i++;
 	}
-	new_strtr[j] = '\0';
-	return (new_strtr);
+	new_str[j] = '\0';
+	free(command);
+	return (new_str);
 }
 
 char	*find_command(t_minishell *shell, char **input_array)
@@ -99,7 +111,7 @@ void	execute_command(t_minishell *shell, char *command)
 	i = 0;
 	while (command_array[i])
 	{
-		command_array[i] = remove_outer_quotes(command_array[i]);
+		command_array[i] = remove_metaquotes(shell, command_array[i]);
 		i++;
 	}
 	// builtins

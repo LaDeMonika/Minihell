@@ -156,7 +156,7 @@ void						redirect_input(char *input_file, int read_fd);
 void						redirect_output(char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
 								t_token_list *list, int read_fd);
-char						*remove_outer_quotes(char *command);
+char	*remove_metaquotes(t_minishell *shell, char *command);
 // signals
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
@@ -172,7 +172,7 @@ char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_quotes(char *str, int i,
-								char quote_type);
+								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
 char	**split_skip_quotes(t_minishell *shell, char *s, char sep);
 
