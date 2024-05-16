@@ -1,4 +1,5 @@
 #include "../../inc/minishell.h"
+#include <unistd.h>
 
 void	handle_input(t_minishell *shell)
 {
@@ -13,6 +14,7 @@ void	handle_input(t_minishell *shell)
 			'|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
+	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 2));
 	shell->list = try_malloc(shell, sizeof(t_token_list *) * (shell->pipes_total
 				+ 2));
 	shell->list[shell->pipes_total + 1] = NULL;
@@ -25,7 +27,8 @@ void	handle_input(t_minishell *shell)
 	}
 	parse_input(shell);
 	if (shell->parsing_exit_status == 0)
-		handle_pipes(shell, STDIN_FILENO);
+		handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
+			STDIN_FILENO);
 	else
 		shell->last_exit_status = shell->parsing_exit_status;
 }

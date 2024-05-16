@@ -59,6 +59,12 @@ void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_erro
 		print_error(prefix, NULL);
 	else if (err == ERR_CLOSE)
 		perror("close");
+	else if (err == ERR_PIPE)
+		perror("pipe");
+	else if (err == ERR_FORK)
+		perror("fork");
+	else if (err == ERR_WAITPID)
+		perror("waitpid");
 	else if (err == ERR_GETPID)
 		write(STDERR_FILENO, "Error getting pid\n", 18);
 	if (err == NO_ERROR)

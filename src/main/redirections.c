@@ -17,7 +17,7 @@ void	temporary_input_redirect(t_minishell *shell, int read_fd)
 	temp_fd = try_open(shell, WRITE_TRUNCATE, temp_file);
 	buffer = try_malloc(shell, sizeof(char) * 1);
 	while (try_read(shell, STDIN_FILENO, &buffer, temp_file) > 0)
-		try_write(shell, 1, temp_fd, buffer);
+		try_write(shell, temp_fd, buffer, 1);
 	try_close(shell, temp_fd);
 	temp_fd = try_open(shell, READ, temp_file);
 	free_and_reset_ptr((void **)&temp_file);

@@ -79,6 +79,9 @@ enum						e_error
 	ERR_READ,
 	ERR_WRITE,
 	ERR_CLOSE,
+	ERR_PIPE,
+	ERR_FORK,
+	ERR_WAITPID,
 	ERR_GETPID
 };
 
@@ -117,26 +120,12 @@ enum						e_open_mode
 char						*find_command(t_minishell *shell,
 								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
-void						extract_and_add_tokens(t_minishell *shell,
-								int index, int start, int len);
+
 // main
 void						custom_perror(char *prefix, char *custom_message);
 char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
-void						list_add(t_minishell *shell, t_token_list **head,
-								char *token);
-void						append_to_command(t_minishell *shell,
-								t_token_list **head, char *command_arg,
-								char *token);
-void						tokenize(t_minishell *shell, char *command,
-								int index);
-void						parent(t_minishell *shell, char **input_array,
-								int pipes_left, int read_fd);
-void						child(t_minishell *shell, int pipes_left,
-								int read_fd);
-void						handle_pipes_recursive(t_minishell *shell,
-								char **input_array, int pipes_left,
-								int read_fd);
+
 void						handle_input(t_minishell *shell);
 
 // init_shell_struct
@@ -157,10 +146,25 @@ void						append_path(t_minishell *shell);
 void						append_hostname(t_minishell *shell);
 void						build_prompt(t_minishell *shell);
 
-// pipes
-void						handle_pipes(t_minishell *shell, int read_fd);
+//tokenize
+void						extract_and_add_tokens(t_minishell *shell,
+								int index, int start, int len);
+void						list_add(t_minishell *shell, t_token_list **head,
+								char *token);
+void						append_to_command(t_minishell *shell,
+								t_token_list **head, char *command_arg,
+								char *token);
+void						tokenize(t_minishell *shell, char *command,
+								int index);
 
-// hereoc
+// pipes
+void	handle_pipes_recursive(t_minishell *shell, char **input_array,
+		int pipes_left, int read_fd);
+void						parent(t_minishell *shell, char **input_array,
+								int pipes_left, int read_fd);
+void						child(t_minishell *shell, int pipes_left,
+								int read_fd);
+// parse + heredoc
 void						parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char *eof,
 								char *input_buffer);
@@ -195,11 +199,13 @@ char						**split_while_skipping_quotes(t_minishell *shell, char *s,
 
 //try
 int	try_read(t_minishell *shell, int fd, char **buffer, char *file);
-int	try_write(t_minishell *shell, int bytes, int fd, char *buffer);
+int	try_write(t_minishell *shell, int fd, char *buffer, int bytes);
 void	try_close(t_minishell *shell, int fd);
 int	try_open(t_minishell *shell, int mode, char *file);
 void	*try_malloc(t_minishell *shell, int size);
 void	try_dup2(t_minishell *shell, int fd, int fd2);
+void	try_pipe(t_minishell *shell, int fd[2]);
+int	try_fork(t_minishell *shell);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,

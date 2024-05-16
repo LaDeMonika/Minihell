@@ -21,22 +21,22 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	int		file_fd;
 	char	*input;
 
-	close(pipe_fd[0]);
+	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
-	file_fd = open(input_file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
 	input = readline("> ");
 	while (input && ft_strncmp(input, eof, ft_strlen(eof) + 1) != 0)
 	{
-		write(pipe_fd[1], "\n", 1);
-		write(file_fd, input, ft_strlen(input));
-		write(file_fd, "\n", 1);
+		try_write(shell, pipe_fd[1], "\n", 1);
+		try_write(shell, file_fd, input, ft_strlen(input));
+		try_write(shell, file_fd, "\n", 1);
 		input = readline("> ");
 	}
 	if (input)
-		write(pipe_fd[1], "\n", 1);
+		try_write(shell, pipe_fd[1], "\n", 1);
 	if (!input)
 		heredoc_EOF(shell, eof);
-	close(pipe_fd[1]);
+	try_close(shell, pipe_fd[1]);
 	exit(EXIT_SUCCESS);
 }
 
@@ -45,33 +45,30 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 {
 	int		pid;
 	int		pipe_fd[2];
-	char	read_buffer[1];
-	int		bytes_read;
+	char	*read_buffer;
 
-	pipe(pipe_fd);
-	pid = fork();
+	try_pipe(shell, pipe_fd);
+	pid = try_fork(shell);
 	if (pid == 0)
 		write_to_file(shell, eof, input_file, pipe_fd);
 	else
 	{
-		close(pipe_fd[1]);
+		try_close(shell, pipe_fd[1]);
 		set_signals(shell, PARENT_WITH_CHILD);
-		waitpid(pid, &shell->status, 0);
-		bytes_read = read(pipe_fd[0], read_buffer, 1);
-		while (bytes_read > 0)
-		{
+		if (waitpid(pid, &shell->status, 0) == -1)
+			error_free_all(shell, ERR_WAITPID, NULL, NULL);
+		read_buffer = try_malloc(shell, sizeof(char));
+		while (try_read(shell, pipe_fd[0], &read_buffer, NULL) > 0)
 			shell->line_count++;
-			bytes_read = read(pipe_fd[0], read_buffer, 1);
-		}
 		set_child_exit_status(shell, &shell->parsing_exit_status, 0);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
-		close(pipe_fd[0]);
+		try_close(shell, pipe_fd[0]);
 	}
 }
 
-void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *next)
+void	error_parsing_input(t_minishell *shell, t_token_list *this,
+		t_token_list *next)
 {
-
 	if (this->delimiter == INVALID_PIPE)
 		shell->unexpected_token = "`|'";
 	else if (this->next)
@@ -92,7 +89,8 @@ void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *n
 	else
 		shell->unexpected_token = "`newline'";
 	write(STDERR_FILENO, "bash: syntax error near unexpected token ", 41);
-	write(STDERR_FILENO, shell->unexpected_token, ft_strlen(shell->unexpected_token));
+	write(STDERR_FILENO, shell->unexpected_token,
+		ft_strlen(shell->unexpected_token));
 	write(STDERR_FILENO, "\n", 1);
 	shell->parsing_exit_status = 2;
 }
@@ -101,31 +99,28 @@ if the redirection syntax is wrong, it will print an error*/
 void	parse_input(t_minishell *shell)
 {
 	int				i;
-	char	*index;
+	char			*index;
 	t_token_list	*list;
 
 	shell->parsing_exit_status = 0;
 	i = 0;
 	while (shell->input_array[i])
 	{
-		index = NULL;
-		index = ft_itoa(shell, i);
-
-		shell->input_file = ft_strjoin(shell, index, "_input.txt");
-
-		free_and_reset_ptr((void **)&index);
-
 		list = shell->list[i];
 		while (list)
 		{
-
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
 				return ;
 			}
 			else if (list->delimiter == HEREDOC)
+			{
+				index = NULL;
+				index = ft_itoa(shell, i);
+				shell->input_file = append_suffix(shell, index, "_input.txt");
 				heredoc(shell, list->token, shell->input_file);
+			}
 			list = list->next;
 		}
 		i++;

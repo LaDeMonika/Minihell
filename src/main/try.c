@@ -27,7 +27,7 @@ int	try_read(t_minishell *shell, int fd, char **buffer, char *file)
 	return (bytes_read);
 }
 
-int	try_write(t_minishell *shell, int bytes, int fd, char *buffer)
+int	try_write(t_minishell *shell, int fd, char *buffer, int bytes)
 {
 	int	bytes_written;
 
@@ -58,3 +58,20 @@ void	try_dup2(t_minishell *shell, int fd, int fd2)
 	if (dup2(fd, fd2) == -1)
 		error_free_all(shell, ERR_DUP2, NULL, NULL);
 }
+
+void	try_pipe(t_minishell *shell, int fd[2])
+{
+	if (pipe(fd) == -1)
+		error_free_all(shell, ERR_PIPE, NULL, NULL);
+}
+
+int	try_fork(t_minishell *shell)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		return (error_free_all(shell, ERR_FORK, NULL, NULL), 1);
+	return (pid);
+}
+
