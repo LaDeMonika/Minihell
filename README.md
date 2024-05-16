@@ -15,13 +15,8 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 
 ### Lilie's Task
     - remove libft and adjust makefile
-    - free, close etc
+    - free, close etc: remove list nodes
 
-    05/14 no command, just EOF:
-
-        HEAP SUMMARY:
-==48942==     in use at exit: 204,212 bytes in 221 blocks
-==48942==   total heap usage: 435 allocs, 214 frees, 225,358 bytes allocated
     - error handling
     - streamline error handling
     - questions: sigpipe handling?

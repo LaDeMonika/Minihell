@@ -122,7 +122,7 @@ char						*find_command(t_minishell *shell,
 void						execute_command(t_minishell *shell, char *command);
 
 // main
-void						custom_perror(char *prefix, char *custom_message);
+
 char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
 
@@ -140,8 +140,7 @@ void						free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 
 // prompt
-char						*append_suffix(t_minishell *shell, char *base,
-								char *suffix);
+
 void						append_path(t_minishell *shell);
 void						append_hostname(t_minishell *shell);
 void						build_prompt(t_minishell *shell);
@@ -165,7 +164,7 @@ void						parent(t_minishell *shell, char **input_array,
 void						child(t_minishell *shell, int pipes_left,
 								int read_fd);
 // parse + heredoc
-void						parse_input(t_minishell *shell);
+void	parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char *eof,
 								char *input_buffer);
 
@@ -236,6 +235,8 @@ char						*ft_strdup(t_minishell *shell, const char *s);
 char						*ft_itoa(t_minishell *shell, int n);
 int							skip_first_metaquote_pair(char *str);
 bool						has_even_metaquotes(char *s);
+char						*append_suffix(t_minishell *shell, char *base,
+								char *suffix);;
 
 // strings_4
 char						**ft_split(char const *s, char c);

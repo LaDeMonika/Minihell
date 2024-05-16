@@ -37,9 +37,9 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 
 		free_and_reset_ptr((void **)&word);
 
-		try_malloc(shell, sizeof(char) * 2);
-
-		word = "|";
+		word = try_malloc(shell, sizeof(char) * 2);
+		word[0] = '|';
+		word[1] = '\0';
 	}
 	return (word);
 }
