@@ -98,7 +98,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	while (s[i])
 	{
 		if (s[i] == '\'')
-			i += skip_between_quotes(s, i, '\'');
+			i = skip_between_metaquotes(s, i, '\'');
 		else if (s[i] == '$')
 		{
 			new_str = extract_substr_and_append(shell, s + start, i - start,
@@ -142,7 +142,7 @@ char	*append_heredoc_on_missing_quote(t_minishell *shell, char *base)
 		if (base[i] == '"' || base[i] == '\'')
 		{
 			metaquote = base[i];
-			i += skip_between_quotes(base, i, metaquote);
+			i = skip_between_metaquotes(base, i, metaquote);
 			if (!base[i])
 				return (append_heredoc(shell, base, metaquote));
 		}

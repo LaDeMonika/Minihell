@@ -50,9 +50,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 	pipe(pipe_fd);
 	pid = fork();
 	if (pid == 0)
-	{
 		write_to_file(shell, eof, input_file, pipe_fd);
-	}
 	else
 	{
 		close(pipe_fd[1]);
@@ -72,35 +70,30 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 
 void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *next)
 {
-	char	*unexpected_token;
-
-	unexpected_token = NULL;
+	
 	if (this->delimiter == INVALID_PIPE)
-		unexpected_token = "`|'";
+		shell->unexpected_token = "`|'";
 	else if (this->next)
 	{
 		if (this->next->delimiter == INPUT)
-			unexpected_token = "`<'";
+			shell->unexpected_token = "`<'";
 		else if (this->next->delimiter == HEREDOC)
-			unexpected_token = "`<<'";
+			shell->unexpected_token = "`<<'";
 		else if (this->next->delimiter == OUTPUT)
-			unexpected_token = "`>'";
+			shell->unexpected_token = "`>'";
 		else if (this->next->delimiter == APPEND)
-			unexpected_token = "`>>'";
+			shell->unexpected_token = "`>>'";
 		else if (this->next->delimiter == INVALID_PIPE)
-			unexpected_token = "`|'";
+			shell->unexpected_token = "`|'";
 	}
 	else if (next)
-	{
-		unexpected_token = "`|'";
-	}
+		shell->unexpected_token = "`|'";
 	else
-		unexpected_token = "`newline'";
+		shell->unexpected_token = "`newline'";
 	write(STDERR_FILENO, "bash: syntax error near unexpected token ", 41);
-	write(STDERR_FILENO, unexpected_token, ft_strlen(unexpected_token));
+	write(STDERR_FILENO, shell->unexpected_token, ft_strlen(shell->unexpected_token));
 	write(STDERR_FILENO, "\n", 1);
 	shell->parsing_exit_status = 2;
-
 }
 /*creates a list for each piped token and takes input for each heredoc
 if the redirection syntax is wrong, it will print an error*/
@@ -117,16 +110,13 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[i];
 		while (list)
 		{
-			/* printf("parsing token: %s with delimiter: %d\n", list->token, list->delimiter); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
 				return ;
 			}
 			else if (list->delimiter == HEREDOC)
-			{
 				heredoc(shell, list->token, shell->input_file);
-			}
 			list = list->next;
 		}
 		i++;

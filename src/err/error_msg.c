@@ -72,7 +72,5 @@ void	print_error(char *prefix, char *custom_error)
 		write(STDERR_FILENO, "\n", 1);
 	}
 	else
-	{
 		perror(NULL);
-	}
 }

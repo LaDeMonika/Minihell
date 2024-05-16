@@ -17,7 +17,7 @@ static int	count_words(char *s, char sep)
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\'')
-			i += skip_between_quotes(s, i, s[i]);
+			i = skip_between_metaquotes(s, i, s[i]);
 		if ((sep == '|' && s[i] == sep) || (sep == ' ' && s[i] != sep && (s[i
 					+ 1] == ' ' || !s[i + 1])))
 			words++;
@@ -61,7 +61,7 @@ bool	put_words(t_minishell *shell, char *s, char sep, char **array)
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\'')
-			i += skip_between_quotes(s, i, s[i]);
+			i = skip_between_metaquotes(s, i, s[i]);
 		if (!s[i] || (sep == '|' && (s[i] == sep || !s[i + 1])) || (sep == ' '
 				&& s[i] != sep && (s[i + 1] == sep || !s[i + 1])))
 		{

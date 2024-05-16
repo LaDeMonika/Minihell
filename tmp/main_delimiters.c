@@ -62,7 +62,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-int	find_redirector(char c1, char c2)
+int	find_redirect(char c1, char c2)
 {
 	if (c1 == '<')
 	{
@@ -83,13 +83,13 @@ int	find_redirector(char c1, char c2)
 	return (-1);
 }
 
-void	list_add(t_token_list **head, char *token, int type)
+void	list_add(t_str_list **head, char *str, int type)
 {
-	t_token_list	*new;
-	t_token_list *current;
+	t_str_list	*new;
+	t_str_list *current;
 
-	new = malloc(sizeof(t_token_list));
-	new->token = token;
+	new = malloc(sizeof(t_str_list));
+	new->str = str;
 	new->delimiter = type;
 	new->next = NULL;
 
@@ -101,7 +101,7 @@ void	list_add(t_token_list **head, char *token, int type)
 	current = *head;
 	while (current->next)
 	{
-		printf("token: %s type: %d\n", current->token, current->delimiter);
+		printf("str: %s type: %d\n", current->str, current->delimiter);
 		current = current->next;
 
 	}
@@ -117,7 +117,7 @@ void	redirect_input(char *input_file)
 
 	dup2(input_fd, STDIN_FILENO);
 }
-/* void	handle_redirections(t_token_list *list, char **envp)
+/* void	handle_redirections(t_str_list *list, char **envp)
 {
 	(void)envp;
 	while (list)
@@ -127,14 +127,14 @@ void	redirect_input(char *input_file)
 	}
 } */
 
-void	tokenize(char *command, char **envp)
+void	strize(char *command, char **envp)
 {
 	int	i;
 	int	preceding_delimiter;
 	int	succeeding_delimiter;
 	bool	delimiter_found;
-	char *token;
-	t_token_list	*list;
+	char *str;
+	t_str_list	*list;
 	int	start;
 	int	len;
 
@@ -148,19 +148,19 @@ void	tokenize(char *command, char **envp)
 
 	while (command[i])
 	{
-		succeeding_delimiter = find_redirector(command[i], command[i + 1]);
+		succeeding_delimiter = find_redirect(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			token = ft_substr(command, start, len);
-			printf("gonna add command part: %s start: %d len: %d\n", token, start, len);
+			str = ft_substr(command, start, len);
+			printf("gonna add command part: %s start: %d len: %d\n", str, start, len);
 			if (!delimiter_found)
 			{
-				list_add(&list, token, COMMAND);
+				list_add(&list, str, COMMAND);
 				delimiter_found = true;
 			}
 			else
 			{
-				list_add(&list, token, preceding_delimiter);
+				list_add(&list, str, preceding_delimiter);
 			}
 			if (succeeding_delimiter == HEREDOC || succeeding_delimiter == APPEND)
 				start = i + 2;
@@ -178,28 +178,28 @@ void	tokenize(char *command, char **envp)
 	}
 	if (i != start)
 	{
-		token = ft_substr(command, start, len);
-		printf("gonna add command part: %s start: %d len: %d\n", token, start, len);
-		list_add(&list, token, preceding_delimiter);
+		str = ft_substr(command, start, len);
+		printf("gonna add command part: %s start: %d len: %d\n", str, start, len);
+		list_add(&list, str, preceding_delimiter);
 	}
 	//if no delimiter is found, this function will just return and execute directly
 	while (list)
 	{
-		printf("print command part: %s type: %d\n", list->token, list->delimiter);
+		printf("print command part: %s type: %d\n", list->str, list->delimiter);
 		list = list->next;
 	}
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	/* t_token_list *list;
+	/* t_str_list *list;
 
 	list = NULL; */
-	//check if tokenize finds command:
+	//check if strize finds command:
 	char *command;
 
 	command = argv[1];
-	tokenize(command, envp);
+	strize(command, envp);
 
 
 }

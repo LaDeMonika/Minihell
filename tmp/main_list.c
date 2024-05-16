@@ -1,12 +1,12 @@
 #include "inc/minishell.h"
 
-void	list_add(t_token_list **head, char *token, int type)
+void	list_add(t_str_list **head, char *str, int type)
 {
-	t_token_list	*new;
-	t_token_list *current;
+	t_str_list	*new;
+	t_str_list *current;
 
-	new = malloc(sizeof(t_token_list));
-	new->token = token;
+	new = malloc(sizeof(t_str_list));
+	new->str = str;
 	new->delimiter = type;
 	new->next = NULL;
 
@@ -27,22 +27,22 @@ void	list_add(t_token_list **head, char *token, int type)
 
 int	main()
 {
-	t_token_list *list;
-	char	*token;
+	t_str_list *list;
+	char	*str;
 	int	type;
 
 	list = NULL;
-	token = "hello";
+	str = "hello";
 	type = 0;
 
-	list_add(&list, token, type);
+	list_add(&list, str, type);
 	list_add(&list, "bye", 1);
 	list_add(&list, "ok", 2);
 
 	//check function list_add:
 	while (list)
 	{
-		printf("command part: %s type: %d\n", list->token, list->delimiter);
+		printf("command part: %s type: %d\n", list->str, list->delimiter);
 		list = list->next;
 	}
 

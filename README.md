@@ -14,6 +14,7 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - Implement error handling.
 
 ### Lilie's Task
+    - remove libft and adjust makefile
     - free, close etc
 
     05/14 no command, just EOF:

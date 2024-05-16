@@ -13,12 +13,14 @@ void	handle_input(t_minishell *shell)
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
 	shell->list = malloc(sizeof(t_token_list *) * (shell->pipes_total + 2));
+	if (!shell->list)
+		error_free_all(shell, ERR_MALLOC);
 	shell->list[shell->pipes_total + 1] = NULL;
 	i = 0;
 	while (shell->input_array[i])
 	{
 		shell->list[i] = NULL;
-		tokenize(shell, shell->input_array[i], &shell->list[i]);
+		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
 	parse_input(shell);
@@ -36,17 +38,16 @@ int	main(int argc, char **argv, char **envp)
 	shell = NULL;
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
-		return (error_free_all(shell, ERR_MALLOC), 1);
+		error_free_all(shell, ERR_MALLOC);
+	init_shell_struct(shell, envp);
 	if (argc > 1)
 		return (error_free_all(shell, ERR_TOO_MANY_ARGS), 1);
-	init_shell_struct(shell, envp);
 	while (1)
 	{
+		init_input_iteration(shell);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		build_prompt(shell);
 		shell->usr_input = readline(shell->prompt);
-		shell->line_count++;
-		shell->pipes_total = 0;
 		if (!shell->usr_input)
 			return (free_all(shell), 0);
 		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " "), "\0", 1) != 0)
@@ -54,8 +55,6 @@ int	main(int argc, char **argv, char **envp)
 			add_history(shell->usr_input);
 			handle_input(shell);
 		}
-		free_and_reset_ptr((void **)&shell->prompt);
-		free_and_reset_ptr((void **)&shell->usr_input);
 	}
 	free_all(shell);
 }

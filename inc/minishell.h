@@ -54,8 +54,9 @@ typedef struct s_minishell
 	char					*input_file;
 	int						parsing_exit_status;
 	t_token_list			**list;
-	int						pre_redirector;
-	int						post_redirector;
+	int						pre_delimiter;
+	int						post_delimiter;
+	char					*unexpected_token;
 }							t_minishell;
 
 /****************************ENUM****************************/
@@ -103,17 +104,19 @@ enum						e_signal_handling_mode
 char						*find_command(t_minishell *shell,
 								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
-void						extract_token(t_minishell *shell, char *command, int start, int len,
-								int pre_redirector, t_token_list **list);
+void						extract_and_add_tokens(t_minishell *shell,
+								int index, int start, int len);
 // main
 void						custom_perror(char *prefix, char *custom_message);
 char						*set_exit_status(t_minishell *shell,
 								int *exit_status);
-void						list_add(t_token_list **head, char *token,
-								int type);
-void						append_to_command(t_minishell *shell, t_token_list **head, char *token);
+void						list_add(t_minishell *shell, t_token_list **head,
+								char *token);
+void						append_to_command(t_minishell *shell,
+								t_token_list **head, char *command_arg,
+								char *token);
 void						tokenize(t_minishell *shell, char *command,
-								t_token_list **list);
+								int index);
 void						parent(t_minishell *shell, char **input_array,
 								int pipes_left, int read_fd);
 void						child(t_minishell *shell, int pipes_left,
@@ -125,6 +128,7 @@ void						handle_input(t_minishell *shell);
 
 // init_shell_struct
 void						init_shell_struct(t_minishell *shell, char **envp);
+void						init_input_iteration(t_minishell *shell);
 
 // err
 void						error_free_all(t_minishell *shell, int err);
@@ -150,13 +154,13 @@ void						heredoc(t_minishell *shell, char *eof,
 
 // redirections
 
-int							find_redirector(t_minishell *shell, char *command,
-								int i);
+int							find_redirect(char *command, int i);
 void						redirect_input(char *input_file, int read_fd);
 void						redirect_output(char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
 								t_token_list *list, int read_fd);
-char	*remove_metaquotes(t_minishell *shell, char *command);
+char						*remove_metaquotes(t_minishell *shell,
+								char *command);
 // signals
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
@@ -171,10 +175,11 @@ char						*extract_substr_and_append(t_minishell *shell,
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
-int							skip_between_quotes(char *str, int i,
+int							skip_between_metaquotes(char *str, int i,
 								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
-char	**split_skip_quotes(t_minishell *shell, char *s, char sep);
+char						**split_skip_quotes(t_minishell *shell, char *s,
+								char sep);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,
@@ -201,8 +206,10 @@ int							ft_strncmp(const char *s1, const char *s2,
 int							ft_isalnum(int c);
 char						*ft_strdup(t_minishell *shell, const char *s);
 
-//strings_3
-char	*ft_itoa(t_minishell *shell, int n);
+// strings_3
+char						*ft_itoa(t_minishell *shell, int n);
+int							skip_first_metaquote_pair(char *str);
+bool						has_even_metaquotes(char *s);
 // utils_01
 
 #endif

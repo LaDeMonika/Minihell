@@ -54,24 +54,49 @@ char	*ft_itoa(t_minishell *shell, int n)
 	write_number(n, str, len);
 	return (str);
 }
-/* int	skip_between_quotes(char *str, int i, char metaquote)
+
+bool	has_even_metaquotes(char *s)
+{
+	int		i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == '"' || s[i] == '\'')
+		{
+			skip_between_metaquotes(s, i, s[i]);
+			if (!s[i])
+				return (false);
+		}
+		i++;
+	}
+	return (true);
+}
+
+
+int	skip_between_metaquotes(char *str, int i, char metaquote)
 {
 	i++;
 	while (str[i] && str[i] != metaquote)
 		i++;
 	return (i);
-} */
-
-int	skip_between_quotes(char *str, int i, char metaquote)
-{
-	int	old_i;
-
-	old_i = i;
-	i++;
-	while (str[i] && str[i] != metaquote)
-		i++;
-	return (i - old_i);
 }
+
+int	skip_first_metaquote_pair(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+			return (skip_between_metaquotes(str, i, str[i]));
+		i++;
+	}
+	return (0);
+
+}
+
 
 /*appends suffix to base and frees base afterwards*/
 char	*append_suffix(t_minishell *shell, char *base, char *suffix)
@@ -80,8 +105,6 @@ char	*append_suffix(t_minishell *shell, char *base, char *suffix)
 
 	new_str = base;
 	new_str = ft_strjoin(shell, base, suffix);
-	if (!new_str)
-		error_free_all(shell, ERR_MALLOC);
 	free_and_reset_ptr((void **)&base);
 	return (new_str);
 }
