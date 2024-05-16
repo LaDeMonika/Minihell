@@ -28,7 +28,7 @@ int	count_literal_chars(char *str, char *metaquote)
 }
 
 /*first determine new string length and then create new string without outer quotes*/
-char	*remove_metaquotes(t_minishell *shell, char *command)
+char	*remove_metaquotes(t_minishell *shell, char *str)
 {
 	char	*new_str;
 	int		new_len;
@@ -36,23 +36,21 @@ char	*remove_metaquotes(t_minishell *shell, char *command)
 	int		j;
 	char	metaquote;
 
-	new_len = count_literal_chars(command, &metaquote);
-	new_str = malloc(sizeof(char) * (new_len + 1));
-	if (!new_str)
-		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+	new_len = count_literal_chars(str, &metaquote);
+	new_str = try_malloc(shell, sizeof(char) * (new_len + 1));
 	i = 0;
 	j = 0;
-	while (command[i])
+	while (str[i])
 	{
-		if (command[i] != metaquote)
+		if (str[i] != metaquote)
 		{
-			new_str[j] = command[i];
+			new_str[j] = str[i];
 			j++;
 		}
 		i++;
 	}
 	new_str[j] = '\0';
-	free(command);
+	free(str);
 	return (new_str);
 }
 
@@ -67,7 +65,7 @@ char	*find_command(t_minishell *shell, char **input_array)
 	path = getenv("PATH");
 	if (!path)
 		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL);
-	shell->path_array = split_skip_quotes(shell,path, ':');
+	shell->path_array = split_while_skipping_quotes(shell,path, ':');
 	i = 0;
 	while (shell->path_array[i])
 	{
@@ -75,9 +73,7 @@ char	*find_command(t_minishell *shell, char **input_array)
 		command_path = ft_strjoin(shell, command_path, input_array[0]);
 		fd = access(command_path, F_OK & X_OK);
 		if (fd == 0)
-		{
 			return (command_path);
-		}
 		i++;
 	}
 	return (NULL);
@@ -105,8 +101,7 @@ void	execute_command(t_minishell *shell, char *command)
 	int		i;
 
 	// int		is_builtin;
-	(void)shell;
-	shell->command_array = split_skip_quotes(shell, command, ' ');
+	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	while (shell->command_array[i])
 	{

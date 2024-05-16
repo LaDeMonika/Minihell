@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_skip_quotes.c                           :+:      :+:    :+:   */
+/*   split_while_skipping_quotes.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -203,7 +203,7 @@ static int	put_words(char *s, char sep, char **array, char quote_marker, int sta
 	return (0);
 }
 
-char	**split_skip_quotes(char *s, char c)
+char	**split_while_skipping_quotes(char *s, char c)
 {
 	int		words;
 	char	**array;

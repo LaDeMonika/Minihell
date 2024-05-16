@@ -168,8 +168,7 @@ void						heredoc(t_minishell *shell, char *eof,
 // redirections
 
 int							find_redirect(char *command, int i);
-void	redirect_input(t_minishell *shell, char *input_file);
-void	redirect_output(t_minishell *shell, char *output_file, int delimiter);
+void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2);
 void						handle_redirections(t_minishell *shell,
 								t_token_list *list, int read_fd);
 char						*remove_metaquotes(t_minishell *shell,
@@ -191,14 +190,14 @@ char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_metaquotes(char *str, int i,
 								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
-char						**split_skip_quotes(t_minishell *shell, char *s,
+char						**split_while_skipping_quotes(t_minishell *shell, char *s,
 								char sep);
 
 //try
 int	try_read(t_minishell *shell, int fd, char **buffer, char *file);
 int	try_write(t_minishell *shell, int bytes, int fd, char *buffer);
 void	try_close(t_minishell *shell, int fd);
-int	try_open(t_minishell *shell, int mode, int permissions, char *file);
+int	try_open(t_minishell *shell, int mode, char *file);
 void	*try_malloc(t_minishell *shell, int size);
 void	try_dup2(t_minishell *shell, int fd, int fd2);
 

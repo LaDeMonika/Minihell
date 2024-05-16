@@ -11,12 +11,10 @@ void	handle_input(t_minishell *shell)
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
-	shell->input_array = split_skip_quotes(shell, shell->usr_input, '|');
+	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
-	shell->list = malloc(sizeof(t_token_list *) * (shell->pipes_total + 2));
-	if (!shell->list)
-		error_free_all(shell, ERR_MALLOC, NULL, NULL);
+	shell->list = try_malloc(shell, sizeof(t_token_list *) * (shell->pipes_total + 2));
 	shell->list[shell->pipes_total + 1] = NULL;
 	i = 0;
 	while (shell->input_array[i])

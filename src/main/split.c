@@ -71,7 +71,7 @@ void	put_words(t_minishell *shell, char *s, char sep, char **array)
 	}
 }
 
-char	**split_skip_quotes(t_minishell *shell, char *s, char sep)
+char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 {
 	int		words;
 	char	**array;

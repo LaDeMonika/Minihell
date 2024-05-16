@@ -2,14 +2,14 @@
 #include <limits.h>
 #include <stdbool.h>
 
-int	try_open(t_minishell *shell, int mode, int permissions, char *file)
+int	try_open(t_minishell *shell, int mode, char *file)
 {
 	int fd;
 
 	if (mode == WRITE_TRUNCATE)
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, permissions);
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (mode == WRITE_APPEND)
-	 	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, permissions);
+	 	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		fd = open(file, O_RDONLY);
 	if (fd == -1)

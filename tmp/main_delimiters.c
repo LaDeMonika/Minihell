@@ -108,7 +108,7 @@ void	list_add(t_str_list **head, char *str, int type)
 	current->next = new;
 }
 
-void	redirect_input(char *input_file)
+void	redirect_stream(char *input_file)
 {
 	int	input_fd;
 
@@ -123,7 +123,7 @@ void	redirect_input(char *input_file)
 	while (list)
 	{
 		if (list->delimiter == INPUT)
-			redirect_input(list->)
+			redirect_stream(list->)
 	}
 } */
 
