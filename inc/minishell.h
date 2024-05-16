@@ -2,7 +2,6 @@
 # define MINISHELL_H
 
 /**************************INCLUDES**************************/
-# include "../libft/libft.h"
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -210,6 +209,11 @@ char						*ft_strdup(t_minishell *shell, const char *s);
 char						*ft_itoa(t_minishell *shell, int n);
 int							skip_first_metaquote_pair(char *str);
 bool						has_even_metaquotes(char *s);
+
+//strings_4
+char	**ft_split(char const *s, char c);
+void	ft_putstr_fd(char	*s, int fd);
+
 // utils_01
 
 #endif
