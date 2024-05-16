@@ -16,6 +16,9 @@
 # include <unistd.h>
 
 /**************************DEFINES***************************/
+# define NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
+# define NEW_WORD_ON_SPACE (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1]))
+# define NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
 
 /**************************STRUCT****************************/
 typedef struct s_command_list
@@ -56,6 +59,7 @@ typedef struct s_minishell
 	int						pre_delimiter;
 	int						post_delimiter;
 	char					*unexpected_token;
+	char **command_array;
 }							t_minishell;
 
 /****************************ENUM****************************/
@@ -210,9 +214,9 @@ char						*ft_itoa(t_minishell *shell, int n);
 int							skip_first_metaquote_pair(char *str);
 bool						has_even_metaquotes(char *s);
 
-//strings_4
-char	**ft_split(char const *s, char c);
-void	ft_putstr_fd(char	*s, int fd);
+// strings_4
+char						**ft_split(char const *s, char c);
+void						ft_putstr_fd(char *s, int fd);
 
 // utils_01
 

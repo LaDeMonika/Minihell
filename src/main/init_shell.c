@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/15 21:05:22 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/16 15:52:30 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,18 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	shell->list = NULL;
 	shell->pid = NULL;
 	shell->input_file = NULL;
+	shell->command_array = NULL;
+	shell->path_array = NULL;
 }
 void	init_input_iteration(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
-	free_and_reset_array((void ***)&shell->list);
 	free_and_reset_array((void ***)&shell->input_array);
-	
+	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_array((void ***)&shell->path_array);
+	free_and_reset_array((void ***)&shell->command_array);
+
 	shell->line_count++;
 	shell->pipes_total = 0;
 	shell->pid = NULL;

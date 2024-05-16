@@ -59,7 +59,7 @@ char	*remove_metaquotes(t_minishell *shell, char *command)
 char	*find_command(t_minishell *shell, char **input_array)
 {
 	char	*path;
-	char	**path_array;
+
 	int		i;
 	char	*command_path;
 	int		fd;
@@ -67,11 +67,11 @@ char	*find_command(t_minishell *shell, char **input_array)
 	path = getenv("PATH");
 	if (!path)
 		return (error_free_all(shell, ERR_PATH_NOT_FOUND), NULL);
-	path_array = ft_split(path, ':');
+	shell->path_array = split_skip_quotes(shell,path, ':');
 	i = 0;
-	while (path_array[i])
+	while (shell->path_array[i])
 	{
-		command_path = ft_strjoin(shell, path_array[i], "/");
+		command_path = ft_strjoin(shell, shell->path_array[i], "/");
 		command_path = ft_strjoin(shell, command_path, input_array[0]);
 		fd = access(command_path, F_OK & X_OK);
 		if (fd == 0)
@@ -99,7 +99,6 @@ char	*set_exit_status(t_minishell *shell, int *exit_status)
 
 void	execute_command(t_minishell *shell, char *command)
 {
-	char	**command_array;
 	char	*path;
 	int		exit_status;
 	char	*custom_message;
@@ -107,26 +106,26 @@ void	execute_command(t_minishell *shell, char *command)
 
 	// int		is_builtin;
 	(void)shell;
-	command_array = split_skip_quotes(shell, command, ' ');
+	shell->command_array = split_skip_quotes(shell, command, ' ');
 	i = 0;
-	while (command_array[i])
+	while (shell->command_array[i])
 	{
-		command_array[i] = remove_metaquotes(shell, command_array[i]);
+		shell->command_array[i] = remove_metaquotes(shell, shell->command_array[i]);
 		i++;
 	}
 	// builtins
 	// is_builtin = ft_is_builtin(shell, command_array);
 	path = NULL;
-	if (strncmp(command_array[0], "./", 2) != 0)
-		path = find_command(shell, command_array);
+	if (strncmp(shell->command_array[0], "./", 2) != 0)
+		path = find_command(shell, shell->command_array);
 	else
-		path = command_array[0];
-	execve(path, command_array, shell->envp);
+		path = shell->command_array[0];
+	execve(path, shell->command_array, shell->envp);
 	// TODO: also set exit status and custom message for builtins
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
-		print_error(command_array[0], custom_message);
+		print_error(shell->command_array[0], custom_message);
 	else
-		print_error(command_array[0], NULL);
+		print_error(shell->command_array[0], NULL);
 	exit(exit_status);
 }
