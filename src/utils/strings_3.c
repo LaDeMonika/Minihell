@@ -48,9 +48,7 @@ char	*ft_itoa(t_minishell *shell, int n)
 	char	*str;
 
 	len = calculate_len(n);
-	str = malloc((len + 1) * sizeof(char));
-	if (!str)
-		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+	str = try_malloc(shell, (len + 1) * sizeof(char));
 	write_number(n, str, len);
 	return (str);
 }

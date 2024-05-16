@@ -72,7 +72,7 @@ void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 // close all the read ends of pipes before returning from recursive call
 void	handle_pipes(t_minishell *shell, int read_fd)
 {
-	shell->pid = malloc(sizeof(int) * (shell->pipes_total + 2));
+	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 2));
 	handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
 		read_fd);
 

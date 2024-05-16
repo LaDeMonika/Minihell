@@ -7,10 +7,7 @@ char	*ft_getpid(t_minishell *shell)
 	char	*pid;
 	int		i;
 
-	pid = NULL;
-	pid = malloc(sizeof(char) * 11);
-	if (!pid)
-		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+	pid = try_malloc(shell, sizeof(char) * 11);
 	i = 0;
 	fd = open("/proc/self/stat", O_RDONLY);
 	if (fd > 0)

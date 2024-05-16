@@ -28,14 +28,17 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 	char	*temp;
 
 	temp = word;
+
 	word = ft_strtrim(shell, word, " ");
+
 	free_and_reset_ptr((void **)&temp);
 	if (sep == '|' && (!word || !(*word)))
 	{
+
 		free_and_reset_ptr((void **)&word);
-		word = malloc(sizeof(char) * 2);
-		if (!word)
-			return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+
+		try_malloc(shell, sizeof(char) * 2);
+
 		word = "|";
 	}
 	return (word);
@@ -55,6 +58,7 @@ void	put_words(t_minishell *shell, char *s, char sep, char **array)
 	word = 0;
 	while (s[i])
 	{
+
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_metaquotes(s, i, s[i]);
 		if (!s[i] || NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
@@ -85,16 +89,17 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 		array = shell->command_array;
 	else if (sep == ':')
 		array = shell->path_array;
-	array = malloc((words + 1) * sizeof(char *));
-	if (!array)
-		error_free_all(shell, ERR_MALLOC, NULL, NULL);
+
+	array = try_malloc(shell, (words + 1) * sizeof(char *));
 	i = 0;
 	while (i < words + 1)
 	{
 		array[i] = NULL;
 		i++;
 	}
+
 	put_words(shell, s, sep, array);
+
 	return (array);
 }
 /* int	main(void)

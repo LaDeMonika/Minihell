@@ -22,9 +22,7 @@ char	*ft_strjoin(t_minishell *shell, char const *s1, char const *s2)
 
 	s1len = ft_strlen(s1);
 	s2len = ft_strlen(s2);
-	s = malloc((s1len + s2len + 1) * sizeof(char));
-	if (!s)
-		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+	s = try_malloc(shell, (s1len + s2len + 1) * sizeof(char));
 	i = 0;
 	while (s1 && *s1)
 	{
@@ -104,9 +102,7 @@ char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 	newlen = end - start + 1;
 	if (newlen < 0)
 		newlen = 0;
-	new = malloc((newlen + 1) * sizeof(char));
-	if (!new)
-		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
+	new = try_malloc(shell, (newlen + 1) * sizeof(char));
 	ft_strlcpy(new, s1 + start, newlen + 1);
 	*(new + newlen) = '\0';
 	return (new);
