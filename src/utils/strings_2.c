@@ -16,7 +16,7 @@ char	*ft_substr(t_minishell *shell, char const *s, unsigned int start, size_t le
 	sub = NULL;
 	sub = malloc((len + 1) * sizeof(char));
 	if (!sub)
-		return (error_free_all(shell, ERR_MALLOC), NULL);
+		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
 	sub[len] = '\0';
 	i = 0;
 	while (i < len)
@@ -68,7 +68,7 @@ char	*ft_strdup(t_minishell *shell, const char	*s)
 	ssize = ft_strlen(s) + 1;
 	new = malloc(sizeof(char) * ssize);
 	if (!new)
-		return (error_free_all(shell, ERR_MALLOC), NULL);
+		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
 	ft_strlcpy(new, s, ssize);
 	return (new);
 }

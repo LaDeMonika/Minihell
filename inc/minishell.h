@@ -21,11 +21,11 @@
 # define NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
 
 /**************************STRUCT****************************/
-typedef struct s_command_list
+typedef struct s_token_list
 {
 	char					*token;
 	int						delimiter;
-	struct s_command_list	*next;
+	struct s_token_list	*next;
 }							t_token_list;
 
 typedef struct s_minishell
@@ -75,7 +75,9 @@ enum						e_error
 	ERR_SIGEMPTYSET,
 	ERR_SIGACTION,
 	ERR_OPEN,
+	ERR_DUP2,
 	ERR_READ,
+	ERR_WRITE,
 	ERR_CLOSE,
 	ERR_GETPID
 };
@@ -99,6 +101,14 @@ enum						e_signal_handling_mode
 	CHILD,
 	HEREDOC_CHILD,
 	PARENT_WITH_HEREDOC
+};
+
+// signal handling modes
+enum						e_open_mode
+{
+	WRITE_TRUNCATE,
+	WRITE_APPEND,
+	READ
 };
 
 /*************************PROTOTYPES*************************/
@@ -134,7 +144,7 @@ void						init_shell_struct(t_minishell *shell, char **envp);
 void						init_input_iteration(t_minishell *shell);
 
 // err
-void						error_free_all(t_minishell *shell, int err);
+void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_error);
 void						free_and_reset_ptr(void **ptr);
 void						free_and_reset_array(void ***array);
 void						free_all(t_minishell *shell);
@@ -158,8 +168,8 @@ void						heredoc(t_minishell *shell, char *eof,
 // redirections
 
 int							find_redirect(char *command, int i);
-void						redirect_input(char *input_file, int read_fd);
-void						redirect_output(char *output_file, int delimiter);
+void	redirect_input(t_minishell *shell, char *input_file);
+void	redirect_output(t_minishell *shell, char *output_file, int delimiter);
 void						handle_redirections(t_minishell *shell,
 								t_token_list *list, int read_fd);
 char						*remove_metaquotes(t_minishell *shell,
@@ -183,6 +193,14 @@ int							skip_between_metaquotes(char *str, int i,
 char						*check_env_variables(t_minishell *shell, char *s);
 char						**split_skip_quotes(t_minishell *shell, char *s,
 								char sep);
+
+//try
+int	try_read(t_minishell *shell, int fd, char **buffer, char *file);
+int	try_write(t_minishell *shell, int bytes, int fd, char *buffer);
+void	try_close(t_minishell *shell, int fd);
+int	try_open(t_minishell *shell, int mode, int permissions, char *file);
+void	*try_malloc(t_minishell *shell, int size);
+void	try_dup2(t_minishell *shell, int fd, int fd2);
 
 //********************src/builtins
 int							ft_is_builtin(t_minishell *shell,

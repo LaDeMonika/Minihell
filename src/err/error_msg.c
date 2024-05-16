@@ -35,8 +35,9 @@ void	free_all(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell);
 }
 
-void	error_free_all(t_minishell *shell, int err)
+void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_error)
 {
+	(void)custom_error;
 	free_all(shell);
 	if (err == ERR_TOO_MANY_ARGS)
 		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
@@ -49,9 +50,13 @@ void	error_free_all(t_minishell *shell, int err)
 	else if (err == ERR_PATH_NOT_FOUND)
 		perror("getenv");
 	else if (err == ERR_OPEN)
-		perror("open");
+		print_error(prefix, NULL);
+	else if (err == ERR_DUP2)
+		print_error(prefix, NULL);
 	else if (err == ERR_READ)
 		perror("read");
+	else if (err == ERR_WRITE)
+		print_error(prefix, NULL);
 	else if (err == ERR_CLOSE)
 		perror("close");
 	else if (err == ERR_GETPID)

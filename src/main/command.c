@@ -39,7 +39,7 @@ char	*remove_metaquotes(t_minishell *shell, char *command)
 	new_len = count_literal_chars(command, &metaquote);
 	new_str = malloc(sizeof(char) * (new_len + 1));
 	if (!new_str)
-		return (error_free_all(shell, ERR_MALLOC), NULL);
+		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
 	i = 0;
 	j = 0;
 	while (command[i])
@@ -66,7 +66,7 @@ char	*find_command(t_minishell *shell, char **input_array)
 
 	path = getenv("PATH");
 	if (!path)
-		return (error_free_all(shell, ERR_PATH_NOT_FOUND), NULL);
+		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL);
 	shell->path_array = split_skip_quotes(shell,path, ':');
 	i = 0;
 	while (shell->path_array[i])

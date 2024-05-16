@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/14 18:28:46 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/16 18:48:50 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ void    append_hostname(t_minishell *shell)
 
     hostname_file = open("/etc/hostname", O_RDONLY);
 	if (hostname_file == -1)
-		error_free_all(shell, ERR_OPEN);
+		error_free_all(shell, ERR_OPEN, NULL, NULL);
 	if (read(hostname_file, hostname, 254) == -1)
-		error_free_all(shell, ERR_READ);
+		error_free_all(shell, ERR_READ, NULL, NULL);
 	if (close(hostname_file) == -1)
-		error_free_all(shell, ERR_CLOSE);
+		error_free_all(shell, ERR_CLOSE, NULL, NULL);
 	hostname_remainder = ft_strchr(hostname, '.');
 	if (hostname_remainder)
 		hostname[hostname_remainder - hostname] = '\0';

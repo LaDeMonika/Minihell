@@ -6,15 +6,17 @@ void	handle_input(t_minishell *shell)
 
 	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,
 			"exit ", 5) == 0)
-		error_free_all(shell, NO_ERROR);
+		error_free_all(shell, NO_ERROR, NULL, NULL);
+
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
+
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
 	shell->input_array = split_skip_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
 	shell->list = malloc(sizeof(t_token_list *) * (shell->pipes_total + 2));
 	if (!shell->list)
-		error_free_all(shell, ERR_MALLOC);
+		error_free_all(shell, ERR_MALLOC, NULL, NULL);
 	shell->list[shell->pipes_total + 1] = NULL;
 	i = 0;
 	while (shell->input_array[i])
@@ -23,6 +25,7 @@ void	handle_input(t_minishell *shell)
 		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
+
 	parse_input(shell);
 	if (shell->parsing_exit_status == 0)
 		handle_pipes(shell, STDIN_FILENO);
@@ -38,12 +41,13 @@ int	main(int argc, char **argv, char **envp)
 	shell = NULL;
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
-		error_free_all(shell, ERR_MALLOC);
+		error_free_all(shell, ERR_MALLOC, NULL, NULL);
 	init_shell_struct(shell, envp);
 	if (argc > 1)
-		return (error_free_all(shell, ERR_TOO_MANY_ARGS), 1);
+		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);
 	while (1)
 	{
+
 		init_input_iteration(shell);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		build_prompt(shell);
@@ -52,8 +56,10 @@ int	main(int argc, char **argv, char **envp)
 			return (free_all(shell), 0);
 		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " "), "\0", 1) != 0)
 		{
+
 			add_history(shell->usr_input);
 			handle_input(shell);
+
 		}
 	}
 	free_all(shell);

@@ -10,7 +10,7 @@ char	*ft_getpid(t_minishell *shell)
 	pid = NULL;
 	pid = malloc(sizeof(char) * 11);
 	if (!pid)
-		return (error_free_all(shell, ERR_MALLOC), NULL);
+		return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
 	i = 0;
 	fd = open("/proc/self/stat", O_RDONLY);
 	if (fd > 0)
@@ -31,9 +31,9 @@ char	*ft_getpid(t_minishell *shell)
 		}
 	}
 	else
-		return (free(pid), error_free_all(shell, ERR_OPEN), NULL);
+		return (free(pid), error_free_all(shell, ERR_OPEN, NULL, NULL), NULL);
 	close(fd);
-	return (free(pid), error_free_all(shell, ERR_GETPID), NULL);
+	return (free(pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
 }
 
 /*if environment value exists to key, then replace it with the value

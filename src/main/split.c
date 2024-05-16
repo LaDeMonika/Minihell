@@ -35,7 +35,7 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 		free_and_reset_ptr((void **)&word);
 		word = malloc(sizeof(char) * 2);
 		if (!word)
-			return (error_free_all(shell, ERR_MALLOC), NULL);
+			return (error_free_all(shell, ERR_MALLOC, NULL, NULL), NULL);
 		word = "|";
 	}
 	return (word);
@@ -87,7 +87,7 @@ char	**split_skip_quotes(t_minishell *shell, char *s, char sep)
 		array = shell->path_array;
 	array = malloc((words + 1) * sizeof(char *));
 	if (!array)
-		error_free_all(shell, ERR_MALLOC);
+		error_free_all(shell, ERR_MALLOC, NULL, NULL);
 	i = 0;
 	while (i < words + 1)
 	{

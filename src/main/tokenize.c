@@ -44,7 +44,7 @@ void	list_add(t_minishell *shell, t_token_list **head, char *token)
 
 	new = malloc(sizeof(t_token_list));
 	if (!new)
-		return (error_free_all(shell, ERR_MALLOC));
+		return (error_free_all(shell, ERR_MALLOC, NULL, NULL));
 	new->token = token;
 	new->delimiter = shell->pre_delimiter;
 	new->next = NULL;

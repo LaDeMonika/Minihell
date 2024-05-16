@@ -12,6 +12,7 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	write(STDERR_FILENO, " delimited by end-of-file (wanted `", 35);
 	write(STDERR_FILENO, eof, ft_strlen(eof));
 	write(STDERR_FILENO, "')\n", 3);
+	free_and_reset_ptr((void **)&str_line_count);
 }
 /*writes input to input_file and sends for each input a newline character to pipe*/
 void	write_to_file(t_minishell *shell, char *eof, char *input_file,
@@ -70,7 +71,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 
 void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *next)
 {
-	
+
 	if (this->delimiter == INVALID_PIPE)
 		shell->unexpected_token = "`|'";
 	else if (this->next)
@@ -100,16 +101,24 @@ if the redirection syntax is wrong, it will print an error*/
 void	parse_input(t_minishell *shell)
 {
 	int				i;
+	char	*index;
 	t_token_list	*list;
 
 	shell->parsing_exit_status = 0;
 	i = 0;
 	while (shell->input_array[i])
 	{
-		shell->input_file = ft_strjoin(shell, ft_itoa(shell, i), "_input.txt");
+		index = NULL;
+		index = ft_itoa(shell, i);
+
+		shell->input_file = ft_strjoin(shell, index, "_input.txt");
+
+		free_and_reset_ptr((void **)&index);
+
 		list = shell->list[i];
 		while (list)
 		{
+
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
