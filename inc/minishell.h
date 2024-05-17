@@ -16,9 +16,11 @@
 # include <unistd.h>
 
 /**************************DEFINES***************************/
+//split
 # define NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
 # define NEW_WORD_ON_SPACE (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1]))
 # define NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
+
 
 /**************************STRUCT****************************/
 typedef struct s_token_list
@@ -60,6 +62,7 @@ typedef struct s_minishell
 	int						post_delimiter;
 	char					*unexpected_token;
 	char **command_array;
+	bool	is_cd_in_parent;
 }							t_minishell;
 
 /****************************ENUM****************************/

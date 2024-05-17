@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 13:21:03 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/17 15:30:50 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ handles the changing in directory and
 
 int ft_cd(char **commad_array)
 {
+    //TODO: we might need to update PWD in env
     int i = 0;
     char *current = getcwd(NULL, 0);
 

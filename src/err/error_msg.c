@@ -74,7 +74,7 @@ void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_erro
 
 void	print_error(char *prefix, char *custom_error)
 {
-	write(STDERR_FILENO, "bash: ", 6);
+	//write(STDERR_FILENO, "bash: ", 6);
 	write(STDERR_FILENO, prefix, ft_strlen(prefix));
 	write(STDERR_FILENO, ": ", 2);
 	if (custom_error)
