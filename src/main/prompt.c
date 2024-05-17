@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/16 18:48:50 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/17 15:30:44 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void    append_path(t_minishell *shell)
 	char	new_path[PATH_MAX];
 	char	*home;
 
-	pwd = getenv("PWD");
+	pwd = getcwd(NULL, 0);
 	home = getenv("HOME");
 	if (ft_strnstr(pwd, home, ft_strlen(home)))
 	{

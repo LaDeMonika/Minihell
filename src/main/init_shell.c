@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/16 22:19:36 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/17 15:05:07 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,6 @@ void	init_input_iteration(t_minishell *shell)
 	shell->pid = NULL;
 	shell->input_file = NULL;
 	shell->unexpected_token = NULL;
+	shell->is_cd_in_parent = false;
 }
 

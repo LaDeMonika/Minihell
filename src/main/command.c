@@ -57,7 +57,6 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 char	*find_command(t_minishell *shell, char **input_array)
 {
 	char	*path;
-
 	int		i;
 	char	*command_path;
 	int		fd;
@@ -65,7 +64,7 @@ char	*find_command(t_minishell *shell, char **input_array)
 	path = getenv("PATH");
 	if (!path)
 		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL);
-	shell->path_array = split_while_skipping_quotes(shell,path, ':');
+	shell->path_array = split_while_skipping_quotes(shell, path, ':');
 	i = 0;
 	while (shell->path_array[i])
 	{
@@ -99,34 +98,35 @@ void	execute_command(t_minishell *shell, char *command)
 	int		exit_status;
 	char	*custom_message;
 	int		i;
-
 	int		is_builtin;
+
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	while (shell->command_array[i])
 	{
-		shell->command_array[i] = remove_metaquotes(shell, shell->command_array[i]);
+		shell->command_array[i] = remove_metaquotes(shell,
+				shell->command_array[i]);
 		i++;
 	}
 	// builtins
 	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
-	if (strncmp(shell->command_array[0], "./", 2) != 0)
-		path = find_command(shell, shell->command_array);
-	else
-		path = shell->command_array[0];
 
 	if (is_builtin == 1)
 	{
+		if (strncmp(shell->command_array[0], "./", 2) != 0)
+			path = find_command(shell, shell->command_array);
+		else
+			path = shell->command_array[0];
 		execve(path, shell->command_array, shell->envp);
-
 		// TODO: also set exit status and custom message for builtins
 		custom_message = set_exit_status(shell, &exit_status);
 		if (custom_message)
 			print_error(shell->command_array[0], custom_message);
 		else
 			print_error(shell->command_array[0], NULL);
-		}
-
-	exit(exit_status);
+		exit(exit_status);
+	}
+	if (!shell->is_cd_in_parent)
+		exit (is_builtin);
 }

@@ -5,8 +5,8 @@ void	handle_input(t_minishell *shell)
 {
 	int	i;
 
-	if (strncmp(shell->usr_input, "exit", 5) == 0 || strncmp(shell->usr_input,
-			"exit ", 5) == 0)
+	if (ft_strncmp(shell->usr_input, "exit", 5) == 0
+		|| strncmp(shell->usr_input, "exit ", 5) == 0)
 		error_free_all(shell, NO_ERROR, NULL, NULL);
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	shell->usr_input = expand_env_variables(shell, shell->usr_input);
@@ -26,7 +26,14 @@ void	handle_input(t_minishell *shell)
 		i++;
 	}
 	parse_input(shell);
-	if (shell->parsing_exit_status == 0)
+
+	if (shell->pipes_total == 0 && (ft_strncmp(shell->list[0]->token, "cd",
+				3) == 0 || ft_strncmp(shell->list[0]->token, "cd ", 3) == 0))
+	{
+		shell->is_cd_in_parent = true;
+		handle_redirections(shell, shell->list[0], STDIN_FILENO);
+	}
+	else if (shell->parsing_exit_status == 0)
 		handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
 			STDIN_FILENO);
 	else
@@ -58,6 +65,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(shell->usr_input);
 			handle_input(shell);
 		}
+
 	}
 	free_all(shell);
 }

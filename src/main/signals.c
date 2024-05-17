@@ -28,7 +28,9 @@ void	set_child_exit_status(t_minishell *shell, int *child_status,
 		int remaining_children)
 {
 	if (WIFEXITED(shell->status))
+	{
 		*child_status = WEXITSTATUS(shell->status);
+	}
 	else if (WIFSIGNALED(shell->status))
 	{
 		*child_status = WTERMSIG(shell->status) + 128;
