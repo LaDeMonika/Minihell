@@ -213,6 +213,7 @@ int     ft_echo(char **command_array);
 int     ft_cd(char **commad_array);
 int     ft_pwd(char **command_array);
 int     ft_env(t_minishell *shell, char **command_array);
+int 	ft_unset(t_minishell *shell, char **command_array);
 
 //********************src/utils
 // strings_1
