@@ -4,11 +4,18 @@ CFLAGS = -Wall -Werror -Wextra -g
 INCLDS = inc/minishell.h
 EXT_LIBS = -lreadline
 
-SRCS = main/minishell.c main/init_shell.c main/redirections.c main/signals.c main/prompt.c main/command.c main/pipes.c main/parse.c main/tokenize.c main/preprocess.c main/split.c main/try.c
+SRCS = main/minishell.c main/init_shell.c \
+		main/redirections.c main/signals.c \
+		main/prompt.c main/command.c main/pipes.c \
+		main/parse.c main/tokenize.c main/preprocess.c \
+		main/split.c main/try.c
 
-BUILTIN = builtins/builtin.c builtins/ft_echo.c
+BUILTIN = builtins/builtin.c builtins/ft_echo.c \
+			builtins/ft_cd.c builtins/ft_pwd.c \
+			builtins/ft_env.c
 
-UTILS = utils/strings_1.c utils/strings_2.c utils/strings_3.c utils/strings_4.c
+UTILS = utils/strings_1.c utils/strings_2.c \
+			utils/strings_3.c utils/strings_4.c
 
 ERR = err/error_msg.c
 

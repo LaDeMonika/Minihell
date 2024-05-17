@@ -22,6 +22,21 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - questions: sigpipe handling?
 
 
+### PROB
+```Bash
+ ./minishell
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ pwd
+/home/msimic/Documents/[01]_GitHub/Minihell
+bash: pwd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ cd ..
+bash: cd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ cd inc
+bash: cd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ ls
+" fjsdl ' fasdjkl "   inc   input   Makefile   minishell   minishell_tester   obj   readline.supp   README.md   src   tmp   utils_test
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ 
+```
+
 
 
 

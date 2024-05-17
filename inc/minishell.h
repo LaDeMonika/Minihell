@@ -207,9 +207,12 @@ void	try_pipe(t_minishell *shell, int fd[2]);
 int	try_fork(t_minishell *shell);
 
 //********************src/builtins
-int							ft_is_builtin(t_minishell *shell,
-								char **command_array);
-int							ft_echo(char **command_array);
+int 	ft_strcmp(char *s1, char *s2);
+int     ft_is_builtin(t_minishell *shell, char **command_array);
+int     ft_echo(char **command_array);
+int     ft_cd(char **commad_array);
+int     ft_pwd(char **command_array);
+int     ft_env(t_minishell *shell, char **command_array);
 
 //********************src/utils
 // strings_1

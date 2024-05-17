@@ -100,7 +100,7 @@ void	execute_command(t_minishell *shell, char *command)
 	char	*custom_message;
 	int		i;
 
-	// int		is_builtin;
+	int		is_builtin;
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	while (shell->command_array[i])
@@ -109,13 +109,16 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	// builtins
-	// is_builtin = ft_is_builtin(shell, command_array);
+	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
 	if (strncmp(shell->command_array[0], "./", 2) != 0)
 		path = find_command(shell, shell->command_array);
 	else
 		path = shell->command_array[0];
-	execve(path, shell->command_array, shell->envp);
+	
+	if (is_builtin == 1)
+		execve(path, shell->command_array, shell->envp);
+	
 	// TODO: also set exit status and custom message for builtins
 	custom_message = set_exit_status(shell, &exit_status);
 	if (custom_message)
