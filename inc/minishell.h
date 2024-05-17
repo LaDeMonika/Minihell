@@ -125,11 +125,12 @@ char						*find_command(t_minishell *shell,
 void						execute_command(t_minishell *shell, char *command);
 
 // main
-
-char						*set_exit_status(t_minishell *shell,
-								int *exit_status);
-
 void						handle_input(t_minishell *shell);
+//exit status
+int	set_exit_status_before_termination(t_minishell *shell, char **custom_message);
+void						set_exit_status_after_termination(t_minishell *shell,
+								int *child_status, int remaining_children);
+
 
 // init_shell_struct
 void						init_shell_struct(t_minishell *shell, char **envp);
@@ -183,8 +184,7 @@ char						*remove_metaquotes(t_minishell *shell,
 void						child_sigint_handler(int sig);
 void						child_sigquit_handler(int sig);
 void						parent_sigint_handler(int sig);
-void						set_child_exit_status(t_minishell *shell,
-								int *child_status, int remaining_children);
+
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
@@ -213,7 +213,7 @@ int	try_fork(t_minishell *shell);
 int 	ft_strcmp(char *s1, char *s2);
 int     ft_is_builtin(t_minishell *shell, char **command_array);
 int     ft_echo(char **command_array);
-int     ft_cd(char **commad_array);
+int     ft_cd(char **command_array);
 int     ft_pwd(char **command_array);
 int     ft_env(t_minishell *shell, char **command_array);
 //********************src/utils

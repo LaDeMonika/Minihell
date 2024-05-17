@@ -60,7 +60,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 		read_buffer = try_malloc(shell, sizeof(char));
 		while (try_read(shell, pipe_fd[0], &read_buffer, NULL) > 0)
 			shell->line_count++;
-		set_child_exit_status(shell, &shell->parsing_exit_status, 0);
+		set_exit_status_after_termination(shell, &shell->parsing_exit_status, 0);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		try_close(shell, pipe_fd[0]);
 	}

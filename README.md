@@ -21,7 +21,7 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
     - streamline error handling
     - questions: sigpipe handling?
 
-- cd without argument
+- correct exit status code when parsin fails (now it's always 2)
 - next: exit status, errno and perror of cd
 - maybe need to update PWD in env
 

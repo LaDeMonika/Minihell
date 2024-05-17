@@ -77,20 +77,7 @@ char	*find_command(t_minishell *shell, char **input_array)
 	}
 	return (NULL);
 }
-char	*set_exit_status(t_minishell *shell, int *exit_status)
-{
-	(void)shell;
-	*exit_status = EXIT_FAILURE;
-	if (errno == EACCES)
-		*exit_status = 126;
-	else if (errno == EFAULT || errno == ENOENT)
-	{
-		*exit_status = 127;
-		if (errno == EFAULT)
-			return ("command not found");
-	}
-	return (NULL);
-}
+
 
 void	execute_command(t_minishell *shell, char *command)
 {
@@ -99,6 +86,7 @@ void	execute_command(t_minishell *shell, char *command)
 	char	*custom_message;
 	int		i;
 	int		is_builtin;
+	bool	error;
 
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
@@ -112,7 +100,8 @@ void	execute_command(t_minishell *shell, char *command)
 	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
 
-	if (is_builtin == 1)
+	error = false;
+	if (is_builtin == 2)
 	{
 		if (strncmp(shell->command_array[0], "./", 2) != 0)
 			path = find_command(shell, shell->command_array);
@@ -120,13 +109,22 @@ void	execute_command(t_minishell *shell, char *command)
 			path = shell->command_array[0];
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
-		custom_message = set_exit_status(shell, &exit_status);
-		if (custom_message)
-			print_error(shell->command_array[0], custom_message);
-		else
-			print_error(shell->command_array[0], NULL);
-		exit(exit_status);
+		error = true;
+
+
 	}
+	if (is_builtin == 1)
+		error = true;
+	if (error)
+	{
+		custom_message = NULL;
+		exit_status = set_exit_status_before_termination(shell, &custom_message);
+		/* custom_message = set_exit_status_before_termination(shell, &exit_status); */
+		print_error(shell->command_array[0], custom_message);
+	}
+	else
+		exit_status = 0;
+
 	if (!shell->is_cd_in_parent)
-		exit (is_builtin);
+		exit (exit_status);
 }

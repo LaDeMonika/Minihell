@@ -17,7 +17,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		{
 			if (waitpid(shell->pid[shell->pipes_total], &shell->status, 0) == -1)
 				error_free_all(shell, ERR_WAITPID, NULL, NULL);
-			set_child_exit_status(shell, &shell->last_exit_status, shell->pipes_total);
+			set_exit_status_after_termination(shell, &shell->last_exit_status, shell->pipes_total);
 			shell->pipes_total--;
 		}
 	}

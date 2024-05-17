@@ -24,25 +24,7 @@ void	parent_sigint_handler(int sig)
 	rl_redisplay();
 }
 
-void	set_child_exit_status(t_minishell *shell, int *child_status,
-		int remaining_children)
-{
-	if (WIFEXITED(shell->status))
-	{
-		*child_status = WEXITSTATUS(shell->status);
-	}
-	else if (WIFSIGNALED(shell->status))
-	{
-		*child_status = WTERMSIG(shell->status) + 128;
-		if (WCOREDUMP(shell->status))
-		{
-			if (remaining_children == 0)
-				write(2, "Quit (core dumped)\n", 19);
-		}
-		else if (remaining_children < 2)
-			write(2, "\n", 1);
-	}
-}
+
 /*
 with sigemptyset reset signals that can block the signal handling
 with sa_flags determine no special signal handling*/
