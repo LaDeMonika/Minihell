@@ -1,36 +1,87 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   error_msg.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/02 12:57:17 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/04 16:31:14 by msimic           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-static void    ft_puterror(const char *fault, const char *msg)
+void	free_and_reset_ptr(void **ptr)
 {
-    if (fault && ft_strlen(fault))
-        printf("Error: %s\n", fault);
-    if (msg && ft_strlen(msg))
-        printf("Expected: %s\n", msg);
-    printf("\n");
+	if (ptr && *ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
 }
 
-void    ft_error_msg(char err)
+void	free_and_reset_array(void ***array)
 {
-    if (err == ERR_MALLOC)
-        ft_puterror("Memory allocation failed", "");
-    else if (err == ERR_TOO_MANY_ARGS)
-        ft_puterror("Too many arguments", "Please try again");
-    else if (err == ERR_TOO_FEW_ARGS)
-        ft_puterror("Too few arguments", "Please try again");
-    else if (err == ERR_INVALID_ARG)
-        ft_puterror("Invalid argument", "Please try again");
-    else if (err == ERR_PATH_NOT_FOUND)
-        ft_puterror("Path not found", "");
+	int	i;
+
+	i = 0;
+	while (array && *array && (*array)[i])
+	{
+		free(((*array))[i]);
+		(*array)[i] = NULL;
+		i++;
+	}
+	free_and_reset_ptr(*array);
+}
+
+void	free_all(t_minishell *shell)
+{
+	free_and_reset_ptr((void **)&shell->prompt);
+	free_and_reset_ptr((void **)&shell->usr_input);
+	free_and_reset_array((void ***)&shell->input_array);
+	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_ptr((void **)&shell);
+}
+
+void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_error)
+{
+	(void)custom_error;
+	free_all(shell);
+	if (err == ERR_TOO_MANY_ARGS)
+		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
+	else if (err == ERR_MALLOC)
+		perror("malloc");
+	else if (err == ERR_SIGEMPTYSET)
+		perror("sigemptyset");
+	else if (err == ERR_SIGACTION)
+		perror("sigaction");
+	else if (err == ERR_PATH_NOT_FOUND)
+		perror("getenv");
+	else if (err == ERR_OPEN)
+		print_error(prefix, NULL);
+	else if (err == ERR_DUP2)
+		print_error(prefix, NULL);
+	else if (err == ERR_READ)
+		perror("read");
+	else if (err == ERR_WRITE)
+		print_error(prefix, NULL);
+	else if (err == ERR_CLOSE)
+		perror("close");
+	else if (err == ERR_PIPE)
+		perror("pipe");
+	else if (err == ERR_FORK)
+		perror("fork");
+	else if (err == ERR_WAITPID)
+		perror("waitpid");
+	else if (err == ERR_GETPID)
+		write(STDERR_FILENO, "Error getting pid\n", 18);
+	if (err == NO_ERROR)
+		exit(EXIT_SUCCESS);
+	exit(EXIT_FAILURE);
+}
+
+void	print_error(char *prefix, char *custom_error)
+{
+	write(STDERR_FILENO, "bash: ", 6);
+	write(STDERR_FILENO, prefix, ft_strlen(prefix));
+	write(STDERR_FILENO, ": ", 2);
+	if (custom_error)
+	{
+		write(STDERR_FILENO, custom_error, ft_strlen(custom_error));
+		write(STDERR_FILENO, "\n", 1);
+	}
+	else
+		perror(NULL);
 }

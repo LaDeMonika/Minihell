@@ -1,93 +1,74 @@
-# include "../../inc/minishell.h"
-#include <readline/readline.h>
-#include <unistd.h>
+#include "../../inc/minishell.h"
+#include <stdbool.h>
 
 void	child_sigint_handler(int sig)
 {
 	(void)sig;
-
-	//printf("child caught sigint\n");
-	write(2, "child caught signal\n", 21);
+	write(2, "> ^C\n", 5);
 	exit(130);
 }
 
 void	child_sigquit_handler(int sig)
 {
 	(void)sig;
-
-	write(2, "^\\Quit (core dumped)\n", 22);
+	write(2, "^\\Quit (core dumped)\n", 21);
 	exit(131);
 }
 
-void	sigint_handler(int sig)
+void	parent_sigint_handler(int sig)
 {
 	(void)sig;
-
-	/* printf("\n%s", build_prompt()); */
-
-	/* printf("sender pid: %d current pid: %d real uid: %d\n", info->si_pid, getpid(), info->si_uid);
-	sender_pid = info->si_pid;
-	if (info->si_code == CLD_EXITED) // child:
-	{
-		printf("Handled by PID: %d, signal from PID: %d real user ID: %d\n", getpid(), info->si_pid, info->si_uid);
-		exit(EXIT_FAILURE);
-	}
-	else //parent: sid > 0 uid > 0
-	{
-		printf("Handled by PID: %d, signal from PID: %d real user ID: %d\n", getpid(), info->si_pid, info->si_uid);
-		//exit(EXIT_FAILURE);
-	} */
-
-
-	//
-	//printf("\n");
-	//while (kill(0, sig) != -1);
-
 	write(2, "\n", 1);
-	//write(2, "parent caught signal\n", 22);
 	rl_on_new_line();
 	rl_replace_line("", 0);
-    rl_redisplay();
+	rl_redisplay();
 }
 
-void	set_child_signals(t_minishell *shell)
-{
-	shell->sa_sigint.sa_handler = child_sigint_handler;
-	sigaction(SIGINT, &shell->sa_sigint, NULL);
-	shell->sa_sigquit.sa_handler = child_sigquit_handler;
-	sigaction(SIGQUIT, &shell->sa_sigquit, NULL);
-}
-
-void	set_last_exit_status(t_minishell *shell)
+void	set_child_exit_status(t_minishell *shell, int *child_status,
+		int remaining_children)
 {
 	if (WIFEXITED(shell->status))
-	{
-		shell->last_exit_status = WEXITSTATUS(shell->status);
-	}
+		*child_status = WEXITSTATUS(shell->status);
 	else if (WIFSIGNALED(shell->status))
 	{
-		write(2, "\n", 1);
-		printf("before adding 128: %d\n", WTERMSIG(shell->status));
-		shell->last_exit_status = WTERMSIG(shell->status) + 128;
-	}
-	printf("exit status: %d\n", shell->last_exit_status);
-	if (WCOREDUMP(shell->status))
-	{
-
-		printf("some core was dumped\n");
-		write(2, "^\\Quit (core dumped)\n", 22);
+		*child_status = WTERMSIG(shell->status) + 128;
+		if (WCOREDUMP(shell->status))
+		{
+			if (remaining_children == 0)
+				write(2, "Quit (core dumped)\n", 19);
+		}
+		else if (remaining_children < 2)
+			write(2, "\n", 1);
 	}
 }
-
-void	handle_signals(t_minishell *shell)
+/*
+with sigemptyset reset signals that can block the signal handling
+with sa_flags determine no special signal handling*/
+void	set_signals(t_minishell *shell, int mode)
 {
-	shell->sa_sigint.sa_handler = sigint_handler;
-	shell->sa_sigint.sa_flags = 0;
-	sigemptyset(&shell->sa_sigint.sa_mask);
-	sigaction(SIGINT, &shell->sa_sigint, NULL);
+	bool	is_child;
 
-	shell->sa_sigquit.sa_handler = SIG_IGN;
+	is_child = false;
+	if (mode == CHILD || mode == HEREDOC_CHILD)
+		is_child = true;
+	if (sigemptyset(&shell->sa_sigint.sa_mask) == -1 || sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
+		error_free_all(shell, ERR_SIGEMPTYSET, NULL, NULL);
+	shell->sa_sigint.sa_flags = 0;
 	shell->sa_sigquit.sa_flags = 0;
-	sigemptyset(&shell->sa_sigquit.sa_mask);
-	sigaction(SIGQUIT, &shell->sa_sigquit, NULL);
+	if (mode == PARENT_WITHOUT_CHILD)
+		shell->sa_sigint.sa_handler = parent_sigint_handler;
+	if (mode == PARENT_WITH_CHILD)
+		shell->sa_sigint.sa_handler = SIG_IGN;
+	if (mode == PARENT_WITHOUT_CHILD || mode == PARENT_WITH_CHILD
+		|| mode == HEREDOC_CHILD)
+		shell->sa_sigquit.sa_handler = SIG_IGN;
+	if (mode == HEREDOC_CHILD)
+		shell->sa_sigint.sa_handler = child_sigint_handler;
+	if (mode == CHILD)
+	{
+		shell->sa_sigint.sa_handler = child_sigint_handler;
+		shell->sa_sigquit.sa_handler = child_sigquit_handler;
+	}
+	if (sigaction(SIGINT, &shell->sa_sigint, NULL) == -1 || sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
+		error_free_all(shell, ERR_SIGACTION, NULL, NULL);
 }

@@ -1,7 +1,4 @@
 #include "inc/minishell.h"
-#include "libft/libft.h"
-#include <stdbool.h>
-#include <unistd.h>
 
 size_t	ft_strlen(const char *s)
 {
@@ -65,7 +62,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-int	find_delimiter(char c1, char c2)
+int	find_redirect(char c1, char c2)
 {
 	if (c1 == '<')
 	{
@@ -86,13 +83,13 @@ int	find_delimiter(char c1, char c2)
 	return (-1);
 }
 
-void	list_add(t_command_list **head, char *command_part, int type)
+void	list_add(t_str_list **head, char *str, int type)
 {
-	t_command_list	*new;
-	t_command_list *current;
+	t_str_list	*new;
+	t_str_list *current;
 
-	new = malloc(sizeof(t_command_list));
-	new->command_part = command_part;
+	new = malloc(sizeof(t_str_list));
+	new->str = str;
 	new->delimiter = type;
 	new->next = NULL;
 
@@ -104,14 +101,14 @@ void	list_add(t_command_list **head, char *command_part, int type)
 	current = *head;
 	while (current->next)
 	{
-		printf("command_part: %s type: %d\n", current->command_part, current->delimiter);
+		printf("str: %s type: %d\n", current->str, current->delimiter);
 		current = current->next;
 
 	}
 	current->next = new;
 }
 
-void	redirect_input(char *input_file)
+void	redirect_stream(char *input_file)
 {
 	int	input_fd;
 
@@ -120,24 +117,24 @@ void	redirect_input(char *input_file)
 
 	dup2(input_fd, STDIN_FILENO);
 }
-/* void	handle_redirections(t_command_list *list, char **envp)
+/* void	handle_redirections(t_str_list *list, char **envp)
 {
 	(void)envp;
 	while (list)
 	{
 		if (list->delimiter == INPUT)
-			redirect_input(list->)
+			redirect_stream(list->)
 	}
 } */
 
-void	handle_delimiters(char *command, char **envp)
+void	strize(char *command, char **envp)
 {
 	int	i;
 	int	preceding_delimiter;
 	int	succeeding_delimiter;
 	bool	delimiter_found;
-	char *command_part;
-	t_command_list	*list;
+	char *str;
+	t_str_list	*list;
 	int	start;
 	int	len;
 
@@ -151,19 +148,19 @@ void	handle_delimiters(char *command, char **envp)
 
 	while (command[i])
 	{
-		succeeding_delimiter = find_delimiter(command[i], command[i + 1]);
+		succeeding_delimiter = find_redirect(command[i], command[i + 1]);
 		if (succeeding_delimiter > -1)
 		{
-			command_part = ft_substr(command, start, len);
-			printf("gonna add command part: %s start: %d len: %d\n", command_part, start, len);
+			str = ft_substr(command, start, len);
+			printf("gonna add command part: %s start: %d len: %d\n", str, start, len);
 			if (!delimiter_found)
 			{
-				list_add(&list, command_part, COMMAND);
+				list_add(&list, str, COMMAND);
 				delimiter_found = true;
 			}
 			else
 			{
-				list_add(&list, command_part, preceding_delimiter);
+				list_add(&list, str, preceding_delimiter);
 			}
 			if (succeeding_delimiter == HEREDOC || succeeding_delimiter == APPEND)
 				start = i + 2;
@@ -181,28 +178,28 @@ void	handle_delimiters(char *command, char **envp)
 	}
 	if (i != start)
 	{
-		command_part = ft_substr(command, start, len);
-		printf("gonna add command part: %s start: %d len: %d\n", command_part, start, len);
-		list_add(&list, command_part, preceding_delimiter);
+		str = ft_substr(command, start, len);
+		printf("gonna add command part: %s start: %d len: %d\n", str, start, len);
+		list_add(&list, str, preceding_delimiter);
 	}
 	//if no delimiter is found, this function will just return and execute directly
 	while (list)
 	{
-		printf("print command part: %s type: %d\n", list->command_part, list->delimiter);
+		printf("print command part: %s type: %d\n", list->str, list->delimiter);
 		list = list->next;
 	}
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	/* t_command_list *list;
+	/* t_str_list *list;
 
 	list = NULL; */
-	//check if handle_delimiters finds command:
+	//check if strize finds command:
 	char *command;
 
 	command = argv[1];
-	handle_delimiters(command, envp);
+	strize(command, envp);
 
 
 }

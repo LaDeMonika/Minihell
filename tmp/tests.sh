@@ -1,48 +1,42 @@
 #!/bin/bash
 
+cd ..
+make
+
+#make outputdir if necessary
+output_dir="./test_output"
+mkdir -p $output_dir
+
 #files for storing outputs
-output_bash="output.bash.txt"
-output_minishell="output_minishell.txt"
+output_bash=$output_dir/"output_bash.txt"
+output_minishell=$output_dir/"output_minishell.txt"
+commands_file="test_commands.txt"
 
-#piping
-command="ls | grep m | grep n | grep i"
-eval $command > $output_bash
-echo "$command" | ./minishell | sed '1d;$d' > $output_minishell
+#clear previous outputs
+echo "" > $output_bash
+echo "" > $output_minishell
 
-diff_output=$(diff $output_bash $output_minishell)
-echo "piping test: command "$command""
-if $diff_output; then
-	echo "output OK"
-else
-	echo "output difference:"
-	echo "$diff:output"
-fi
-echo ""
+#read from file until end
+#IFS= prevents trimming
+#read-r prevents escaping backslashes
+while IFS= read -r command
+do
+	#is true if command is empty
+	if [ -z "$command" ]; then
+		continue
+	fi
+	eval "$command" &> $output_bash
+	echo "$command" | ./minishell | sed '1d;$d' &> $output_minishell
 
-#redirection
-command="wc -l < input.txt"
-command="wc -l < input.txt > output.txt"
-command="wc -l < input.txt < input2.txt"
-command="wc -l <> output.txt"
+	#compare bash and minishell output
+	diff_output=$(diff $output_bash $output_minishell)
 
-#heredoc
-command="wc -l << a << b"
-
-#redirection + heredoc
-command="wc -l < input.txt >> output.txt"
-command="wc -l << EOF > output.txt"
-command="wc-l < input.txt >> output.txt >> output2.txt"
-command="wc -l >> output.txt << a << b < input.txt > output2.txt"
-command="echo "hello" > output yes.txt <<eof"
-
-#input + heredoc 4 combinations
-command="wc << a << b"
-command="wc < input1 << b"
-command="wc << b < input1"
-command="wc < input1 < input2"
-
-#redirection + piping
-command="grep i < input.txt | wc -l > output.txt"
-
-#redirection + heredoc + piping
-command="wc -l << a << b | wc -l > output.txt"
+	echo "Testing command: "$command""
+	if $diff_output; then
+		echo "Output OK"
+	else
+		echo "Output difference: "
+		echo "$diff_output"
+	fi
+	echo ""
+done < "$commands_file"

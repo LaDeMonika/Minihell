@@ -1,122 +1,64 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   redirections.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/10 16:36:05 by msimic            #+#    #+#             */
-/*   Updated: 2024/04/18 23:03:15 by lilin            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
+#include <fcntl.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-void	append_output(char *output_file)
+void	temporary_input_redirect(t_minishell *shell, int read_fd)
 {
-	int	output_fd;
+	char	*temp_index;
+	char	*temp_file;
+	int		temp_fd;
+	char	*buffer;
 
-	output_fd = open(output_file, O_WRONLY | O_APPEND);
-	dup2(output_fd, STDOUT_FILENO);
+	temp_index = ft_itoa(shell, read_fd);
+	temp_file = append_suffix(shell, temp_index, "_temp_input");
+	temp_fd = try_open(shell, WRITE_TRUNCATE, temp_file);
+	buffer = try_malloc(shell, sizeof(char) * 1);
+	while (try_read(shell, STDIN_FILENO, &buffer, temp_file) > 0)
+		try_write(shell, temp_fd, buffer, 1);
+	try_close(shell, temp_fd);
+	temp_fd = try_open(shell, READ, temp_file);
+	free_and_reset_ptr((void **)&temp_file);
+	try_dup2(shell, temp_fd, STDIN_FILENO);
+	try_close(shell, temp_fd);
 }
 
-void	heredoc_input(char *eof)
+void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 {
-	int input_fd;
-	char *input;
+	int	fd;
 
-	input_fd = open("input.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	input = readline("> ");
-	while (input && ft_strncmp(input, eof, ft_strlen(eof) +1) != 0)
-	{
-		write(input_fd, input, ft_strlen(input));
-		write(input_fd, "\n", 1);
-		input = readline("> ");
-	}
-	close(input_fd);
-	input_fd = open("input.txt", O_RDONLY);
-	dup2(input_fd, STDIN_FILENO);
-	close(input_fd);
+	fd = try_open(shell, mode, file);
+	try_dup2(shell, fd, fd2);
+	try_close(shell, fd);
 }
 
-int	find_delimiter(char c1, char c2)
+/*
+regarding input & heredoc: only if it is the most right delimiter,
+	is _stdin will be true, and thus STDIN for the command should be redirected
+*/
+void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 {
-	if (c1 == '<')
-	{
-		if (c2 == '<')
-			return HEREDOC;
-		return INPUT;
-	}
-	else if (c1 == '>')
-	{
-		if (c2 == '>')
-			return APPEND;
-		return OUTPUT;
-	}
-	return (-1);
-}
-
-void	redirect_input(char *input_file)
-{
-	int	input_fd;
-
-	input_fd = open(input_file, O_RDONLY);
-	if (input_fd > 0)
-		dup2(input_fd, STDIN_FILENO);
-	else
-	{
-		perror(input_file);
-		exit(EXIT_FAILURE);
-	}
-
-
-}
-
-void	redirect_output(char *output_file)
-{
-	int	output_fd;
-
-	output_fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	dup2(output_fd, STDOUT_FILENO);
-}
-
-void	heredoc_execute(char *eof)
-{
-	char	*input;
-
-	input = readline("> ");
-	while (ft_strncmp(input, eof, ft_strlen(eof) +1) != 0)
-	{
-		input = readline("> ");
-	}
-}
-
-void	handle_redirections(t_command_list *list, char **envp)
-{
-	char *command;
+	char	*command;
 
 	command = NULL;
-	(void)envp;
+	(void)read_fd;
+	/* if (read_fd > 0)
+		temporary_input_redirect(shell, read_fd); */
 	while (list)
 	{
 		if (list->delimiter == COMMAND)
-			command = list->command_part;
-		else if (list->delimiter == INPUT && list->primary_input)
-			redirect_input(list->command_part);
+			command = list->token;
+		else if (list->delimiter == INPUT)
+			redirect_stream(shell, list->token, READ, STDIN_FILENO);
 		else if (list->delimiter == OUTPUT)
-			redirect_output(list->command_part);
+			redirect_stream(shell, list->token, WRITE_TRUNCATE, STDOUT_FILENO);
 		else if (list->delimiter == APPEND)
-			append_output(list->command_part);
+			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
 		else if (list->delimiter == HEREDOC)
-		{
-			if (list->primary_input == true)
-				heredoc_input(list->command_part);
-			else if (list->primary_input == false)
-				heredoc_execute(list->command_part);
-		}
+			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
 		list = list->next;
 	}
-	execute_command(command, envp);
+	execute_command(shell, command);
 }

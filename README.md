@@ -7,15 +7,37 @@
 -> <a href="https://www.linux.org/threads/bash-03-–-command-line-processing.38676/" target="_blank">Command-line processing</a>
 -> <a href="https://github.com/Swoorup/mysh" target="_blank">Practice example from 42 Decs</a>
 
-### Monika's Task
-    ## Next Steps:
+Valgrind: run it with this flag to suppress all readline leaks: --suppressions=readline.supp
 
-    - Finish implementing the `execute_command` function.
+### Monika's Task
     - Builtins.
     - Implement error handling.
 
 ### Lilie's Task
-    - exit status not correct for cat | ls
-    - free
+    - remove libft and adjust makefile
+    - free, close etc: remove list nodes
+
     - error handling
-    - add bash warning for EOF signal during heredoc
+    - streamline error handling
+    - questions: sigpipe handling?
+
+
+### PROB
+```Bash
+ ./minishell
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ pwd
+/home/msimic/Documents/[01]_GitHub/Minihell
+bash: pwd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ cd ..
+bash: cd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ cd inc
+bash: cd: No such file or directory
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ ls
+" fjsdl ' fasdjkl "   inc   input   Makefile   minishell   minishell_tester   obj   readline.supp   README.md   src   tmp   utils_test
+msimic@@c2r5p11:~/Documents/[01]_GitHub/Minihell$ 
+```
+
+
+
+
+

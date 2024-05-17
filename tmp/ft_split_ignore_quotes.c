@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split_ignore_quotes.c                           :+:      :+:    :+:   */
+/*   split_while_skipping_quotes.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 17:12:20 by lilin             #+#    #+#             */
-/*   Updated: 2024/04/12 16:06:32 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/03 21:55:26 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include <stdlib.h>
 
 
-static char	*add_heredoc(char *s, char quote_marker)
+static char	*append_heredoc_on_missing_quote(char *s, char quote_marker)
 {
-	char	*new_s;
+	char	*new_str;
 
-	new_s = ft_strjoin((const char*)s, "<<");
-	new_s = ft_strjoin(s, &quote_marker);
-	return (new_s);
+	new_str = ft_strjoin((const char*)s, "<<");
+	new_str = ft_strjoin(s, &quote_marker);
+	return (new_str);
 }
 
 static char	find_quote(char *s, int *start, int *end)
@@ -80,16 +80,16 @@ static int	count_words(char *s, char sep, char quote_marker, int start_quote, in
 	return (words);
 }
 
-char	*append_affix(char *old_s, int start, int len, char *new_s)
+char	*extract_substr_and_append(char *old_s, int start, int len, char *new_str)
 {
 	char	*affix;
 
 	affix = ft_substr(old_s, start, len - start);
-	if (new_s)
-		new_s = ft_strjoin(new_s, affix);
+	if (new_str)
+		new_str = ft_strjoin(new_str, affix);
 	else
-		new_s = affix;
-	return (new_s);
+		new_str = affix;
+	return (new_str);
 }
 
 char *check_env_variables(char *s)
@@ -98,27 +98,27 @@ char *check_env_variables(char *s)
 	int	start;
 	char	*env_key;
 	char	*env_value;
-	char	*new_s;
+	char	*new_str;
 
 	i = 0;
 	start = 0;
-	new_s = NULL;
+	new_str = NULL;
 	while (s[i])
 	{
 		if (s[i] == '$')
 		{
-			new_s = append_affix(s, start, i, new_s);
+			new_str = extract_substr_and_append(s, start, i, new_str);
 			start = i + 1;
 			while (s[i] && s[i] != ' ')
 				i++;
 			env_key = ft_substr(s, start, i - start);
 			env_value = getenv(env_key);
 			if (env_value)
-				new_s = ft_strjoin(new_s, env_value);
+				new_str = ft_strjoin(new_str, env_value);
 			else
 			{
-			 	new_s = ft_strjoin(new_s, "$");
-				new_s = ft_strjoin(new_s, env_key);
+			 	new_str = ft_strjoin(new_str, "$");
+				new_str = ft_strjoin(new_str, env_key);
 			}
 			start = i;
 
@@ -126,8 +126,8 @@ char *check_env_variables(char *s)
 		i++;
 	}
 	if (s[start])
-		append_affix(s, start, i, new_s);
-	return (new_s);
+		extract_substr_and_append(s, start, i, new_str);
+	return (new_str);
 }
 
 static char	*put_word(char *s, int start, int len)
@@ -203,7 +203,7 @@ static int	put_words(char *s, char sep, char **array, char quote_marker, int sta
 	return (0);
 }
 
-char	**ft_split_ignore_quotes(char *s, char c)
+char	**split_while_skipping_quotes(char *s, char c)
 {
 	int		words;
 	char	**array;
@@ -215,12 +215,10 @@ char	**ft_split_ignore_quotes(char *s, char c)
 		return (NULL);
 	quote_marker = find_quote(s, &start_quote, &end_quote);
 	if (quote_marker != '\0' && end_quote == -1)
-		s = add_heredoc(s, quote_marker);
+		s = append_heredoc_on_missing_quote(s, quote_marker);
 
 	if (quote_marker == '"')
 		s = check_env_variables(s);
-	printf("quote marker: %c\n", quote_marker);
-	printf("string: %s\n", s);
 	words = count_words(s, c, quote_marker, start_quote, end_quote);
 
 	array = NULL;
