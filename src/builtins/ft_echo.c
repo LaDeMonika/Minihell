@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 13:21:39 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/17 21:49:48 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,20 @@ int ft_echo(char **command_array)
 
     while (command_array[i])
     {
-        if (ft_strcmp(command_array[i], "echo") == 0)
+        /* printf("argument: %s\n", command_array[i]); */
+        if (i == 0 && ft_strcmp(command_array[i], "echo") == 0)
         {
-            if (ft_strcmp(command_array[i+1], "-n") == 0)
+            i++;
+            if (!command_array[i])
+                break;
+            if (ft_strcmp(command_array[i], "-n") == 0)
             {
                 new_line_flag = 1;
                 i++;
             }
-            i++;
         }
+        if (!command_array[i])
+            break;
         ft_putstr_no_newline(command_array[i], new_line_flag);
         if (command_array[i + 1])
             write(1, " ", 1);

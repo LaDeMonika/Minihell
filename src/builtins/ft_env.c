@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:57 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 13:31:08 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/17 21:53:27 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ft_env(t_minishell *shell, char **command_array)
 {
     int i = 0;
     int j = 0;
-    
+
     if (ft_strcmp(command_array[i], "env") == 0)
     {
         // probably will need to implement something for redirections, not sure yet

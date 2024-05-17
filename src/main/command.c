@@ -78,7 +78,6 @@ char	*find_command(t_minishell *shell, char **input_array)
 	return (NULL);
 }
 
-
 void	execute_command(t_minishell *shell, char *command)
 {
 	char	*path;
@@ -99,7 +98,6 @@ void	execute_command(t_minishell *shell, char *command)
 	// builtins
 	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
-
 	error = false;
 	if (is_builtin == 2)
 	{
@@ -110,21 +108,18 @@ void	execute_command(t_minishell *shell, char *command)
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
 		error = true;
-
-
 	}
 	if (is_builtin == 1)
 		error = true;
 	if (error)
 	{
 		custom_message = NULL;
-		exit_status = set_exit_status_before_termination(shell, &custom_message);
-		/* custom_message = set_exit_status_before_termination(shell, &exit_status); */
+		exit_status = set_exit_status_before_termination(shell,
+				&custom_message);
 		print_error(shell->command_array[0], custom_message);
 	}
 	else
 		exit_status = 0;
-
 	if (!shell->is_cd_in_parent)
-		exit (exit_status);
+		exit(exit_status);
 }

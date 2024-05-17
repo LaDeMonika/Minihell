@@ -20,6 +20,7 @@ void	set_exit_status_after_termination(t_minishell *shell, int *child_status,
 	if (WIFEXITED(shell->status))
 	{
 		*child_status = WEXITSTATUS(shell->status);
+		/* printf("child exit status: %d\n", *child_status); */
 	}
 	else if (WIFSIGNALED(shell->status))
 	{
