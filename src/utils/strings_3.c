@@ -19,13 +19,13 @@ static int	calculate_len(int n)
 	return (len);
 }
 
-static void	write_number(int n, char	*str, int len)
+static void	write_number(int n, char *str, int len)
 {
 	char	digit;
 
 	str[len] = '\0';
 	if (n == INT_MIN)
-		ft_strlcpy(str, "-2147483648", len +1);
+		ft_strlcpy(str, "-2147483648", len + 1);
 	else if (n == 0)
 		str[0] = '0';
 	else if (n < 0)
@@ -55,14 +55,14 @@ char	*ft_itoa(t_minishell *shell, int n)
 
 bool	has_even_metaquotes(char *s)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\'')
 		{
-			skip_between_metaquotes(s, i, s[i]);
+			i = skip_between_metaquotes(s, i, s[i]);
 			if (!s[i])
 				return (false);
 		}
@@ -70,7 +70,6 @@ bool	has_even_metaquotes(char *s)
 	}
 	return (true);
 }
-
 
 int	skip_between_metaquotes(char *str, int i, char metaquote)
 {
@@ -83,23 +82,27 @@ int	skip_between_metaquotes(char *str, int i, char metaquote)
 int	skip_first_metaquote_pair(char *str)
 {
 	int	i;
+	int	new_i;
 
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
-			return (skip_between_metaquotes(str, i, str[i]));
+		{
+			new_i = skip_between_metaquotes(str, i, str[i]);
+			if (str[new_i])
+				return (new_i);
+			break ;
+		}
 		i++;
 	}
 	return (0);
-
 }
-
 
 /*appends suffix to base and frees base afterwards*/
 char	*append_suffix(t_minishell *shell, char *base, char *suffix)
 {
-	char	*new_str;
+	char *new_str;
 
 	new_str = base;
 	new_str = ft_strjoin(shell, base, suffix);

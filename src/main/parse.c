@@ -14,23 +14,54 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	write(STDERR_FILENO, "')\n", 3);
 	free_and_reset_ptr((void **)&str_line_count);
 }
+
+char	*extract_last_line(char *input)
+{
+	char	*temp;
+	char	*last_line;
+
+	temp = strchr(input, '\n');
+	if (temp)
+	{
+		while (temp)
+		{
+			last_line = temp + 1;
+			temp = strchr(last_line, '\n');
+		}
+	}
+	else
+		last_line = input;
+	return (last_line);
+}
 /*writes input to input_file and sends for each input a newline character to pipe*/
 void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
 	char	*input;
+	char	*last_line;
 
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
 	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
 	input = readline("> ");
-	while (input && ft_strncmp(input, eof, ft_strlen(eof) + 1) != 0)
+	last_line = extract_last_line(input);
+	/* printf("last line: %s\n", last_line);
+	printf("input: %s\n", input); */
+	while (input && (last_line != input || ft_strncmp(last_line, eof, ft_strlen(eof) + 1) != 0))
 	{
+		/* printf("last line: %s\n", last_line);
+		printf("last line is eof? %d\n", ft_strncmp(last_line, eof, ft_strlen(eof) + 1) == 0); */
+		if (ft_strncmp(last_line, eof, ft_strlen(eof) + 1) == 0)
+			input[last_line - input - 1] = '\0';
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, input, ft_strlen(input));
 		try_write(shell, file_fd, "\n", 1);
+		/* printf("input: %s last line: %s\n", input, last_line); */
+		if (ft_strncmp(last_line, eof, ft_strlen(eof) + 1) == 0)
+			break;
 		input = readline("> ");
+		last_line = extract_last_line(input);
 	}
 	if (input)
 		try_write(shell, pipe_fd[1], "\n", 1);

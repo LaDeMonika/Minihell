@@ -55,8 +55,10 @@ void	*try_malloc(t_minishell *shell, int size)
 
 void	try_dup2(t_minishell *shell, int fd, int fd2)
 {
+	/* printf("fd: %d fd2: %d\n", fd, fd2); */
 	if (dup2(fd, fd2) == -1)
 		error_free_all(shell, ERR_DUP2, NULL, NULL);
+	/* printf("fd: %d fd2: %d\n", fd, fd2); */
 }
 
 void	try_pipe(t_minishell *shell, int fd[2])

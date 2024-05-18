@@ -30,8 +30,11 @@ void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 	int	fd;
 
 	fd = try_open(shell, mode, file);
+	/* printf("open ok\n"); */
 	try_dup2(shell, fd, fd2);
+	/* printf("dup2 ok\n"); */
 	try_close(shell, fd);
+	/* printf("close ok\n"); */
 }
 
 /*
@@ -48,6 +51,7 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 		temporary_input_redirect(shell, read_fd); */
 	while (list)
 	{
+		/* printf("token: %s delimiter: %d\n", list->token, list->delimiter); */
 		if (list->delimiter == COMMAND)
 			command = list->token;
 		else if (list->delimiter == INPUT)
@@ -58,7 +62,10 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
 		else if (list->delimiter == HEREDOC)
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
+		/* printf("again token: %s delimiter: %d\n", list->token, list->delimiter);
+		printf("next %p\n", (char *)list->next); */
 		list = list->next;
 	}
+
 	execute_command(shell, command);
 }

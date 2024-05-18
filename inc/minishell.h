@@ -18,7 +18,7 @@
 /**************************DEFINES***************************/
 //split
 # define NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
-# define NEW_WORD_ON_SPACE (sep == ' ' && s[i] != sep && (s[i + 1] == sep || !s[i + 1]))
+# define NEW_WORD_ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
 # define NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
 
 

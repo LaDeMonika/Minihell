@@ -3,21 +3,23 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	count_literal_chars(char *str, char *metaquote)
+int	count_literal_chars(char *str, char metaquote)
 {
 	int	i;
 	int	len;
 
 	i = 0;
 	len = 0;
-	*metaquote = '\0';
+
 	while (str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
 		{
-			if (!(*metaquote))
-				*metaquote = str[i];
-			else if (str[i] != *metaquote)
+			if (!(metaquote))
+				metaquote = str[i];
+			else if (metaquote == str[i])
+				metaquote = '\0';
+			else if (str[i] != metaquote)
 				len++;
 		}
 		else
@@ -36,13 +38,27 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 	int		j;
 	char	metaquote;
 
-	new_len = count_literal_chars(str, &metaquote);
+	metaquote = '\0';
+	new_len = count_literal_chars(str, metaquote);
 	new_str = try_malloc(shell, sizeof(char) * (new_len + 1));
 	i = 0;
 	j = 0;
 	while (str[i])
 	{
-		if (str[i] != metaquote)
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			if (!(metaquote))
+				metaquote = str[i];
+			else if (metaquote == str[i])
+				metaquote = '\0';
+			else if (str[i] != metaquote)
+			{
+				new_str[j] = str[i];
+				j++;
+			}
+
+		}
+		else
 		{
 			new_str[j] = str[i];
 			j++;
@@ -87,24 +103,30 @@ void	execute_command(t_minishell *shell, char *command)
 	int		is_builtin;
 	bool	error;
 
+	/* printf("command: %s\n", command); */
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
+	if (!shell->command_array[0])
+		exit(EXIT_SUCCESS);
 	while (shell->command_array[i])
 	{
+		/* printf("before remove: %s\n", shell->command_array[i]); */
 		shell->command_array[i] = remove_metaquotes(shell,
 				shell->command_array[i]);
+		/* printf("after remove: %s\n", shell->command_array[i]); */
 		i++;
 	}
+
 	// builtins
 	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
 	error = false;
 	if (is_builtin == 2)
 	{
-		if (strncmp(shell->command_array[0], "./", 2) != 0)
-			path = find_command(shell, shell->command_array);
-		else
+		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0)
 			path = shell->command_array[0];
+		else
+			path = find_command(shell, shell->command_array);
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
 		error = true;

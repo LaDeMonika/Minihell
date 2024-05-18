@@ -9,7 +9,7 @@ char	*ft_getpid(t_minishell *shell)
 
 	pid = try_malloc(shell, sizeof(char) * 11);
 	i = 0;
-	//fd = try_open(shell, READ, "/proc/self/stat");
+	// fd = try_open(shell, READ, "/proc/self/stat");
 	fd = open("/proc/self/stat", O_RDONLY);
 	if (fd > 0)
 	{
@@ -36,7 +36,8 @@ char	*ft_getpid(t_minishell *shell)
 
 /*if environment value exists to key, then replace it with the value
 returns mallocated string that has to be freed*/
-char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
+char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
+		char *metaquote)
 {
 	char	*env_key;
 	char	*env_value;
@@ -44,7 +45,7 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 	env_key = NULL;
 	env_value = NULL;
 	(*i)++;
-	if (ft_isalnum(base[*i]))
+	if (ft_isalnum(base[*i]) && (base[*i] >= '9' || base[*i] <= '0'))
 	{
 		*start = *i;
 		while (ft_isalnum(base[*i]))
@@ -57,17 +58,27 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 	}
 	else
 	{
-		*start = *i + 1;
-		if (!base[*i] || base[*i] == ' ')
+		/* printf("metaquote: %c\n", *metaquote); */
+		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
+		{
 			env_value = ft_strdup(shell, "$");
+			*metaquote = '\0';
+			(*i)--;
+		}
 		else if (base[*i] == '$')
 			env_value = ft_getpid(shell);
 		else if (base[*i] == '?')
 			env_value = ft_itoa(shell, shell->last_exit_status);
+		else if (base[*i] == '"' || base[*i] == '\'')
+		{
+			(*i)--;
+			/* printf("after decrementing: %c\n", base[*i]); */
+		}
+		*start = *i + 1;
 	}
+	/* printf("env value: %s\n", env_value); */
 	return (env_value);
 }
-
 
 /*extract from base a substring and append it to new_str*/
 char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
@@ -89,27 +100,36 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	int		start;
 	char	*new_str;
 	char	*env_value;
+	char	metaquote;
 
 	i = 0;
 	start = 0;
 	new_str = NULL;
+	metaquote = '\0';
 	while (s[i])
 	{
-		if (s[i] == '\'')
+		if (s[i] == '"' && !metaquote)
+			metaquote = s[i];
+		else if (s[i] == metaquote)
+			metaquote = '\0';
+		else if (s[i] == '\'' && !metaquote)
 			i = skip_between_metaquotes(s, i, '\'');
 		else if (s[i] == '$')
 		{
 			new_str = extract_substr_and_append(shell, s + start, i - start,
 					new_str);
-			env_value = get_env_value(shell, s, &start, &i);
+			/* printf("after extracting: %s\n", new_str); */
+			env_value = get_env_value(shell, s, &start, &i, &metaquote);
 			new_str = append_suffix(shell, new_str, env_value);
 			free(env_value);
+			/* printf("after appending: %s\n", new_str); */
 		}
 		i++;
 	}
 	if (i != start)
 		new_str = extract_substr_and_append(shell, s + start, i - start,
 				new_str);
+	/* printf("final string: %s\n", new_str); */
 	return (new_str);
 }
 

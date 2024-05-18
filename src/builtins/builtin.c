@@ -53,5 +53,6 @@ int ft_is_builtin(t_minishell *shell, char **command_array)
     else
         status = 2;
     //printf("\nft_is_buitin [0 = builtin, 2 = not builtin]: %d\n\n", status);
+
     return (status);
 }

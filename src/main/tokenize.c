@@ -46,6 +46,7 @@ void	list_add(t_minishell *shell, t_token_list **head, char *token)
 	new->token = token;
 	new->delimiter = shell->pre_delimiter;
 	new->next = NULL;
+	/* printf("new token: %s delimiter: %d next: %p\n", new->token, new->delimiter, new->next); */
 	if (!*head)
 		*head = new;
 	else
@@ -81,7 +82,10 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 			append_to_command(shell, &shell->list[index], command_arg, token);
 		if (has_even_metaquotes(token))
 			token = remove_metaquotes(shell, token);
+		if (has_even_metaquotes(token))
+			token = remove_metaquotes(shell, token);
 	}
+
 	list_add(shell, &shell->list[index], token);
 }
 

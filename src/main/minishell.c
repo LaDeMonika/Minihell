@@ -40,7 +40,7 @@ void	handle_input(t_minishell *shell)
 		shell->last_exit_status = shell->parsing_exit_status;
 }
 
-int	main(int argc, char **argv, char **envp)
+/* int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
 
@@ -60,6 +60,47 @@ int	main(int argc, char **argv, char **envp)
 		shell->usr_input = readline(shell->prompt);
 		if (!shell->usr_input)
 			return (free_all(shell), 0);
+		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " "), "\0", 1) != 0)
+		{
+			add_history(shell->usr_input);
+			handle_input(shell);
+		}
+
+	}
+	free_all(shell);
+} */
+
+//main for tester:
+
+#include "../get_next_line/get_next_line.h"
+int	main(int argc, char **argv, char **envp)
+{
+	t_minishell	*shell;
+
+	(void)argv;
+	shell = NULL;
+	shell = malloc(sizeof(t_minishell));
+	if (!shell)
+		return (perror("malloc"), 1);
+	init_shell_struct(shell, envp);
+	if (argc > 1)
+		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);
+	while (1)
+	{
+		init_input_iteration(shell);
+		set_signals(shell, PARENT_WITHOUT_CHILD);
+		build_prompt(shell);
+		if (isatty(fileno(stdin)))
+			shell->usr_input = readline(shell->prompt);
+		else
+		{
+			char *line;
+			line = get_next_line(fileno(stdin));
+			shell->usr_input = ft_strtrim(shell, line, "\n");
+			free(line);
+		}
+		if (!shell->usr_input)
+			return (free_all(shell), shell->last_exit_status);
 		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " "), "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);

@@ -1,4 +1,12 @@
 #include "../../inc/minishell.h"
+#include <stdbool.h>
+
+bool	is_space(char c)
+{
+	if ((c >= '\t' && c <= '\r') || c == ' ')
+		return (true);
+	return (false);
+}
 
 /*
 if sep is pipe start word count at one and at one for every pipe
@@ -29,7 +37,7 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 
 	temp = word;
 
-	word = ft_strtrim(shell, word, " ");
+	word = ft_strtrim(shell, word, " \f\n\r\t\v");
 
 	free_and_reset_ptr((void **)&temp);
 	if (sep == '|' && (!word || !(*word)))
@@ -99,7 +107,13 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 	}
 
 	put_words(shell, s, sep, array);
-
+	/* printf("sep: %c amount of words: %d\n", sep, words);
+	int j = 0;
+	while (array[j])
+	{
+		printf("word at index %d: %s\n", j, array[j]);
+		j++;
+	} */
 	return (array);
 }
 /* int	main(void)
