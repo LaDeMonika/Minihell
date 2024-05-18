@@ -117,9 +117,12 @@ void	execute_command(t_minishell *shell, char *command)
 		exit_status = set_exit_status_before_termination(shell,
 				&custom_message);
 		print_error(shell->command_array[0], custom_message);
+		if (is_builtin == 1)
+			exit_status = 1;
 	}
 	else
 		exit_status = 0;
+	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->is_cd_in_parent)
 		exit(exit_status);
 }
