@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/17 13:20:35 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 16:44:45 by lilin            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
 
 int ft_strcmp(char *s1, char *s2)
@@ -56,9 +44,9 @@ int ft_is_builtin(t_minishell *shell, char **command_array)
         status = ft_pwd(command_array);
     else if (ft_strcmp_btin(shell->input_array[0], "env") == 0)
         status = ft_env(shell, command_array);
-    /* else if (ft_strcmp_btin(shell->input_array[0], "unset") == 0)
+    else if (ft_strcmp_btin(shell->input_array[0], "unset") == 0)
         status = ft_unset(shell, command_array); //wip
-    else if (ft_strcmp_btin(shell->input_array[0], "export") == 0)
+    /* else if (ft_strcmp_btin(shell->input_array[0], "export") == 0)
         status = ft_export(shell, command_array);
     else if (ft_strcmp_btin(shell->input_array[0], "exit") == 0)
         status = ft_exit(command_array); */
