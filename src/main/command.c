@@ -11,7 +11,7 @@ int	count_literal_chars(char *str, char metaquote)
 	i = 0;
 	len = 0;
 
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
 		{
@@ -43,7 +43,7 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 	new_str = try_malloc(shell, sizeof(char) * (new_len + 1));
 	i = 0;
 	j = 0;
-	while (str[i])
+	while (str && str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
 		{
@@ -103,11 +103,14 @@ void	execute_command(t_minishell *shell, char *command)
 	int		is_builtin;
 	bool	error;
 
-	/* printf("command: %s\n", command); */
+	/* printf("pid: %d\n", getpid());
+	printf("command: %s\n", command); */
+	if (!command || !command[0])
+		exit(EXIT_SUCCESS);
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
-	if (!shell->command_array[0])
-		exit(EXIT_SUCCESS);
+	/* if (!shell->command_array[0])
+		exit(EXIT_SUCCESS); */
 	while (shell->command_array[i])
 	{
 		/* printf("before remove: %s\n", shell->command_array[i]); */

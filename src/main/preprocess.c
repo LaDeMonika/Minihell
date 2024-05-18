@@ -126,6 +126,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 		}
 		i++;
 	}
+	/* printf("new str: %s i: %d start: %d\n", new_str, i, start); */
 	if (i != start)
 		new_str = extract_substr_and_append(shell, s + start, i - start,
 				new_str);

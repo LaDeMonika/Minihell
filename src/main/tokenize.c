@@ -74,17 +74,22 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 	temp = token;
 	token = ft_strtrim(shell, token, " ");
 	free_and_reset_ptr((void **)&temp);
+	/* printf("before expansion token: %s delimiter: %d\n", token, shell->pre_delimiter); */
+	if (shell->pre_delimiter != HEREDOC)
+		token = expand_env_variables(shell, token);
+	/* printf("after expansion token: %s delimiter: %d\n", token, shell->pre_delimiter); */
 	if (shell->pre_delimiter != COMMAND)
 	{
 		temp = token + skip_first_metaquote_pair(token);
 		command_arg = strchr(temp, ' ');
 		if (command_arg)
 			append_to_command(shell, &shell->list[index], command_arg, token);
-		if (has_even_metaquotes(token))
-			token = remove_metaquotes(shell, token);
+
 		if (has_even_metaquotes(token))
 			token = remove_metaquotes(shell, token);
 	}
+
+
 
 	list_add(shell, &shell->list[index], token);
 }
