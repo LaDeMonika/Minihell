@@ -31,17 +31,17 @@ typedef struct s_minishell
 	int						len_prompt;
 	int						*pid;
 	int						exit_status;
-	char **path_array; // Array of paths
+	char **path_array;
 	char					*home_dir;
-	char *current_dir;      // Current working directory
-	char *command_path;     // Path to the command
-	char **envp;            // Environment variables
-	char **input_array;     // Array of input arguments
-	char **command_history; // Array of command history
-	int history_index;      // Index of the command history
-	int last_exit_status;   // Exit status of the last command
-	int fd_hostname;        // File descriptor for hostname
-	int fd;                 // File descriptor
+	char 					*current_dir;
+	char 					*command_path;
+	char 					**envp;
+	char 					**input_array;
+	char 					**command_history;
+	int history_index;
+	int last_exit_status;
+	int fd_hostname;
+	int fd;
 	int						status;
 	struct sigaction		sa_sigint;
 	struct sigaction		sa_sigquit;
