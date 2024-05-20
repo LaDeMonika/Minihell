@@ -61,7 +61,10 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 		else if (list->delimiter == APPEND)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
 		else if (list->delimiter == HEREDOC)
+		{
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
+		}
+
 		/* printf("again token: %s delimiter: %d\n", list->token, list->delimiter);
 		printf("next %p\n", (char *)list->next); */
 		list = list->next;

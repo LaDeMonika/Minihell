@@ -64,6 +64,7 @@ typedef struct s_minishell
 	char					*unexpected_token;
 	char 					**command_array;
 	bool					is_cd_in_parent;
+	char	*heredoc_input;
 }							t_minishell;
 
 /****************************ENUM****************************/

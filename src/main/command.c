@@ -119,7 +119,6 @@ void	execute_command(t_minishell *shell, char *command)
 		/* printf("after remove: %s\n", shell->command_array[i]); */
 		i++;
 	}
-
 	// builtins
 	is_builtin = ft_is_builtin(shell, shell->command_array);
 	path = NULL;
