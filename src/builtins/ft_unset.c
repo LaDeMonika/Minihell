@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:23:13 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 15:36:53 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/20 16:44:40 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,16 @@ char **delete_env(t_minishell *shell, int index)
     int i = 0;
     int j = 0;
     char **new_envp = NULL;
-
-    new_envp = try_malloc(shell, sizeof(char *) * (ft_strlen(*shell->envp) + 1));
+    
+    while (shell->envp[i])
+        i++;
+    new_envp = malloc(sizeof(char *) * i);
+    if (!new_envp)
+        return (NULL);
+    i = 0;
     while (shell->envp[i])
     {
-        if (i != index)
+        if (i == index)
         {
             new_envp[j] = shell->envp[i];
             j++;
@@ -37,10 +42,6 @@ char **delete_env(t_minishell *shell, int index)
     return (new_envp);
 }
 
-/*
-The `unset` command is used in Unix-like operating systems to unset or
-remove environment variables and shell functions. 
-*/
 int ft_unset(t_minishell *shell, char **command_array)
 {
     // command_array[0] = unset command_array[1] = variable to unset
@@ -50,6 +51,9 @@ int ft_unset(t_minishell *shell, char **command_array)
     (void)shell;
     char *name = command_array[1];
 
+    if (!name)
+        return (0);
+
     printf("ft_unset\n");
     while (shell->envp[i])
     {
@@ -57,16 +61,17 @@ int ft_unset(t_minishell *shell, char **command_array)
         if (ft_strcmp(env_name, name) == 0)
         {
             j = i;
-            printf("unset: %s\n", shell->envp[j]);
+            printf("unset: %s\n", shell->envp[j]); //test
             while (shell->envp[j])
             {
                 shell->envp[j] = shell->envp[j + 1];
                 j++;
             }
-            //shell->envp = delete_env(shell, i);
             break;
         }
         i++;
     }
+    shell->envp = delete_env(shell, i);
+    printf("new envp: %s\n", shell->envp[i]);
     return (0);
 }
