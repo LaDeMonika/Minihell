@@ -140,6 +140,7 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[i];
 		while (list)
 		{
+			/* printf("list token: %s list delimiter: %d\n", list->token, list->delimiter); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);

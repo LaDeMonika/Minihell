@@ -67,8 +67,8 @@ void	error_free_all(t_minishell *shell, int err, char *prefix, char *custom_erro
 		perror("waitpid");
 	else if (err == ERR_GETPID)
 		write(STDERR_FILENO, "Error getting pid\n", 18);
-	if (err == NO_ERROR)
-		exit(EXIT_SUCCESS);
+	if (err == EXIT)
+		exit(253);
 	exit(EXIT_FAILURE);
 }
 

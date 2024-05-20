@@ -6,12 +6,13 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 21:49:48 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/20 14:15:46 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../inc/minishell.h"
+#include <stdbool.h>
 
 /*
 function for the echo command in bash
@@ -35,6 +36,17 @@ static void ft_putstr_no_newline(char *str, int flag)
     }
 }
 
+bool    contains_only_char(char *str, char c)
+{
+    while (str && *str)
+    {
+        if (*str != c)
+            return (false);
+        str++;
+    }
+    return (true);
+}
+
 int ft_echo(char **command_array)
 {
     int i = 0;
@@ -48,10 +60,13 @@ int ft_echo(char **command_array)
             i++;
             if (!command_array[i])
                 break;
-            if (ft_strcmp(command_array[i], "-n") == 0)
+            if (ft_strncmp(command_array[i], "-n", 2) == 0)
             {
-                new_line_flag = 1;
-                i++;
+                if (contains_only_char(command_array[i] + 2, 'n'))
+                {
+                    new_line_flag = 1;
+                    i++;
+                }
             }
         }
         if (!command_array[i])

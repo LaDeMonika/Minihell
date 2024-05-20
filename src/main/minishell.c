@@ -7,7 +7,11 @@ void	handle_input(t_minishell *shell)
 
 	if (ft_strncmp(shell->usr_input, "exit", 5) == 0
 		|| strncmp(shell->usr_input, "exit ", 5) == 0)
-		error_free_all(shell, NO_ERROR, NULL, NULL);
+		{
+			printf("exit\n");
+			error_free_all(shell, EXIT, NULL, NULL);
+		}
+
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	//shell->usr_input = expand_env_variables(shell, shell->usr_input);
 	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input,

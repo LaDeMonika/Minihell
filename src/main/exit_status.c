@@ -3,14 +3,14 @@
 int	set_exit_status_before_termination(t_minishell *shell, char **custom_message)
 {
 	(void)shell;
-	if (errno == EACCES)
-		return (126);
-	else if (errno == EFAULT || errno == ENOENT)
+	if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
 	{
-		if (errno == EFAULT)
+		if (errno == EFAULT || (errno == EACCES && !shell->command_array[0][0]))
 			*custom_message = ("command not found");
 		return (127);
 	}
+	else if (errno == EACCES)
+		return (126);
 	return (EXIT_FAILURE);
 }
 

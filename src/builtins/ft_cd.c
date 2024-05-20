@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 17:28:56 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/20 14:55:23 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@ int ft_cd(char **command_array)
         printf("Memory allocation failed\n");
     if (ft_strcmp(command_array[i], "cd") == 0)
     {
-        if (!command_array[1])
-            return (0);
-        if (ft_strcmp(command_array[i+1], "~") == 0)
+        if (!command_array[1] || ft_strcmp(command_array[i+1], "~") == 0 || ft_strcmp(command_array[i+1], "--") == 0)
             chdir(getenv("HOME"));
         else if (ft_strcmp(command_array[i+1], "-") == 0)
             chdir(getenv("OLDPWD"));

@@ -56,7 +56,7 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 			command = list->token;
 		else if (list->delimiter == INPUT)
 			redirect_stream(shell, list->token, READ, STDIN_FILENO);
-		else if (list->delimiter == OUTPUT)
+		else if (list->delimiter == OUTPUT || list->delimiter == FORCE_WRITE)
 			redirect_stream(shell, list->token, WRITE_TRUNCATE, STDOUT_FILENO);
 		else if (list->delimiter == APPEND)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);

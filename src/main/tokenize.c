@@ -15,6 +15,8 @@ int	find_delimiter(char *command, int i)
 	{
 		if (command[i + 1] == '>')
 			return (APPEND);
+		if (command[i + 1] == '|')
+			return (FORCE_WRITE);
 		return (OUTPUT);
 	}
 	return (-1);
@@ -115,7 +117,7 @@ void	tokenize(t_minishell *shell, char *command,
 		{
 			extract_and_add_tokens(shell, index, start, i - start);
 			if (shell->post_delimiter == HEREDOC
-				|| shell->post_delimiter == APPEND)
+				|| shell->post_delimiter == APPEND || shell->post_delimiter == FORCE_WRITE)
 				i++;
 			start = i + 1;
 			shell->pre_delimiter = shell->post_delimiter;

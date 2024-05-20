@@ -18,6 +18,7 @@
 /**************************DEFINES***************************/
 //split
 # define NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
+# define SKIP_FORCE_WRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
 # define NEW_WORD_ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
 # define NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
 
@@ -68,7 +69,7 @@ typedef struct s_minishell
 /****************************ENUM****************************/
 enum						e_error
 {
-	NO_ERROR,
+	EXIT,
 	ERR_MALLOC,
 	ERR_TOO_MANY_ARGS,
 	ERR_TOO_FEW_ARGS,
@@ -96,7 +97,8 @@ enum						e_token_delimiter
 	HEREDOC,
 	APPEND,
 	COMMAND,
-	INVALID_PIPE
+	INVALID_PIPE,
+	FORCE_WRITE
 };
 
 // signal handling modes

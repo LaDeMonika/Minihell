@@ -106,6 +106,8 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	start = 0;
 	new_str = NULL;
 	metaquote = '\0';
+	if (!s[i])
+		new_str = s;
 	while (s[i])
 	{
 		if (s[i] == '"' && !metaquote)

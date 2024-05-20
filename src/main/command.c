@@ -150,4 +150,6 @@ void	execute_command(t_minishell *shell, char *command)
 	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->is_cd_in_parent)
 		exit(exit_status);
+	else
+	 	shell->last_exit_status = exit_status;
 }
