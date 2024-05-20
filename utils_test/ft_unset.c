@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:23:13 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 15:39:54 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/20 13:56:23 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,6 @@ int ft_unset(t_minishell *shell, char **command_array)
             // shell->envp[i] = NULL;
             // shift the rest of the list
             printf("found the variable to unset\n");
-            while (shell->envp[i])
-            {
-                shell->envp[i] = shell->envp[i + 1];
-                i++;
-                printf("shifting the list\n");
-            }
             return (0);
         }
         i++;
@@ -73,7 +67,9 @@ int ft_unset(t_minishell *shell, char **command_array)
 
 int main(int argc, char **argv, char **envp)
 {
-    t_minishell *shell;
+    t_minishell *shell = (t_minishell *)malloc(sizeof(t_minishell));
+    if (!shell)
+        return (1);
     int i = 0;
     
     //Test builtin ft_unset command but other commands should be available
@@ -82,8 +78,9 @@ int main(int argc, char **argv, char **envp)
     {
         printf("%s\n", shell->envp[i]);
         //check if the variable is in the envp list and if it comes to = then remove it
-        printf("HHHHHHHHHHHHHHHHHHHHHHHHHHH");
+        printf("------>");
         ft_unset(shell, argv);
         i++;
     }
+    free(shell);
 }
