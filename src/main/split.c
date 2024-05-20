@@ -1,12 +1,6 @@
 #include "../../inc/minishell.h"
 #include <stdbool.h>
 
-bool	is_space(char c)
-{
-	if ((c >= '\t' && c <= '\r') || c == ' ')
-		return (true);
-	return (false);
-}
 
 /*
 if sep is pipe start word count at one and at one for every pipe

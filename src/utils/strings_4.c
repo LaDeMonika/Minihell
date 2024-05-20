@@ -11,3 +11,10 @@ void	ft_putstr_fd(char	*s, int fd)
 		s++;
 	}
 }
+
+bool	is_space(char c)
+{
+	if ((c >= '\t' && c <= '\r') || c == ' ')
+		return (true);
+	return (false);
+}

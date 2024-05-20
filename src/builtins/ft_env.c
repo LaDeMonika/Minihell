@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:57 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/17 21:53:27 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/20 17:57:02 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,22 @@ prints the linked list of env variables
 
 int ft_env(t_minishell *shell, char **command_array)
 {
-    int i = 0;
     int j = 0;
 
-    if (ft_strcmp(command_array[i], "env") == 0)
+
+    // probably will need to implement something for redirections, not sure yet
+    if (command_array[j + 1] == NULL)
     {
-        // probably will need to implement something for redirections, not sure yet
-        if (command_array[j + 1] == NULL)
+        while (shell->envp[j])
         {
-            while (shell->envp[j])
-	        {
-		        printf("%s\n", shell->envp[j]);
-		        j++;
-	        }
+            printf("%s\n", shell->envp[j]);
+            j++;
         }
     }
+    else if (!strchr(command_array[j + 1], '='))
+    {
+        return (2);
+    }
+
     return (0);
 }

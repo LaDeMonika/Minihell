@@ -89,6 +89,11 @@ enum						e_error
 	ERR_GETPID
 };
 
+
+enum e_custom_errno
+{
+	U_TOO_MANY_ARGUMENTS
+};
 // token delimiters
 enum						e_token_delimiter
 {
@@ -248,9 +253,8 @@ char						*append_suffix(t_minishell *shell, char *base,
 								char *suffix);;
 
 // strings_4
-char						**ft_split(char const *s, char c);
 void						ft_putstr_fd(char *s, int fd);
-
+bool	is_space(char c);
 // utils_01
 
 #endif

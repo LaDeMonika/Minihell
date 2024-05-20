@@ -37,14 +37,14 @@ int ft_is_builtin(t_minishell *shell, char **command_array)
 
     status = 1; // 0 = builtin, 1 = not builtin
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
-        status = ft_echo(command_array);
+        status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
         status = ft_cd(command_array);
     else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
         status = ft_pwd(command_array);
-    else if (ft_strcmp_btin(shell->input_array[0], "env") == 0)
+    else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
         status = ft_env(shell, command_array);
-    else if (ft_strcmp_btin(shell->input_array[0], "unset") == 0)
+    else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
         status = ft_unset(shell, command_array); //wip
     /* else if (ft_strcmp_btin(shell->input_array[0], "export") == 0)
         status = ft_export(shell, command_array);

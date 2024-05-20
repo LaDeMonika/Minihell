@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 14:15:46 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/20 17:33:22 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@ handles option -n to print the arguements without a "\n" at the end
 //4.    echo -n "hello hello     hellooo" [should print everything in quotes as it is]
 //5.    echo -n hello hello     hellooo [should print every arg separated by one space]
 
-static void ft_putstr_no_newline(char *str, int flag)
+static void ft_putstr_no_newline(char *str)
 {
-    (void)flag;
     while (*str)
     {
         write(1, str, 1);
@@ -36,13 +35,30 @@ static void ft_putstr_no_newline(char *str, int flag)
     }
 }
 
-bool    contains_only_char(char *str, char c)
+bool    contains_only_option_n(char *str)
 {
-    while (str && *str)
+    int i;
+
+    i = 0;
+    /* printf("string: %s\n", str); */
+    if (!str || !str[i])
+        return (false);
+    while (str && str[i])
     {
-        if (*str != c)
+        while (is_space(str[i]))
+            i++;
+        if (str[i] == '-')
+        {
+            i++;
+            if (str[i] != 'n')
+                return (false);
+            while (str[i] == 'n')
+                i++;
+            if (str[i] && !is_space(str[i]))
+                return (false);
+        }
+        else
             return (false);
-        str++;
     }
     return (true);
 }
@@ -50,33 +66,20 @@ bool    contains_only_char(char *str, char c)
 int ft_echo(char **command_array)
 {
     int i = 0;
-    int new_line_flag = 0;
+    int new_line_flag;
 
+    new_line_flag = contains_only_option_n(command_array[i]);
+    while (new_line_flag && contains_only_option_n(command_array[i]))
+        i++;
     while (command_array[i])
     {
         /* printf("argument: %s\n", command_array[i]); */
-        if (i == 0 && ft_strcmp(command_array[i], "echo") == 0)
-        {
-            i++;
-            if (!command_array[i])
-                break;
-            if (ft_strncmp(command_array[i], "-n", 2) == 0)
-            {
-                if (contains_only_char(command_array[i] + 2, 'n'))
-                {
-                    new_line_flag = 1;
-                    i++;
-                }
-            }
-        }
-        if (!command_array[i])
-            break;
-        ft_putstr_no_newline(command_array[i], new_line_flag);
+        ft_putstr_no_newline(command_array[i]);
         if (command_array[i + 1])
             write(1, " ", 1);
         i++;
     }
-    if (new_line_flag == 0)
+    if (!new_line_flag)
         write(1, "\n", 1);
     return 0;
 }

@@ -30,11 +30,31 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 
 
 big tester m:
+TOTAL TEST COUNT: 866  TESTS PASSED: 663  LEAKING: 0
+                     STD_OUT: 119  STD_ERR: 121  EXIT_CODE: 150
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 390
+                                     ✅ 2208   
+ TOTAL TEST COUNT: 868  TESTS PASSED: 606  LEAKING: 0
+                     STD_OUT: 129  STD_ERR: 175  EXIT_CODE: 192
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 496
+                                     ✅ 2108
+TOTAL TEST COUNT: 871  TESTS PASSED: 606  LEAKING: 0
+                     STD_OUT: 131  STD_ERR: 177  EXIT_CODE: 191
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 499
+                                     ✅ 2114
+TOTAL TEST COUNT: 871  TESTS PASSED: 597  LEAKING: 0
+                     STD_OUT: 140  STD_ERR: 177  EXIT_CODE: 191
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 508
+                                     ✅ 2105
 TOTAL TEST COUNT: 878  TESTS PASSED: 593  LEAKING: 0
                      STD_OUT: 149  STD_ERR: 179  EXIT_CODE: 192
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 520
-                                     ✅ 2114  
+                                     ✅ 2114
 after moving expand env to tokenize:
  TOTAL TEST COUNT: 928  TESTS PASSED: 558  LEAKING: 0
                      STD_OUT: 132  STD_ERR: 249  EXIT_CODE: 244

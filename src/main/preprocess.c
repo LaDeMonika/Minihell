@@ -45,7 +45,12 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 	env_key = NULL;
 	env_value = NULL;
 	(*i)++;
-	if (ft_isalnum(base[*i]) && (base[*i] >= '9' || base[*i] <= '0'))
+	if (base[*i - 1] == '~')
+	{
+		env_value = ft_strdup(shell, getenv("HOME"));
+		*start = *i + 1;
+	}
+	else if (ft_isalnum(base[*i]) && (base[*i] >= '9' || base[*i] <= '0'))
 	{
 		*start = *i;
 		while (ft_isalnum(base[*i]))
@@ -59,6 +64,7 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 	else
 	{
 		/* printf("metaquote: %c\n", *metaquote); */
+
 		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
 		{
 			env_value = ft_strdup(shell, "$");
@@ -116,7 +122,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 			metaquote = '\0';
 		else if (s[i] == '\'' && !metaquote)
 			i = skip_between_metaquotes(s, i, '\'');
-		else if (s[i] == '$')
+		else if (s[i] == '$' || (s[i] == '~' && !metaquote && (is_space(s[i + 1]) || !s[i + 1])))
 		{
 			new_str = extract_substr_and_append(shell, s + start, i - start,
 					new_str);
