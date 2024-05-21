@@ -120,9 +120,10 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	// builtins
-	//error = false;
+
 	exit_status = 0;
 	is_builtin = ft_is_builtin(shell, shell->command_array, &exit_status);
+	/* printf("is builtin? %d\n", is_builtin); */
 	path = NULL;
 	if (!is_builtin)
 	{
@@ -139,7 +140,8 @@ void	execute_command(t_minishell *shell, char *command)
 	{
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
-		exit_status = set_exit_status_before_termination(shell,
+		if (ft_strcmp_btin(shell->command_array[0], "cd") != 0)
+			exit_status = set_exit_status_before_termination(shell,
 				&custom_message);
 		print_error(shell->command_array[0], custom_message);
 	}

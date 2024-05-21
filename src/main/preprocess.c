@@ -68,7 +68,7 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
 		{
 			env_value = ft_strdup(shell, "$");
-			*metaquote = '\0';
+			//*metaquote = '\0';
 			(*i)--;
 		}
 		else if (base[*i] == '$')

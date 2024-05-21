@@ -55,6 +55,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	current_line = extract_line(shell, shell->heredoc_input);
 	/* printf("last line: %s\n", last_line);
 	printf("input: %s\n", input); */
+	/* try_write(shell, file_fd, "\n", 1); */
 	while (current_line && (ft_strncmp(current_line, eof, ft_strlen(eof) + 1) != 0))
 	{
 		current_line = expand_env_variables(shell, current_line);

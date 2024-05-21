@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 17:45:31 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/21 17:53:35 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,21 @@ int ft_cd(char **command_array)
 
     if (current == NULL)
         printf("Memory allocation failed\n");
-    if (ft_strcmp(command_array[0], "cd") == 0)
+    if (command_array[1] && command_array[2])
     {
-        if (command_array[1] && command_array[2])
-        {
-            errno = U_TOO_MANY_ARGUMENTS;
-            return (1);
-        }
-
-        if (!command_array[1] || ft_strcmp(command_array[1], "--") == 0)
-            chdir(getenv("HOME"));
-        else if (ft_strcmp(command_array[1], "-") == 0)
-            chdir(getenv("OLDPWD"));
-        else if (ft_strcmp(command_array[1], "..") == 0)
-            chdir(".."); //go behind one directory
-        else if (chdir(command_array[1]) == -1)
-            return (1);
-
+        errno = U_TOO_MANY_ARGUMENTS;
+        return (1);
     }
+
+    if (!command_array[1] || ft_strcmp(command_array[1], "--") == 0)
+        chdir(getenv("HOME"));
+    else if (ft_strcmp(command_array[1], "-") == 0)
+        chdir(getenv("OLDPWD"));
+    else if (ft_strcmp(command_array[1], "..") == 0)
+        chdir(".."); //go behind one directory
+    else if (chdir(command_array[1]) == -1)
+        return (1);
+
+
     return (0);
 }
