@@ -12,7 +12,8 @@ SRCS = main/minishell.c main/init_shell.c \
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c \
 			builtins/ft_cd.c builtins/ft_pwd.c \
-			builtins/ft_env.c builtins/ft_unset.c
+			builtins/ft_env.c builtins/ft_unset.c \
+			builtins/ft_exit.c
 
 UTILS = utils/strings_1.c utils/strings_2.c \
 			utils/strings_3.c utils/strings_4.c

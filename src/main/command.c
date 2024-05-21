@@ -101,7 +101,7 @@ void	execute_command(t_minishell *shell, char *command)
 	char	*custom_message;
 	int		i;
 	int		is_builtin;
-	bool	error;
+	//bool	error;
 
 	/* printf("pid: %d\n", getpid());
 	printf("command: %s\n", command); */
@@ -120,10 +120,11 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	// builtins
-	is_builtin = ft_is_builtin(shell, shell->command_array);
+	//error = false;
+	exit_status = 0;
+	is_builtin = ft_is_builtin(shell, shell->command_array, &exit_status);
 	path = NULL;
-	error = false;
-	if (is_builtin == 2)
+	if (!is_builtin)
 	{
 		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0)
 			path = shell->command_array[0];
@@ -131,23 +132,19 @@ void	execute_command(t_minishell *shell, char *command)
 			path = find_command(shell, shell->command_array);
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
-		error = true;
+		exit_status = 1;
 	}
-	if (is_builtin == 1)
-		error = true;
-	if (error)
+	if ((exit_status != 0 /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
+	|| (exit_status != 1 && ft_strcmp_btin(shell->command_array[0], "exit") == 0 */))
 	{
+		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
 		exit_status = set_exit_status_before_termination(shell,
 				&custom_message);
 		print_error(shell->command_array[0], custom_message);
-		if (is_builtin == 1)
-			exit_status = 1;
 	}
-	else
-		exit_status = 0;
 	/* printf("child exit status: %d\n", exit_status); */
-	if (!shell->is_cd_in_parent)
+	if (!shell->stay_in_parent)
 		exit(exit_status);
 	else
 	 	shell->last_exit_status = exit_status;

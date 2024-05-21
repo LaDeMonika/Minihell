@@ -16,7 +16,7 @@ int ft_strcmp(char *s1, char *s2)
     return (s1[i] - s2[i]);
 }
 
-static char ft_strcmp_btin(char *s1, char *s2)
+char ft_strcmp_btin(char *s1, char *s2)
 {
     int i;
 
@@ -37,28 +37,27 @@ ft_is_builtin is a function that will check if the command is a builtin command.
 If the command is a builtin command, it will execute the builtin command.
 If the command is not a builtin command, it will return 0.
 */
-int ft_is_builtin(t_minishell *shell, char **command_array)
+bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
 {
-    int status;
+    /* int status;
 
-    status = 1;
+    status = 1; */
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
-        status = ft_echo(command_array + 1);
+        *status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
-        status = ft_cd(command_array);
+        *status = ft_cd(command_array);
     else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
-        status = ft_pwd(command_array);
+        *status = ft_pwd(command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
-        status = ft_env(shell, command_array);
+        *status = ft_env(shell, command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
-        status = ft_unset(shell, command_array); //wip
+        *status = ft_unset(shell, command_array); //wip
     /* else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
-        status = ft_export(shell, command_array);
+        status = ft_export(shell, command_array);*/
     else if (ft_strcmp_btin(shell->command_array[0], "exit") == 0)
-        status = ft_exit(command_array); */
+        *status = ft_exit(shell, shell->command_array);
     else
-        status = 2;
+        return (false);
     //printf("\nft_is_buitin [0 = builtin, 2 = not builtin]: %d\n\n", status);
-
-    return (status);
+    return (true);
 }

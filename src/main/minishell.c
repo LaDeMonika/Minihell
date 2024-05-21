@@ -5,12 +5,7 @@ void	handle_input(t_minishell *shell)
 {
 	int	i;
 
-	if (ft_strncmp(shell->usr_input, "exit", 5) == 0
-		|| strncmp(shell->usr_input, "exit ", 5) == 0)
-		{
-			printf("exit\n");
-			error_free_all(shell, EXIT, NULL, NULL);
-		}
+
 
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	//shell->usr_input = expand_env_variables(shell, shell->usr_input);
@@ -30,9 +25,11 @@ void	handle_input(t_minishell *shell)
 		i++;
 	}
 	parse_input(shell);
-
-	if (shell->pipes_total == 0 && (ft_strncmp(shell->list[0]->token, "cd",
-				3) == 0 || ft_strncmp(shell->list[0]->token, "cd ", 3) == 0))
+	if (shell->pipes_total == 0
+	&& (ft_strncmp(shell->list[0]->token, "cd",	3) == 0
+	|| ft_strncmp(shell->list[0]->token, "cd ", 3) == 0
+	|| ft_strncmp(shell->usr_input, "exit", 5) == 0
+	|| ft_strncmp(shell->usr_input, "exit ", 5) == 0))
 	{
 		/* printf("command token is: %s\n", shell->list[0]->token);
 		printf("cd without argument? %d\n", ft_strncmp(shell->list[0]->token, "cd",
@@ -40,7 +37,7 @@ void	handle_input(t_minishell *shell)
 		printf("cd with argument? %d\n", ft_strncmp(shell->list[0]->token, "cd ",
 				3) == 0);
 		printf("doing command in parent\n"); */
-		shell->is_cd_in_parent = true;
+		shell->stay_in_parent = true;
 		handle_redirections(shell, shell->list[0], STDIN_FILENO);
 	}
 	else if (shell->parsing_exit_status == 0)

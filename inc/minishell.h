@@ -63,7 +63,7 @@ typedef struct s_minishell
 	int						post_delimiter;
 	char					*unexpected_token;
 	char 					**command_array;
-	bool					is_cd_in_parent;
+	bool					stay_in_parent;
 	char	*heredoc_input;
 }							t_minishell;
 
@@ -219,12 +219,14 @@ int	try_fork(t_minishell *shell);
 
 //********************src/builtins
 int 	ft_strcmp(char *s1, char *s2);
-int     ft_is_builtin(t_minishell *shell, char **command_array);
+bool ft_is_builtin(t_minishell *shell, char **command_array, int *status);
+char ft_strcmp_btin(char *s1, char *s2);
 int     ft_echo(char **command_array);
 int     ft_cd(char **command_array);
 int     ft_pwd(char **command_array);
 int     ft_env(t_minishell *shell, char **command_array);
 int 	ft_unset(t_minishell *shell, char **command_array);
+int	ft_exit(t_minishell *shell, char **command_array);
 
 //********************src/utils
 // strings_1
@@ -256,6 +258,8 @@ char						*append_suffix(t_minishell *shell, char *base,
 // strings_4
 void						ft_putstr_fd(char *s, int fd);
 bool	is_space(char c);
+int	ft_atoi(const char	*nptr, bool *valid_number);
+
 // utils_01
 
 #endif

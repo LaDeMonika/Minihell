@@ -24,17 +24,23 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 - correct exit status code when parsin fails (now it's always 2)
 - next: exit status, errno and perror of cd
 - maybe need to update PWD in env
+- improve error message: include bash and command argument if necessary
 
 ### PROB
 
 
 
 big tester m:
+ TOTAL TEST COUNT: 740  TESTS PASSED: 604  LEAKING: 0
+                     STD_OUT: 97  STD_ERR: 56  EXIT_CODE: 35
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 188
+                                     ✅ 2032  
 TOTAL TEST COUNT: 866  TESTS PASSED: 663  LEAKING: 0
                      STD_OUT: 119  STD_ERR: 121  EXIT_CODE: 150
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 390
-                                     ✅ 2208   
+                                     ✅ 2208
  TOTAL TEST COUNT: 868  TESTS PASSED: 606  LEAKING: 0
                      STD_OUT: 129  STD_ERR: 175  EXIT_CODE: 192
                          TOTAL FAILED AND PASSED CASES:
