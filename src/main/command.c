@@ -94,35 +94,16 @@ char	*find_command(t_minishell *shell, char **input_array)
 	return (NULL);
 }
 
-void	execute_command(t_minishell *shell, char *command)
+void	execute_command_array(t_minishell *shell, char **command_array)
 {
 	char	*path;
 	int		exit_status;
 	char	*custom_message;
-	int		i;
-	int		is_builtin;
-	//bool	error;
-
-	/* printf("pid: %d\n", getpid());
-	printf("command: %s\n", command); */
-	if (!command || !command[0])
-		exit(EXIT_SUCCESS);
-	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
-	i = 0;
-	/* if (!shell->command_array[0])
-		exit(EXIT_SUCCESS); */
-	while (shell->command_array[i])
-	{
-		/* printf("before remove: %s\n", shell->command_array[i]); */
-		shell->command_array[i] = remove_metaquotes(shell,
-				shell->command_array[i]);
-		/* printf("after remove: %s\n", shell->command_array[i]); */
-		i++;
-	}
-	// builtins
-
 	exit_status = 0;
-	is_builtin = ft_is_builtin(shell, shell->command_array, &exit_status);
+	int		is_builtin;
+
+	(void)command_array;
+	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
 	/* printf("is builtin? %d\n", is_builtin); */
 	path = NULL;
 	if (!is_builtin)
@@ -150,4 +131,32 @@ void	execute_command(t_minishell *shell, char *command)
 		exit(exit_status);
 	else
 	 	shell->last_exit_status = exit_status;
+}
+
+void	execute_command(t_minishell *shell, char *command)
+{
+
+	int		i;
+
+	//bool	error;
+
+	/* printf("pid: %d\n", getpid());
+	printf("command: %s\n", command); */
+	if (!command || !command[0])
+		exit(EXIT_SUCCESS);
+	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
+	i = 0;
+	/* if (!shell->command_array[0])
+		exit(EXIT_SUCCESS); */
+	while (shell->command_array[i])
+	{
+		/* printf("before remove: %s\n", shell->command_array[i]); */
+		shell->command_array[i] = remove_metaquotes(shell,
+				shell->command_array[i]);
+		/* printf("after remove: %s\n", shell->command_array[i]); */
+		i++;
+	}
+	// builtins
+	execute_command_array(shell, shell->command_array);
+
 }

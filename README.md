@@ -25,6 +25,7 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 - next: exit status, errno and perror of cd
 - maybe need to update PWD in env
 - improve error message: include bash and command argument if necessary
+- quote behaviour in heredoc
 
 ### PROB
 
@@ -35,7 +36,7 @@ TOTAL TEST COUNT: 931  TESTS PASSED: 717  LEAKING: 0
                      STD_OUT: 114  STD_ERR: 117  EXIT_CODE: 111
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 342
-                                     ✅ 2451  
+                                     ✅ 2451
  TOTAL TEST COUNT: 931  TESTS PASSED: 711  LEAKING: 0
                      STD_OUT: 113  STD_ERR: 124  EXIT_CODE: 118
                          TOTAL FAILED AND PASSED CASES:

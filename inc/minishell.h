@@ -146,6 +146,7 @@ enum						e_open_mode
 char						*find_command(t_minishell *shell,
 								char **input_array);
 void						execute_command(t_minishell *shell, char *command);
+void	execute_command_array(t_minishell *shell, char **command_array);
 
 // main
 void						handle_input(t_minishell *shell);
@@ -198,6 +199,7 @@ void						child(t_minishell *shell, int pipes_left,
 void						parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char *eof,
 								char *input_buffer);
+char	*extract_line(t_minishell *shell, char *input, char **heredoc_input);
 
 // redirections
 int							find_redirect(char *command, int i);
@@ -225,6 +227,7 @@ int							skip_between_metaquotes(char *str, int i,
 char						*check_env_variables(t_minishell *shell, char *s);
 char						**split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
+char	*ft_getenv(t_minishell *shell, char *key);
 
 //try
 int							try_read(t_minishell *shell, int fd, char **buffer,
@@ -244,22 +247,14 @@ bool						ft_is_builtin(t_minishell *shell,
 								char **command_array, int *status);
 char						ft_strcmp_btin(char *s1, char *s2);
 int							ft_echo(char **command_array);
-int							ft_cd(char **command_array);
-int							ft_pwd(char **command_array);
+int ft_cd(t_minishell *shell, char **command_array);
 int							ft_env(t_minishell *shell, char **command_array);
 int							ft_unset(t_minishell *shell, char **command_array);
 int							ft_exit(t_minishell *shell, char **command_array);
-int 	ft_strcmp(char *s1, char *s2);
-bool ft_is_builtin(t_minishell *shell, char **command_array, int *status);
-char ft_strcmp_btin(char *s1, char *s2);
-int     ft_echo(char **command_array);
-int     ft_cd(char **command_array);
-int     ft_pwd(char **command_array);
-int     ft_env(t_minishell *shell, char **command_array);
-int 	ft_unset(t_minishell *shell, char **command_array);
-int	ft_exit(t_minishell *shell, char **command_array);
+int ft_pwd();
 int ft_export(t_minishell *shell, char *arg);
 int index_of_first_occurence(char *str, char c);
+char *update_value(t_minishell *shell, char *key, char *value);
 
 //********************src/utils
 // strings_1

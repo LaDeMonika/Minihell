@@ -46,9 +46,9 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
         *status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
-        *status = ft_cd(command_array);
+        *status = ft_cd(shell, command_array);
     else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
-        *status = ft_pwd(command_array);
+        *status = ft_pwd();
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
         *status = ft_env(shell, command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)

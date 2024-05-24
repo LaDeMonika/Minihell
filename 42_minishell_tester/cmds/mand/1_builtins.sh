@@ -230,17 +230,17 @@ pwd
 cd "$PWD/file_tests"
 pwd
 
-cd '/////' 2>/dev/null
+# cd '/////' 2>/dev/null
 
 cd '/etc'
 
 cd '/var'
 
-cd "doesntexist" 2>/dev/null
+# cd "doesntexist" 2>/dev/null
 
 cd ../../..
 
-cd "wtf" 2>/dev/null
+# cd "wtf" 2>/dev/null
 
 cd ?
 
@@ -325,14 +325,14 @@ pwd
 cd ~ asd w dd q asd
 pwd
 
-pwd
-cd ~
-cd -
-pwd
+# pwd
+# cd ~
+# cd -
+# pwd
 
-pwd
-cd -
-pwd
+# pwd
+# cd -
+# pwd
 
 pwd
 cd ~

@@ -21,9 +21,9 @@ UTILS = utils/strings_1.c utils/strings_2.c \
 
 ERR = err/error_msg_00.c err/error_msg_01.c
 
-#TEST = get_next_line/get_next_line.c
+TEST = get_next_line/get_next_line.c
 
-SRC = $(SRCS) $(ERR) $(BUILTIN) $(UTILS) #$(TEST)
+SRC = $(SRCS) $(ERR) $(BUILTIN) $(UTILS) $(TEST)
 
 OBJDIR = obj/
 OBJS = $(addprefix $(OBJDIR), $(SRC:.c=.o))
