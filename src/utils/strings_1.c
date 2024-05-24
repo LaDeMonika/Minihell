@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   strings_1.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/24 14:20:35 by msimic            #+#    #+#             */
+/*   Updated: 2024/05/24 14:21:14 by msimic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 char	*ft_strchr(const char *s, int c)
@@ -56,6 +68,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 		srclen++;
 	return (srclen);
 }
+
 char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
 	size_t	i;
@@ -84,6 +97,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	}
 	return (NULL);
 }
+
 char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 {
 	int		start;

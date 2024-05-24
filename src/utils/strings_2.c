@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   strings_2.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/24 14:20:39 by msimic            #+#    #+#             */
+/*   Updated: 2024/05/24 14:23:01 by msimic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
-char	*ft_substr(t_minishell *shell, char const *s, unsigned int start, size_t len)
+char	*ft_substr(t_minishell *shell, char const *s, unsigned int start,
+				size_t len)
 {
 	unsigned int	i;
 	char			*sub;
@@ -24,6 +37,7 @@ char	*ft_substr(t_minishell *shell, char const *s, unsigned int start, size_t le
 	}
 	return (sub);
 }
+
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
@@ -33,6 +47,7 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
+
 int	ft_strncmp(const char	*s1, const char	*s2, size_t	n)
 {
 	size_t	i;
@@ -53,11 +68,13 @@ int	ft_strncmp(const char	*s1, const char	*s2, size_t	n)
 
 int	ft_isalnum(int c)
 {
-	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+		|| (c >= '0' && c <= '9'))
 		return (1);
 	else
 		return (0);
 }
+
 char	*ft_strdup(t_minishell *shell, const char	*s)
 {
 	size_t	ssize;
