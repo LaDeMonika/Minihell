@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:23:13 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 16:44:40 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/24 13:21:36 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,13 @@ int ft_unset(t_minishell *shell, char **command_array)
     while (shell->envp[i])
     {
         env_name = strtok(shell->envp[i], "="); //ft_split
+        //check if env_name is splited correctly
+        while (env_name)
+        {
+            printf("env_name: %s\n", env_name);
+            env_name = strtok(NULL, "=");
+        }
+        
         if (ft_strcmp(env_name, name) == 0)
         {
             j = i;
