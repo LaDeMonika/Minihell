@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:57 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 17:57:02 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/23 16:48:47 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ft_env(t_minishell *shell, char **command_array)
 {
     int j = 0;
 
-
+    
     // probably will need to implement something for redirections, not sure yet
     if (command_array[j + 1] == NULL)
     {

@@ -31,11 +31,21 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 
 
 big tester m:
+ TOTAL TEST COUNT: 931  TESTS PASSED: 711  LEAKING: 0
+                     STD_OUT: 113  STD_ERR: 124  EXIT_CODE: 118
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 355
+                                     ✅ 2438  
+TOTAL TEST COUNT: 931  TESTS PASSED: 670  LEAKING: 0
+                     STD_OUT: 152  STD_ERR: 127  EXIT_CODE: 122
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 401
+                                     ✅ 2392
  TOTAL TEST COUNT: 696  TESTS PASSED: 614  LEAKING: 0
                      STD_OUT: 50  STD_ERR: 55  EXIT_CODE: 29
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 134
-                                     ✅ 1954   
+                                     ✅ 1954
 TOTAL TEST COUNT: 740  TESTS PASSED: 612  LEAKING: 0
                      STD_OUT: 96  STD_ERR: 55  EXIT_CODE: 29
                          TOTAL FAILED AND PASSED CASES:

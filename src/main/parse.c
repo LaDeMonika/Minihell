@@ -15,7 +15,7 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	free_and_reset_ptr((void **)&str_line_count);
 }
 
-char	*extract_line(t_minishell *shell, char *input)
+char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
 {
 	char	*temp;
 	char	*line;
@@ -29,17 +29,40 @@ char	*extract_line(t_minishell *shell, char *input)
 		/* printf("end index: %d\n", end_index); */
 		remain_len = ft_strlen(input) - end_index;
 		line = ft_substr(shell, input, 0, end_index);
-		shell->heredoc_input = ft_strdup(shell, temp + 1);
-
+		*heredoc_input = ft_strdup(shell, temp + 1);
 	}
 	else
 	{
 		line = ft_strdup(shell, input);
-		shell->heredoc_input = NULL;
+		*heredoc_input = NULL;
 	}
 	/* printf("remaining input: %s\n", shell->heredoc_input); */
 	free(input);
 	return (line);
+}
+
+void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
+{
+	char	*old_eof;
+	int	end_index_for_eof;
+	int	old_len;
+
+	/* printf("eof before: [%s]\n", *eof); */
+	old_eof = *eof;
+	old_len = ft_strlen(*eof);
+	end_index_for_eof = 0;
+	*heredoc_input = NULL;
+	*heredoc_input = strchr(*eof, '\n');
+	if (*heredoc_input)
+	{
+		*heredoc_input = ft_strdup(shell, *heredoc_input + 1);
+		end_index_for_eof = old_len - ft_strlen(*heredoc_input) - 1;
+		*eof = ft_substr(shell, old_eof, 0, end_index_for_eof);
+
+		/* printf("eof after: [%s] end index: %d heredoc input: [%s]\n", *eof, end_index_for_eof, *heredoc_input); */
+	}
+
+
 }
 /*writes input to input_file and sends for each input a newline character to pipe to increment line count*/
 void	write_to_file(t_minishell *shell, char *eof, char *input_file,
@@ -47,12 +70,17 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 {
 	int		file_fd;
 	char	*current_line;
+	char	*heredoc_input;
+
 
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
 	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
-	shell->heredoc_input = readline("> ");
-	current_line = extract_line(shell, shell->heredoc_input);
+	heredoc_input = NULL;
+	extract_eof_and_input(shell, &eof, &heredoc_input);
+	if (!heredoc_input)
+		heredoc_input = readline("> ");
+	current_line = extract_line(shell, heredoc_input, &heredoc_input);
 	/* printf("last line: %s\n", last_line);
 	printf("input: %s\n", input); */
 	/* try_write(shell, file_fd, "\n", 1); */
@@ -63,9 +91,9 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		try_write(shell, file_fd, current_line, ft_strlen(current_line));
 		try_write(shell, file_fd, "\n", 1);
 		/* printf("input: %s last line: %s\n", input, last_line); */
-		if (!shell->heredoc_input)
-			shell->heredoc_input = readline("> ");
-		current_line = extract_line(shell, shell->heredoc_input);
+		if (!heredoc_input)
+			heredoc_input = readline("> ");
+		current_line = extract_line(shell, heredoc_input, &heredoc_input);
 	}
 	if (current_line)
 		try_write(shell, pipe_fd[1], "\n", 1);

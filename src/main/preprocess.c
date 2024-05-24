@@ -34,6 +34,29 @@ char	*ft_getpid(t_minishell *shell)
 	return (free(pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
 }
 
+char	*ft_getenv(t_minishell *shell, char *key)
+{
+	int	i;
+	char	*key_in_array;
+	char	*value;
+
+	i = 0;
+	while (shell->envp[i])
+	{
+		key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
+		if (ft_strcmp(key_in_array, key) == 0)
+		{
+			/* printf("found key: %s\n", key); */
+			value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+			/* printf("found value: %s\n", value); */
+			return (value);
+		}
+
+		i++;
+	}
+	return (NULL);
+}
+
 /*if environment value exists to key, then replace it with the value
 returns mallocated string that has to be freed*/
 char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
@@ -56,7 +79,8 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		while (ft_isalnum(base[*i]))
 			(*i)++;
 		env_key = ft_substr(shell, base, *start, *i - *start);
-		env_value = ft_strdup(shell, getenv(env_key));
+		env_value = ft_strdup(shell, ft_getenv(shell, env_key));
+		/* env_value = ft_strdup(shell, getenv(env_key)); */
 		free(env_key);
 		*start = *i;
 		(*i)--;

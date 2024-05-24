@@ -29,7 +29,9 @@ void	handle_input(t_minishell *shell)
 	&& (ft_strncmp(shell->list[0]->token, "cd",	3) == 0
 	|| ft_strncmp(shell->list[0]->token, "cd ", 3) == 0
 	|| ft_strncmp(shell->usr_input, "exit", 5) == 0
-	|| ft_strncmp(shell->usr_input, "exit ", 5) == 0))
+	|| ft_strncmp(shell->usr_input, "exit ", 5) == 0
+	|| ft_strncmp(shell->usr_input, "export", 7) == 0
+	|| ft_strncmp(shell->usr_input, "export ", 7) == 0))
 	{
 		/* printf("command token is: %s\n", shell->list[0]->token);
 		printf("cd without argument? %d\n", ft_strncmp(shell->list[0]->token, "cd",
