@@ -39,6 +39,7 @@ If the command is not a builtin command, it will return 0.
 */
 bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
 {
+    int i;
     /* int status;
 
     status = 1; */
@@ -54,11 +55,11 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
         *status = ft_unset(shell, command_array); //wip
     else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
     {
-        command_array++;
-        while (command_array)
+        i = 1;
+        while (shell->command_array[i])
         {
-            *status = ft_export(shell, command_array);
-            command_array++;
+            *status = ft_export(shell, shell->command_array[i]);
+            i++;
         }
 
     }

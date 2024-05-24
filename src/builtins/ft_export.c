@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:22:36 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 14:18:42 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/24 14:22:03 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,12 @@ char *update_value(t_minishell *shell, char *arg)
 }
 
 
-int ft_export(t_minishell *shell, char **command_array)
+int ft_export(t_minishell *shell, char *arg)
 {
      //separete name and value by first =
     //check if name is valid
     //check is there =
     //add name to env
-    int new_elements;
     char **new_envp;
     int old_size;
 
@@ -86,23 +85,12 @@ int ft_export(t_minishell *shell, char **command_array)
 
 
 
-    if (!command_array[0] || !strchr(command_array[1], '='))
+    if (!arg || !strchr(arg, '='))
         return (0);
-    i = 1;
-    new_elements = 0;
-    while (command_array[i])
-    {
-        if (update_value(shell, command_array[i]))
-            command_array[i] = NULL;
-        else
-            new_elements++;
-        i++;
-    }
-    if (new_elements == 0)
+    if (update_value(shell, arg))
         return (0);
-
     old_size = sizeof_array((void **)shell->envp);
-    new_envp = malloc(sizeof(char *) * (old_size + new_elements + 1));
+    new_envp = malloc(sizeof(char *) * (old_size + 2));
     if (!new_envp)
         error_free_all(shell, ERR_MALLOC, NULL, NULL);
     i = 0;
@@ -112,18 +100,7 @@ int ft_export(t_minishell *shell, char **command_array)
         i++;
     }
 
-    i = 1;
-    while (new_elements > 0)
-    {
-        if (command_array[i])
-        {
-            new_envp[old_size] = ft_strdup(shell, command_array[i]);
-            old_size++;
-            new_elements--;
-        }
-        i++;
-    }
-
+    new_envp[old_size] = ft_strdup(shell, arg);
     new_envp[old_size + 1] = NULL;
     shell->envp = new_envp;
 

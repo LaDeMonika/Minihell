@@ -226,7 +226,7 @@ int     ft_pwd(char **command_array);
 int     ft_env(t_minishell *shell, char **command_array);
 int 	ft_unset(t_minishell *shell, char **command_array);
 int	ft_exit(t_minishell *shell, char **command_array);
-int ft_export(t_minishell *shell, char **command_array);
+int ft_export(t_minishell *shell, char *arg);
 int index_of_first_occurence(char *str, char c);
 
 //********************src/utils
