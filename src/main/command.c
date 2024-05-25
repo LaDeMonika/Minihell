@@ -77,9 +77,15 @@ char	*find_command(t_minishell *shell, char **input_array)
 	char	*command_path;
 	int		fd;
 
-	path = getenv("PATH");
+	/* path = getenv("PATH");
 	if (!path)
-		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL);
+		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL); */
+	path = ft_getenv(shell, "PATH");
+	if (!path)
+	{
+		print_error(input_array[0], "Permission denied");
+		exit (126);
+	}
 	shell->path_array = split_while_skipping_quotes(shell, path, ':');
 	i = 0;
 	while (shell->path_array[i])
@@ -108,7 +114,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	path = NULL;
 	if (!is_builtin)
 	{
-		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0)
+		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0 || access(ft_strjoin(shell, "./", shell->command_array[0]), F_OK) != -1)
 			path = shell->command_array[0];
 		else
 			path = find_command(shell, shell->command_array);
@@ -157,6 +163,16 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	// builtins
+	if (ft_strcmp(shell->command_array[0], ".") == 0)
+	{
+		print_error(".", "filename argument required");
+		exit (2);
+	}
+	if (ft_strcmp(shell->command_array[0], "..") == 0)
+	{
+		print_error("..", "command not found");
+		exit (127);
+	}
 	execute_command_array(shell, shell->command_array);
 
 }

@@ -6,11 +6,12 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/25 17:39:06 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/25 20:04:12 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+#include <string.h>
 #include <sys/types.h>
 
 /*
@@ -41,7 +42,8 @@ int ft_cd(t_minishell *shell, char **command_array)
     {
         new_pwd = getenv("HOME");
     }
-
+    else if (command_array[1][0] == '~')
+        new_pwd = ft_strjoin(shell, getenv("HOME"), command_array[1] + 1);
     else if (ft_strcmp(command_array[1], "-") == 0)
     {
         new_pwd = ft_getenv(shell, "OLDPWD");
@@ -57,7 +59,9 @@ int ft_cd(t_minishell *shell, char **command_array)
 
     if (chdir(new_pwd) == -1)
         return (1);
-    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, 0);
+    update_value(shell, ft_strdup(shell, "OLDPWD"),
+    current_pwd, 0);
+    update_value(shell, ft_strdup(shell, "PWD"), getcwd(NULL, 0), 0);
 
     return (0);
 }

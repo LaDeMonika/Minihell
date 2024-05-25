@@ -30,7 +30,7 @@ echo >
 
 echo > <
 
-.
+# .
 
 ..
 
@@ -40,14 +40,14 @@ EechoE
 
 .echo.
 
->echo>
-/bin/rm -f echo
+# >echo>
+# /bin/rm -f echo
 
-<echo<
-/bin/rm -f echo
+# <echo<
+# /bin/rm -f echo
 
->>echo>>
-/bin/rm -f echo
+# >>echo>>
+# /bin/rm -f echo
 
 |echo|
 
@@ -67,7 +67,7 @@ echo > <
 
 hello world
 ||||||||
-            
+
 cat wouaf wouaf
 >
 
