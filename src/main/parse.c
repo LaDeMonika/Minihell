@@ -64,8 +64,62 @@ void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
 
 
 }
-/*writes input to input_file and sends for each input a newline character to pipe to increment line count*/
+//variation for tester:
+#include "../get_next_line/get_next_line.h"
 void	write_to_file(t_minishell *shell, char *eof, char *input_file,
+		int pipe_fd[2])
+{
+	int		file_fd;
+	//char	*current_line;
+	char	*heredoc_input;
+
+
+	try_close(shell, pipe_fd[0]);
+	set_signals(shell, HEREDOC_CHILD);
+	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
+	//extract_eof_and_input(shell, &eof, &heredoc_input);
+	if (isatty(fileno(stdin)))
+		heredoc_input = readline("> ");
+	else
+	{
+		char *line;
+		line = get_next_line(fileno(stdin));
+		heredoc_input = ft_strtrim(shell, line, "\n");
+		free(line);
+	}
+
+
+	//current_line = extract_line(shell, heredoc_input, &heredoc_input);
+	while (heredoc_input && (ft_strncmp(heredoc_input, eof, ft_strlen(eof) + 1) != 0))
+	{
+		heredoc_input = expand_env_variables(shell, heredoc_input);
+		try_write(shell, pipe_fd[1], "\n", 1);
+		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
+		try_write(shell, file_fd, "\n", 1);
+		if (isatty(fileno(stdin)))
+			heredoc_input = readline("> ");
+		else
+		{
+			char *line;
+			line = get_next_line(fileno(stdin));
+			heredoc_input = ft_strtrim(shell, line, "\n");
+			free(line);
+		}
+
+
+		//current_line = extract_line(shell, heredoc_input, &heredoc_input);
+	}
+	if (heredoc_input)
+		try_write(shell, pipe_fd[1], "\n", 1);
+	if (!heredoc_input)
+		heredoc_EOF(shell, eof);
+	try_close(shell, pipe_fd[1]);
+	exit(EXIT_SUCCESS);
+}
+
+
+/*writes input to input_file and sends for each input a newline character to pipe to increment line count*/
+/* void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
@@ -81,16 +135,12 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	if (!heredoc_input)
 		heredoc_input = readline("> ");
 	current_line = extract_line(shell, heredoc_input, &heredoc_input);
-	/* printf("last line: %s\n", last_line);
-	printf("input: %s\n", input); */
-	/* try_write(shell, file_fd, "\n", 1); */
 	while (current_line && (ft_strncmp(current_line, eof, ft_strlen(eof) + 1) != 0))
 	{
 		current_line = expand_env_variables(shell, current_line);
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, current_line, ft_strlen(current_line));
 		try_write(shell, file_fd, "\n", 1);
-		/* printf("input: %s last line: %s\n", input, last_line); */
 		if (!heredoc_input)
 			heredoc_input = readline("> ");
 		current_line = extract_line(shell, heredoc_input, &heredoc_input);
@@ -102,7 +152,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	try_close(shell, pipe_fd[1]);
 	exit(EXIT_SUCCESS);
 }
-
+ */
 /*heredoc will read input in a child. local line count will increase by 1 for each line and added to global line count in the parent*/
 void	heredoc(t_minishell *shell, char *eof, char *input_file)
 {

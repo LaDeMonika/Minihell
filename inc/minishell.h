@@ -250,7 +250,7 @@ char						ft_strcmp_btin(char *s1, char *s2);
 int							ft_echo(char **command_array);
 int ft_cd(t_minishell *shell, char **command_array);
 int							ft_env(t_minishell *shell, char **command_array);
-int							ft_unset(t_minishell *shell, char **command_array);
+int ft_unset(t_minishell *shell, char *key);
 int							ft_exit(t_minishell *shell, char **command_array);
 int ft_pwd();
 int ft_export(t_minishell *shell, char *arg);
@@ -292,4 +292,5 @@ int							ft_atoi(const char	*nptr, bool *valid_number);
 
 //strings_5
 bool    ft_isalpha(char c);
+int sizeof_array(void **array);
 #endif

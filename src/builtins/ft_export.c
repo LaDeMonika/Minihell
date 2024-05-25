@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:22:36 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/25 18:00:46 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/25 18:16:59 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-int sizeof_array(void **array)
-{
-    int i;
 
-    i = 0;
-    while (array[i])
-        i++;
-    return (i);
-}
 
 int index_of_first_occurence(char *str, char c)
 {

@@ -6,7 +6,7 @@ int	ft_exit(t_minishell *shell, char **command_array)
 	int	exit_code;
 
 	(void)shell;
-	printf("exit\n");
+	/* printf("exit\n"); */
 	valid_number = true;
 	if (command_array[1])
 	{
@@ -19,6 +19,7 @@ int	ft_exit(t_minishell *shell, char **command_array)
 				errno = U_TOO_MANY_ARGUMENTS;
 				return (1);
 			}
+			shell->last_exit_status = exit_code % 256;
 			exit(exit_code % 256);
 
 		}

@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 14:25:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/25 17:28:00 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/25 18:17:03 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,14 @@ bool    ft_isalpha(char c)
     if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
         return (true);
     return (false);
+}
+
+int sizeof_array(void **array)
+{
+    int i;
+
+    i = 0;
+    while (array[i])
+        i++;
+    return (i);
 }

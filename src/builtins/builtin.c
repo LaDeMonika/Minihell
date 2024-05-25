@@ -67,7 +67,14 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
         *status = ft_env(shell, command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
-        *status = ft_unset(shell, command_array); //wip
+    {
+        i = 1;
+        while (shell->command_array[i])
+        {
+            *status = ft_unset(shell, command_array[i]);
+            i++;
+        }
+    }
     else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
     {
         if (!command_array[1])
