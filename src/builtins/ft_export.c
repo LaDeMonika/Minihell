@@ -6,12 +6,13 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:22:36 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 16:29:53 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/25 18:00:46 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../inc/minishell.h"
+#include <stdbool.h>
 #include <string.h>
 
 int sizeof_array(void **array)
@@ -38,12 +39,12 @@ int index_of_first_occurence(char *str, char c)
     return (-1);
 }
 
-char *update_value(t_minishell *shell, char *key, char *value)
+char *update_value(t_minishell *shell, char *key, char *value, bool append)
 {
     int i;
 
     char  *key_in_array;
-    //char *value_in_array;
+    char *value_in_array;
     char  *new_entry;
 
 
@@ -52,12 +53,17 @@ char *update_value(t_minishell *shell, char *key, char *value)
     while (shell->envp[i])
     {
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
-       /*  printf("key in array: %s key: %s\n", key_in_array, key); */
+
+        /* printf("key in array: %s key: %s\n", key_in_array, key); */
         if (ft_strcmp(key_in_array, key) == 0)
         {
 
 
             new_entry = append_suffix(shell, key, "=");
+            if (append)
+            {
+                value_in_array = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+            }
             new_entry = append_suffix(shell, new_entry, value);
             /* printf("value before: %s\n", shell->envp[i]); */
             shell->envp[i] = ft_strdup(shell, new_entry);
@@ -70,7 +76,42 @@ char *update_value(t_minishell *shell, char *key, char *value)
     return (NULL);
 
 }
+int count_occurences_of_char(char *str, char c)
+{
+    int i;
+    int count;
 
+    i = 0;
+    count = 0;
+    while (str[i])
+    {
+        if (str[i] == c)
+            count++;
+        i++;
+    }
+    return (count);
+}
+
+
+
+bool    valid_arg(char *str)
+{
+    int i;
+
+    if (!ft_isalpha(str[0]) && str[0] != '_')
+        return (false);
+    i = 0;
+    while (str[i] && str[i] != '=' && str[i] != '+')
+    {
+        if (!ft_isalnum(str[i]) && str[i] != '_' && str[i])
+            return (false);
+        i++;
+    }
+
+    if (str[i] == '+' && str[i + 1] != '=')
+        return (false);
+    return (true);
+}
 
 int ft_export(t_minishell *shell, char *arg)
 {
@@ -82,16 +123,31 @@ int ft_export(t_minishell *shell, char *arg)
     char    *value;
     char **new_envp;
     int old_size;
+    int    append;
+    char    *new_entry;
+
 
     int i;
 
 
 
-    if (!arg || !strchr(arg, '='))
+    if (!valid_arg(arg))
+    {
+        errno = U_INVALID_IDENTIFIER;
+        return(1);
+    }
+    if (count_occurences_of_char(arg, '=') < 1)
         return (0);
-    key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '='));
+    append = 0;
+    if (ft_strnstr(arg, "+=", ft_strlen(arg)))
+        append = 1;
+
+    key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - append);
+    /* printf("append: %d key: %s\n", append, key); */
     value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
-    if (update_value(shell, key, value))
+
+
+    if (update_value(shell, key, value, append))
         return (0);
     old_size = sizeof_array((void **)shell->envp);
     new_envp = malloc(sizeof(char *) * (old_size + 2));
@@ -103,8 +159,15 @@ int ft_export(t_minishell *shell, char *arg)
         new_envp[i] = ft_strdup(shell, shell->envp[i]);
         i++;
     }
-
-    new_envp[old_size] = ft_strdup(shell, arg);
+    if (append)
+    {
+        new_entry = append_suffix(shell, key, "=");
+        new_entry = append_suffix(shell, new_entry, value);
+    }
+    else
+        new_entry = ft_strdup(shell, arg);
+    /* printf("check\n"); */
+    new_envp[old_size] = new_entry;
     new_envp[old_size + 1] = NULL;
     shell->envp = new_envp;
 

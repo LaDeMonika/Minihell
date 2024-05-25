@@ -73,10 +73,10 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		env_value = ft_strdup(shell, getenv("HOME"));
 		*start = *i + 1;
 	}
-	else if (ft_isalnum(base[*i]) && (base[*i] >= '9' || base[*i] <= '0'))
+	else if (ft_isalpha(base[*i]) || base[*i] == '_')
 	{
 		*start = *i;
-		while (ft_isalnum(base[*i]))
+		while (ft_isalnum(base[*i]) || base[*i] == '_')
 			(*i)++;
 		env_key = ft_substr(shell, base, *start, *i - *start);
 		env_value = ft_strdup(shell, ft_getenv(shell, env_key));

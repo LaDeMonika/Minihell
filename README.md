@@ -26,12 +26,28 @@ Valgrind: run it with this flag to suppress all readline leaks: --suppressions=r
 - maybe need to update PWD in env
 - improve error message: include bash and command argument if necessary
 - quote behaviour in heredoc
+- export and env should show the exact same elements as bash?
 
 ### PROB
 
 
 
 big tester m:
+TOTAL TEST COUNT: 891  TESTS PASSED: 755  LEAKING: 0
+                     STD_OUT: 129  STD_ERR: 68  EXIT_CODE: 63
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 260
+                                     ✅ 2413  
+ TOTAL TEST COUNT: 894  TESTS PASSED: 750  LEAKING: 0
+                     STD_OUT: 133  STD_ERR: 72  EXIT_CODE: 71
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 276
+                                     ✅ 2406
+ TOTAL TEST COUNT: 894  TESTS PASSED: 728  LEAKING: 0
+                     STD_OUT: 137  STD_ERR: 97  EXIT_CODE: 91
+                         TOTAL FAILED AND PASSED CASES:
+                                     ❌ 325
+                                     ✅ 2357
 TOTAL TEST COUNT: 931  TESTS PASSED: 717  LEAKING: 0
                      STD_OUT: 114  STD_ERR: 117  EXIT_CODE: 111
                          TOTAL FAILED AND PASSED CASES:

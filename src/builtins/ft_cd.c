@@ -6,7 +6,7 @@
 /*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 16:45:39 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/25 17:39:06 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int ft_cd(t_minishell *shell, char **command_array)
 
     if (chdir(new_pwd) == -1)
         return (1);
-    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd);
+    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, 0);
 
     return (0);
 }

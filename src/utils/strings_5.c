@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   strings_5.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 14:25:21 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 14:27:30 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/25 17:28:00 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,11 @@ char	*append_suffix(t_minishell *shell, char *base, char *suffix)
 	new_str = ft_strjoin(shell, base, suffix);
 	free_and_reset_ptr((void **)&base);
 	return (new_str);
+}
+
+bool    ft_isalpha(char c)
+{
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+        return (true);
+    return (false);
 }

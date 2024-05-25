@@ -31,7 +31,22 @@ char ft_strcmp_btin(char *s1, char *s2)
         return (1);
     return (0);
 }
+int export_no_args(t_minishell  *shell)
+{
+    int i;
+    char  *key;
+    char *value;
 
+    i = 0;
+    while (shell->envp[i])
+    {
+        key = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
+        value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+        printf("declare -x %s=\"%s\"\n", key, value);
+        i++;
+    }
+    return (0);
+}
 /*
 ft_is_builtin is a function that will check if the command is a builtin command.
 If the command is a builtin command, it will execute the builtin command.
@@ -55,6 +70,11 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
         *status = ft_unset(shell, command_array); //wip
     else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
     {
+        if (!command_array[1])
+        {
+            *status = export_no_args(shell);
+            return (true);
+        }
         i = 1;
         while (shell->command_array[i])
         {

@@ -3,9 +3,11 @@
 int	set_exit_status_before_termination(t_minishell *shell, char **custom_message)
 {
 	(void)shell;
+	if (errno == U_INVALID_IDENTIFIER)
+		*custom_message = ("not a valid identifier");
 	if (errno == U_TOO_MANY_ARGUMENTS)
 		*custom_message = ("too many arguments");
-	if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
+	else if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
 	{
 		if (errno == EFAULT || (errno == EACCES && !shell->command_array[0][0]))
 			*custom_message = ("command not found");

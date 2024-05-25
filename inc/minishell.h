@@ -108,7 +108,8 @@ enum						e_error
 
 enum e_custom_errno
 {
-	U_TOO_MANY_ARGUMENTS
+	U_TOO_MANY_ARGUMENTS,
+	U_INVALID_IDENTIFIER
 };
 
 enum						e_token_delimiter
@@ -254,7 +255,7 @@ int							ft_exit(t_minishell *shell, char **command_array);
 int ft_pwd();
 int ft_export(t_minishell *shell, char *arg);
 int index_of_first_occurence(char *str, char c);
-char *update_value(t_minishell *shell, char *key, char *value);
+char *update_value(t_minishell *shell, char *key, char *value, bool append);
 
 //********************src/utils
 // strings_1
@@ -288,4 +289,7 @@ void						ft_putstr_fd(char *s, int fd);
 bool						is_space(char c);
 int							ft_atoi(const char	*nptr, bool *valid_number);
 
+
+//strings_5
+bool    ft_isalpha(char c);
 #endif
