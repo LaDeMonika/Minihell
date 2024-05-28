@@ -89,13 +89,13 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 
 	words = count_words(s, sep);
 	array = NULL;
-	if (sep == '|')
+	/* if (sep == '|')
 		array = shell->input_array;
 	else if (sep == ' ')
 		array = shell->command_array;
 	else if (sep == ':')
 		array = shell->path_array;
-
+ */
 	array = try_malloc(shell, (words + 1) * sizeof(char *));
 	i = 0;
 	while (i < words + 1)

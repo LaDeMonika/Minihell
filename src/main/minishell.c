@@ -13,7 +13,7 @@ void	handle_input(t_minishell *shell)
 			'|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
-	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 2));
+	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));
 	shell->list = try_malloc(shell, sizeof(t_token_list *) * (shell->pipes_total
 				+ 2));
 	shell->list[shell->pipes_total + 1] = NULL;
@@ -121,7 +121,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(shell->usr_input);
 			handle_input(shell);
 		}
-
+		free_iteration(shell);
 	}
 	return (free_all(shell));
 }

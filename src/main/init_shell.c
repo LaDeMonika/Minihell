@@ -31,8 +31,8 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 }
 void	init_input_iteration(t_minishell *shell)
 {
-	free_iteration(shell);
 	
+
 
 	shell->line_count++;
 	shell->pipes_total = 0;

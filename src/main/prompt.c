@@ -34,6 +34,7 @@ void    append_path(t_minishell *shell)
 	}
 	else
 		shell->prompt = append_suffix(shell, shell->prompt, pwd);
+	free_and_reset_ptr((void **)&pwd);
 }
 
 void    append_hostname(t_minishell *shell)
