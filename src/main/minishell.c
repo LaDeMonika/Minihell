@@ -13,7 +13,7 @@ void	handle_input(t_minishell *shell)
 			'|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
-	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 2));
+	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));
 	shell->list = try_malloc(shell, sizeof(t_token_list *) * (shell->pipes_total
 				+ 2));
 	shell->list[shell->pipes_total + 1] = NULL;
@@ -53,6 +53,7 @@ void	handle_input(t_minishell *shell)
 
 	else
 		shell->last_exit_status = shell->parsing_exit_status;
+	//free_iteration(shell);
 }
 /*
 int	main(int argc, char **argv, char **envp)
@@ -112,16 +113,22 @@ int	main(int argc, char **argv, char **envp)
 			char *line;
 			line = get_next_line(fileno(stdin));
 			shell->usr_input = ft_strtrim(shell, line, "\n");
-			free(line);
+			//free(line);
 		}
 		if (!shell->usr_input)
-			return (free_all(shell), shell->last_exit_status);
-		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v"), "\0", 1) != 0)
+		{
+			/* printf("You pressed CTRL + D\n"); */
+			return (free_all(shell));
+		}
+
+		shell->usr_input = ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v");
+		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
+			//free_iteration(shell);
 		}
-
+		free_iteration(shell);
 	}
-	free_all(shell);
+	return (free_all(shell));
 }

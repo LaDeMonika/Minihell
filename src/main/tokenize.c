@@ -75,7 +75,7 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 	token = ft_substr(shell, shell->input_array[index], start, len);
 	temp = token;
 	token = ft_strtrim(shell, token, " ");
-	free_and_reset_ptr((void **)&temp);
+	//free_and_reset_ptr((void **)&temp);
 	/* printf("before expansion token: %s delimiter: %d\n", token, shell->pre_delimiter); */
 	if (shell->pre_delimiter != HEREDOC)
 		token = expand_env_variables(shell, token);

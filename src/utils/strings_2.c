@@ -35,6 +35,7 @@ char	*ft_substr(t_minishell *shell, char const *s, unsigned int start,
 		sub[i] = s[start + i];
 		i++;
 	}
+	
 	return (sub);
 }
 

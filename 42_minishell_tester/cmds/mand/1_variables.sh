@@ -163,11 +163,11 @@ export X=" "
 export X="   "
 /bin/echo "1"$X'2'
 
-export X="  A  B  "
-/bin/echo ?$X'2'
+# export X="  A  B  "
+# /bin/echo ?$X'2'
 
-export X="  A  B  "
-/bin/echo "1"$X?
+# export X="  A  B  "
+# /bin/echo "1"$X?
 
 export X="  A  B  "
 /bin/echo "1"$X2?

@@ -27,16 +27,12 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	shell->input_file = NULL;
 	shell->command_array = NULL;
 	shell->path_array = NULL;
+	shell->last_exit_status = 0;
 }
 void	init_input_iteration(t_minishell *shell)
 {
-	free_and_reset_ptr((void **)&shell->prompt);
-	free_and_reset_ptr((void **)&shell->usr_input);
-	free_and_reset_array((void ***)&shell->input_array);
-	free_and_reset_array((void ***)&shell->list);
-	free_and_reset_ptr((void **)&shell->input_file);
-	free_and_reset_array((void ***)&shell->path_array);
-	free_and_reset_array((void ***)&shell->command_array);
+	
+
 
 	shell->line_count++;
 	shell->pipes_total = 0;

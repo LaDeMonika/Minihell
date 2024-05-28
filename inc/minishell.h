@@ -168,8 +168,10 @@ void						error_free_all(t_minishell *shell, int err,
 								char *prefix, char *custom_error);
 void						free_and_reset_ptr(void **ptr);
 void						free_and_reset_array(void ***array);
-void						free_all(t_minishell *shell);
+int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
+void	free_iteration(t_minishell *shell);
+void	free_child(t_minishell *shell);
 
 // prompt
 
@@ -263,7 +265,7 @@ char						*ft_strtrim(t_minishell *shell, char const *s1,
 								char const *set);
 char						*ft_strjoin(t_minishell *shell, char const *s1,
 								char const *s2);
-char						*ft_strchr(const char *s, int c);
+char	*ft_strchr(const char *s, char c);
 char						*ft_strnstr(const char *big, const char *little,
 								size_t len);
 size_t						ft_strlcpy(char *dst, const char *src, size_t size);

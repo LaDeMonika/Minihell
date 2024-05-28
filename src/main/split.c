@@ -29,13 +29,13 @@ static int	count_words(char *s, char sep)
 if sep i ' ' then increase len by one so that it also puts the current char*/
 static char	*parse_word(t_minishell *shell, char *word, char sep)
 {
-	char	*temp;
+	/* char	*temp;
 
-	temp = word;
+	temp = word; */
 
 	word = ft_strtrim(shell, word, " \f\n\r\t\v");
 
-	free_and_reset_ptr((void **)&temp);
+	/* free_and_reset_ptr((void **)&temp); */
 	if (sep == '|' && (!word || !(*word)))
 	{
 
@@ -89,13 +89,13 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 
 	words = count_words(s, sep);
 	array = NULL;
-	if (sep == '|')
+	/* if (sep == '|')
 		array = shell->input_array;
 	else if (sep == ' ')
 		array = shell->command_array;
 	else if (sep == ':')
 		array = shell->path_array;
-
+ */
 	array = try_malloc(shell, (words + 1) * sizeof(char *));
 	i = 0;
 	while (i < words + 1)
