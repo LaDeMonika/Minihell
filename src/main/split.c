@@ -29,13 +29,13 @@ static int	count_words(char *s, char sep)
 if sep i ' ' then increase len by one so that it also puts the current char*/
 static char	*parse_word(t_minishell *shell, char *word, char sep)
 {
-	char	*temp;
+	/* char	*temp;
 
-	temp = word;
+	temp = word; */
 
 	word = ft_strtrim(shell, word, " \f\n\r\t\v");
 
-	free_and_reset_ptr((void **)&temp);
+	/* free_and_reset_ptr((void **)&temp); */
 	if (sep == '|' && (!word || !(*word)))
 	{
 

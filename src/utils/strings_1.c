@@ -97,7 +97,8 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	}
 	return (NULL);
 }
-
+/*trims s1 by set and frees old s1.
+returns an allocated string that has to be freed*/
 char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 {
 	int		start;
@@ -107,6 +108,8 @@ char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 
 	if (!s1 || !set)
 		return (NULL);
+	if (ft_strlen(s1) == 0)
+		return (free_and_reset_ptr((void **)&s1), ft_strdup(shell, ""));
 	start = 0;
 	while (ft_strchr(set, s1[start]))
 		start++;
@@ -119,5 +122,6 @@ char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 	new = try_malloc(shell, (newlen + 1) * sizeof(char));
 	ft_strlcpy(new, s1 + start, newlen + 1);
 	*(new + newlen) = '\0';
+	free_and_reset_ptr((void **)&s1);
 	return (new);
 }

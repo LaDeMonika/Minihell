@@ -173,4 +173,4 @@ cd .. |ls|cat Makefile|>> out
 pwd
 /bin/rm -f out
 
-ls -l | awk '$1 ~ /^d/ {print $9}'
+# ls -l | awk '$1 ~ /^d/ {print $9}'

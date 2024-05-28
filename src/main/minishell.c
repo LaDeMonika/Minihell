@@ -112,14 +112,16 @@ int	main(int argc, char **argv, char **envp)
 			char *line;
 			line = get_next_line(fileno(stdin));
 			shell->usr_input = ft_strtrim(shell, line, "\n");
-			free(line);
+			//free(line);
 		}
 		if (!shell->usr_input)
 			return (free_all(shell));
-		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v"), "\0", 1) != 0)
+		shell->usr_input = ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v");
+		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
+			free_iteration(shell);
 		}
 		free_iteration(shell);
 	}

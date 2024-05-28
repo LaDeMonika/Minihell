@@ -171,6 +171,7 @@ void						free_and_reset_array(void ***array);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 void	free_iteration(t_minishell *shell);
+void	free_child(t_minishell *shell);
 
 // prompt
 

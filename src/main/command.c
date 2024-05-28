@@ -118,6 +118,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 			path = shell->command_array[0];
 		else
 			path = find_command(shell, shell->command_array);
+		free_child(shell);
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
 		exit_status = 1;

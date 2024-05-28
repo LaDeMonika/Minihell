@@ -37,16 +37,53 @@ void	free_and_reset_array(void ***array)
 	free_and_reset_ptr(*array);
 }
 
+void	free_and_reset_list(t_token_list **list)
+{
+	t_token_list *current;
+
+	while (*list)
+	{
+		current = *list;
+		*list = (*list)->next;
+		free_and_reset_ptr((void **)&current);
+	}
+}
+
+/* void	free_and_reset_int(int **ptr)
+{
+	if (ptr && *ptr)
+	{
+		free(ptr);
+		*ptr = NULL;
+	}
+} */
+void	free_child(t_minishell *shell)
+{
+	free_and_reset_ptr((void **)&shell->prompt);
+	free_and_reset_ptr((void **)&shell->usr_input);
+	free_and_reset_array((void ***)&shell->input_array);
+	/* free_and_reset_list(shell->list);
+	free_and_reset_ptr((void **)shell->list); */
+	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_ptr((void **)&shell->input_file);
+	free_and_reset_array((void ***)&shell->path_array);
+
+	free_and_reset_ptr((void **)&shell->pid);
+}
+
 void	free_iteration(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
 	free_and_reset_array((void ***)&shell->input_array);
+	/* free_and_reset_list(shell->list);
+	free_and_reset_ptr((void **)shell->list); */
 	free_and_reset_array((void ***)&shell->list);
 	free_and_reset_ptr((void **)&shell->input_file);
 	free_and_reset_array((void ***)&shell->path_array);
 	free_and_reset_array((void ***)&shell->command_array);
 	free_and_reset_ptr((void **)&shell->pid);
+	/* free_and_reset_int(&shell->pid);*/
 }
 
 int	free_all(t_minishell *shell)
