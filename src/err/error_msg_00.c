@@ -45,6 +45,7 @@ void	free_and_reset_list(t_token_list **list)
 	{
 		current = *list;
 		*list = (*list)->next;
+		free_and_reset_ptr((void **)&current->token);
 		free_and_reset_ptr((void **)&current);
 	}
 }
@@ -78,6 +79,7 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->input_array);
 	/* free_and_reset_list(shell->list);
 	free_and_reset_ptr((void **)shell->list); */
+
 	free_and_reset_array((void ***)&shell->list);
 	free_and_reset_ptr((void **)&shell->input_file);
 	free_and_reset_array((void ***)&shell->path_array);

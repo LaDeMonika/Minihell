@@ -53,6 +53,7 @@ void	handle_input(t_minishell *shell)
 
 	else
 		shell->last_exit_status = shell->parsing_exit_status;
+	//free_iteration(shell);
 }
 /*
 int	main(int argc, char **argv, char **envp)
@@ -115,13 +116,17 @@ int	main(int argc, char **argv, char **envp)
 			//free(line);
 		}
 		if (!shell->usr_input)
+		{
+			/* printf("You pressed CTRL + D\n"); */
 			return (free_all(shell));
+		}
+
 		shell->usr_input = ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v");
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
-			free_iteration(shell);
+			//free_iteration(shell);
 		}
 		free_iteration(shell);
 	}

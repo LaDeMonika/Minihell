@@ -4,6 +4,7 @@
 void	parent(t_minishell *shell, char **input_array, int pipes_left,
 		int read_fd)
 {
+	/* printf("parent pid: %d\n", getpid()); */
 	set_signals(shell, PARENT_WITH_CHILD);
 	try_close(shell, shell->pipe_fd[1]);
 	if (read_fd > 0)
@@ -29,6 +30,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left,
 void	child(t_minishell *shell, int pipes_left,
 		int read_fd)
 {
+	/* printf("child pid: %d\n", getpid()); */
 	set_signals(shell, CHILD);
 	try_close(shell, shell->pipe_fd[0]);
 	if (read_fd > 0)
