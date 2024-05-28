@@ -12,15 +12,15 @@
 
 #include "../../inc/minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strchr(const char *s, char c)
 {
-	while (s && *s)
+	while (s && c && *s)
 	{
-		if (*s == (char)c)
+		if (*s == c)
 			return ((char *)s);
 		s++;
 	}
-	if (s && *s == (char)c)
+	if (s && c && *s == c)
 		return ((char *)s);
 	return (NULL);
 }
@@ -108,17 +108,16 @@ char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 
 	if (!s1 || !set)
 		return (NULL);
-	if (ft_strlen(s1) == 0)
-		return (free_and_reset_ptr((void **)&s1), ft_strdup(shell, ""));
+
 	start = 0;
 	while (ft_strchr(set, s1[start]))
 		start++;
 	end = ft_strlen(s1) - 1;
+	if (ft_strlen(s1) == 0 || start > end)
+		return (free_and_reset_ptr((void **)&s1), ft_strdup(shell, ""));
 	while (ft_strchr(set, s1[end]))
 		end--;
 	newlen = end - start + 1;
-	if (newlen < 0)
-		newlen = 0;
 	new = try_malloc(shell, (newlen + 1) * sizeof(char));
 	ft_strlcpy(new, s1 + start, newlen + 1);
 	*(new + newlen) = '\0';

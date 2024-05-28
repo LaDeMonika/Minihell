@@ -265,7 +265,7 @@ char						*ft_strtrim(t_minishell *shell, char const *s1,
 								char const *set);
 char						*ft_strjoin(t_minishell *shell, char const *s1,
 								char const *s2);
-char						*ft_strchr(const char *s, int c);
+char	*ft_strchr(const char *s, char c);
 char						*ft_strnstr(const char *big, const char *little,
 								size_t len);
 size_t						ft_strlcpy(char *dst, const char *src, size_t size);
