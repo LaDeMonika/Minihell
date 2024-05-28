@@ -115,7 +115,7 @@ int	main(int argc, char **argv, char **envp)
 			free(line);
 		}
 		if (!shell->usr_input)
-			return (free_all(shell), shell->last_exit_status);
+			return (free_all(shell));
 		if (ft_strncmp(ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v"), "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
@@ -123,5 +123,5 @@ int	main(int argc, char **argv, char **envp)
 		}
 
 	}
-	free_all(shell);
+	return (free_all(shell));
 }

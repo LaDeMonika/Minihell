@@ -8,7 +8,7 @@
 -> <a href="https://github.com/Swoorup/mysh" target="_blank">Practice example from 42 Decs</a>
 
 Valgrind: run it with this flag to suppress all readline leaks:
---suppressions=readline.supp
+--suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes
 
 ### Monika's Task
     - Builtins.

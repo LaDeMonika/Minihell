@@ -46,10 +46,14 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->command_array);
 }
 
-void	free_all(t_minishell *shell)
+int	free_all(t_minishell *shell)
 {
+	int	last_exit_status;
+
+	last_exit_status = shell->last_exit_status;
 	free_iteration(shell);
 	free_and_reset_ptr((void **)&shell);
+	return (last_exit_status);
 }
 
 void	error_free_all_second(int err, char *prefix)
