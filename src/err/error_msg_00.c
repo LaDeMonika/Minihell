@@ -35,12 +35,20 @@ void	free_and_reset_array(void ***array)
 	free_and_reset_ptr(*array);
 }
 
-void	free_all(t_minishell *shell)
+void	free_iteration(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
 	free_and_reset_array((void ***)&shell->input_array);
 	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_ptr((void **)&shell->input_file);
+	free_and_reset_array((void ***)&shell->path_array);
+	free_and_reset_array((void ***)&shell->command_array);
+}
+
+void	free_all(t_minishell *shell)
+{
+	free_iteration(shell);
 	free_and_reset_ptr((void **)&shell);
 }
 

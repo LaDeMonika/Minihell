@@ -7,7 +7,8 @@
 -> <a href="https://www.linux.org/threads/bash-03-–-command-line-processing.38676/" target="_blank">Command-line processing</a>
 -> <a href="https://github.com/Swoorup/mysh" target="_blank">Practice example from 42 Decs</a>
 
-Valgrind: run it with this flag to suppress all readline leaks: --suppressions=readline.supp
+Valgrind: run it with this flag to suppress all readline leaks:
+--suppressions=readline.supp
 
 ### Monika's Task
     - Builtins.
@@ -37,7 +38,7 @@ TOTAL TEST COUNT: 871  TESTS PASSED: 871  LEAKING: 0
                      STD_OUT: ✓   STD_ERR: ✓   EXIT_CODE: ✓
                          TOTAL FAILED AND PASSED CASES:
                                      ❌ 0
-                                     ✅ 2613   
+                                     ✅ 2613
 TOTAL TEST COUNT: 881  TESTS PASSED: 868  LEAKING: 0
                      STD_OUT: 6  STD_ERR: 4  EXIT_CODE: 6
                          TOTAL FAILED AND PASSED CASES:
