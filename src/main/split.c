@@ -26,7 +26,8 @@ static int	count_words(char *s, char sep)
 	return (words);
 }
 /*
-if sep i ' ' then increase len by one so that it also puts the current char*/
+if sep i ' ' then increase len by one so that it also puts the current char.
+returns a malloced string that has to be freed*/
 static char	*parse_word(t_minishell *shell, char *word, char sep)
 {
 	/* char	*temp;
@@ -40,7 +41,6 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 	{
 
 		free_and_reset_ptr((void **)&word);
-
 		word = try_malloc(shell, sizeof(char) * 2);
 		word[0] = '|';
 		word[1] = '\0';
@@ -112,6 +112,7 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 		printf("word at index %d: %s\n", j, array[j]);
 		j++;
 	} */
+	/* printf("address of sep %c array: %p\n", sep, array); */
 	return (array);
 }
 /* int	main(void)

@@ -11,6 +11,8 @@ void	handle_input(t_minishell *shell)
 	//shell->usr_input = expand_env_variables(shell, shell->usr_input);
 	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input,
 			'|');
+
+	/* printf("address of input_array on assignment: %p\n", (void *)shell->input_array); */
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
 	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));
