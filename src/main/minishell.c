@@ -22,6 +22,7 @@ void	handle_input(t_minishell *shell)
 	i = 0;
 	while (shell->input_array[i])
 	{
+
 		shell->list[i] = NULL;
 		tokenize(shell, shell->input_array[i], i);
 		i++;
@@ -52,10 +53,10 @@ void	handle_input(t_minishell *shell)
 		handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
 			STDIN_FILENO);
 	}
-
 	else
 		shell->last_exit_status = shell->parsing_exit_status;
 	//free_iteration(shell);
+
 }
 /*
 int	main(int argc, char **argv, char **envp)

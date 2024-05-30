@@ -185,9 +185,8 @@ void						extract_and_add_tokens(t_minishell *shell,
 								int index, int start, int len);
 void						list_add(t_minishell *shell, t_token_list **head,
 								char *token);
-void						append_to_command(t_minishell *shell,
-								t_token_list **head, char *command_arg,
-								char *token);
+void	append_to_command(t_minishell *shell, t_token_list **head,
+		char *command_arg, char **token);
 void						tokenize(t_minishell *shell, char *command,
 								int index);
 

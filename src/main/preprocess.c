@@ -29,9 +29,9 @@ char	*ft_getpid(t_minishell *shell)
 		}
 	}
 	else
-		return (free(pid), error_free_all(shell, ERR_OPEN, NULL, NULL), NULL);
+		return (free_and_reset_ptr((void **)&pid), error_free_all(shell, ERR_OPEN, NULL, NULL), NULL);
 	close(fd);
-	return (free(pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
+	return (free_and_reset_ptr((void **)&pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
 }
 
 char	*ft_getenv(t_minishell *shell, char *key)
@@ -49,9 +49,10 @@ char	*ft_getenv(t_minishell *shell, char *key)
 			/* printf("found key: %s\n", key); */
 			value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
 			/* printf("found value: %s\n", value); */
+			free_and_reset_ptr((void **)&key_in_array);
 			return (value);
 		}
-
+		free_and_reset_ptr((void **)&key_in_array);
 		i++;
 	}
 	return (NULL);
@@ -79,9 +80,9 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		while (ft_isalnum(base[*i]) || base[*i] == '_')
 			(*i)++;
 		env_key = ft_substr(shell, base, *start, *i - *start);
-		env_value = ft_strdup(shell, ft_getenv(shell, env_key));
+		env_value = ft_getenv(shell, env_key);
 		/* env_value = ft_strdup(shell, getenv(env_key)); */
-		free(env_key);
+		free_and_reset_ptr((void **)&env_key);
 		*start = *i;
 		(*i)--;
 	}
@@ -118,7 +119,7 @@ char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
 
 	suffix = ft_substr(shell, base, 0, len);
 	new_str = append_suffix(shell, new_str, suffix);
-	free(suffix);
+	free_and_reset_ptr((void **)&suffix);
 	return (new_str);
 }
 
@@ -138,7 +139,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	new_str = NULL;
 	metaquote = '\0';
 	if (!s[i])
-		new_str = s;
+		new_str = ft_strdup(shell, s);
 	while (s[i])
 	{
 		if (s[i] == '"' && !metaquote)
@@ -154,7 +155,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 			/* printf("after extracting: %s\n", new_str); */
 			env_value = get_env_value(shell, s, &start, &i, &metaquote);
 			new_str = append_suffix(shell, new_str, env_value);
-			free(env_value);
+			free_and_reset_ptr((void **)&env_value);
 			/* printf("after appending: %s\n", new_str); */
 		}
 		i++;
@@ -163,7 +164,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	if (i != start)
 		new_str = extract_substr_and_append(shell, s + start, i - start,
 				new_str);
-	//free_and_reset_ptr((void **)&s);
+	free_and_reset_ptr((void **)&s);
 	/* printf("final string: %s\n", new_str); */
 	return (new_str);
 }

@@ -37,7 +37,7 @@ char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
 		*heredoc_input = NULL;
 	}
 	/* printf("remaining input: %s\n", shell->heredoc_input); */
-	free(input);
+	free_and_reset_ptr((void **)&input);
 	return (line);
 }
 
@@ -85,7 +85,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		char *line;
 		line = get_next_line(fileno(stdin));
 		heredoc_input = ft_strtrim(shell, line, "\n");
-		free(line);
+		free_and_reset_ptr((void **)&line);
 	}
 
 
@@ -103,7 +103,6 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 			char *line;
 			line = get_next_line(fileno(stdin));
 			heredoc_input = ft_strtrim(shell, line, "\n");
-			free(line);
 		}
 
 
@@ -224,6 +223,7 @@ void	parse_input(t_minishell *shell)
 		while (list)
 		{
 			/* printf("list token: %s list delimiter: %d\n", list->token, list->delimiter); */
+			/* printf("address of token while parsing: %p\n", (void *)list->token); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
@@ -240,5 +240,6 @@ void	parse_input(t_minishell *shell)
 		}
 		i++;
 	}
+
 	//free_and_reset_array((void ***)&shell->input_array);
 }

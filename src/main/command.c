@@ -66,7 +66,8 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 		i++;
 	}
 	new_str[j] = '\0';
-	free(str);
+	/* printf("address of old token: %p\n", (void *)str); */
+	free_and_reset_ptr((void **)&str);
 	return (new_str);
 }
 
@@ -109,16 +110,17 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	int		is_builtin;
 
 	(void)command_array;
+	path = NULL;
 	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
 	/* printf("is builtin? %d\n", is_builtin); */
-	path = NULL;
+
 	if (!is_builtin)
 	{
 		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0 || access(ft_strjoin(shell, "./", shell->command_array[0]), F_OK) != -1)
 			path = shell->command_array[0];
 		else
 			path = find_command(shell, shell->command_array);
-		free_child(shell);
+		//free_child(shell);
 		execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
 		exit_status = 1;
@@ -135,9 +137,16 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	}
 	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->stay_in_parent)
+	{
+		/* printf("child pid: %d\n", getpid()); */
+		if (is_builtin)
+			free_iteration(shell);
 		exit(exit_status);
+	}
+
 	else
 	 	shell->last_exit_status = exit_status;
+
 }
 
 void	execute_command(t_minishell *shell, char *command)

@@ -162,6 +162,7 @@ int ft_export(t_minishell *shell, char *arg)
     new_envp[old_size] = new_entry;
     new_envp[old_size + 1] = NULL;
     shell->envp = new_envp;
-
+    free_and_reset_ptr((void **)&key);
+    free_and_reset_ptr((void **)&value);
     return (0);
 }

@@ -55,7 +55,7 @@ void	child(t_minishell *shell, int pipes_left,
 void	handle_pipes_recursive(t_minishell *shell, char **input_array,
 		int pipes_left, int read_fd)
 {
-	/* printf("pid: %d\n", getpid()); */
+	/* printf("parent pid: %d\n", getpid()); */
 	if (pipe(shell->pipe_fd) == -1)
 		error_free_all(shell, ERR_PIPE, NULL, NULL);
 	shell->pid[pipes_left] = fork();

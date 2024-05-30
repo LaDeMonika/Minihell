@@ -24,10 +24,21 @@ void	free_and_reset_ptr(void **ptr)
 }
 void	free_and_reset_list_contents(t_token_list *list)
 {
+	t_token_list *current;
+
 	while (list)
 	{
-		free_and_reset_ptr((void **)&list->token);
+		/* printf("address of token about to be freed: %p node: %p\n", (void *)list->token, (void *)list);
+		printf("about to free token: %s address: %p\n", list->token, list->token); */
+
+		current = list;
 		list = (list)->next;
+		/* printf("next node: %p token: %s\n", list, list->token); */
+		if (current->token)
+			free_and_reset_ptr((void **)&current->token);
+		if (current)
+			free_and_reset_ptr((void **)&current);
+
 
 	}
 }
@@ -40,10 +51,18 @@ void	free_and_reset_array(void ***array, bool is_list)
 	i = 0;
 	while (array && *array && (*array)[i])
 	{
+
 		if (is_list)
+		{
+			/* printf("in array i: %d about to free list node: %p\n", i,(*array)[i]); */
 			free_and_reset_list_contents((t_token_list *)(*array)[i]);
+
+		}
+
 		/* printf("freeing %p\n", (*array)[i]); */
-		free(((*array))[i]);
+		/* printf("check1\n"); */
+		else
+			free(((*array))[i]);
 		(*array)[i] = NULL;
 		i++;
 	}
@@ -85,12 +104,16 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell->input_array);
 	/* free_and_reset_list(shell->list);
 	free_and_reset_ptr((void **)shell->list); */
-
+	/* printf("pid: %d\n", getpid()); */
 	free_and_reset_array((void ***)&shell->list, true);
+	/* printf("check2\n"); */
 	free_and_reset_ptr((void **)&shell->list);
+
+
 	free_and_reset_ptr((void **)&shell->input_file);
 	free_and_reset_array((void ***)&shell->path_array, false);
 	free_and_reset_ptr((void **)&shell->path_array);
+
 	free_and_reset_array((void ***)&shell->command_array, false);
 	free_and_reset_ptr((void **)&shell->command_array);
 	free_and_reset_ptr((void **)&shell->pid);
