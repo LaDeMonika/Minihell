@@ -167,11 +167,12 @@ void						init_input_iteration(t_minishell *shell);
 void						error_free_all(t_minishell *shell, int err,
 								char *prefix, char *custom_error);
 void						free_and_reset_ptr(void **ptr);
-void						free_and_reset_array(void ***array);
+void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_error);
 void	free_iteration(t_minishell *shell);
 void	free_child(t_minishell *shell);
+
 
 // prompt
 

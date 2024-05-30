@@ -240,4 +240,5 @@ void	parse_input(t_minishell *shell)
 		}
 		i++;
 	}
+	//free_and_reset_array((void ***)&shell->input_array);
 }

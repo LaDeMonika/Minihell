@@ -14,41 +14,42 @@
 
 void	free_and_reset_ptr(void **ptr)
 {
+
 	if (ptr && *ptr)
 	{
+		/* printf("final: freeing pointer %p\n", *ptr); */
 		free(*ptr);
 		*ptr = NULL;
 	}
 }
+void	free_and_reset_list_contents(t_token_list *list)
+{
+	while (list)
+	{
+		free_and_reset_ptr((void **)&list->token);
+		list = (list)->next;
 
-void	free_and_reset_array(void ***array)
+	}
+}
+
+
+void	free_and_reset_array(void ***array, bool is_list)
 {
 	int	i;
 
 	i = 0;
 	while (array && *array && (*array)[i])
 	{
-		/* printf("freeing %s\n", (char *)((*array)[i])); */
+		if (is_list)
+			free_and_reset_list_contents((t_token_list *)(*array)[i]);
+		/* printf("freeing %p\n", (*array)[i]); */
 		free(((*array))[i]);
 		(*array)[i] = NULL;
 		i++;
 	}
-	/* printf("freeing pointer %s\n", (char *)*array); */
-	free_and_reset_ptr(*array);
+
 }
 
-void	free_and_reset_list(t_token_list **list)
-{
-	t_token_list *current;
-
-	while (*list)
-	{
-		current = *list;
-		*list = (*list)->next;
-		free_and_reset_ptr((void **)&current->token);
-		free_and_reset_ptr((void **)&current);
-	}
-}
 
 /* void	free_and_reset_int(int **ptr)
 {
@@ -62,13 +63,15 @@ void	free_child(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
-	free_and_reset_array((void ***)&shell->input_array);
-	/* free_and_reset_list(shell->list);
-	free_and_reset_ptr((void **)shell->list); */
-	free_and_reset_array((void ***)&shell->list);
+	/* printf("pid: %d\n", getpid());
+	printf("address of input_array about to be freed: %p\n", (void *)shell->input_array); */
+	free_and_reset_array((void ***)&shell->input_array, false);
+	//free_and_reset_list_contents(shell->list);
+	free_and_reset_array((void ***)&shell->list, true);
+	free_and_reset_ptr((void **)shell->list);
 	free_and_reset_ptr((void **)&shell->input_file);
-	free_and_reset_array((void ***)&shell->path_array);
-
+	free_and_reset_array((void ***)&shell->path_array, false);
+	free_and_reset_ptr((void **)&shell->path_array);
 	free_and_reset_ptr((void **)&shell->pid);
 }
 
@@ -76,14 +79,20 @@ void	free_iteration(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
-	free_and_reset_array((void ***)&shell->input_array);
+	/* printf("pid: %d\n", getpid());
+	printf("address of input_array about to be freed: %p\n", (void *)shell->input_array); */
+	free_and_reset_array((void ***)&shell->input_array, false);
+	free_and_reset_ptr((void **)&shell->input_array);
 	/* free_and_reset_list(shell->list);
 	free_and_reset_ptr((void **)shell->list); */
 
-	free_and_reset_array((void ***)&shell->list);
+	free_and_reset_array((void ***)&shell->list, true);
+	free_and_reset_ptr((void **)&shell->list);
 	free_and_reset_ptr((void **)&shell->input_file);
-	free_and_reset_array((void ***)&shell->path_array);
-	free_and_reset_array((void ***)&shell->command_array);
+	free_and_reset_array((void ***)&shell->path_array, false);
+	free_and_reset_ptr((void **)&shell->path_array);
+	free_and_reset_array((void ***)&shell->command_array, false);
+	free_and_reset_ptr((void **)&shell->command_array);
 	free_and_reset_ptr((void **)&shell->pid);
 	/* free_and_reset_int(&shell->pid);*/
 }
