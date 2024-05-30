@@ -163,7 +163,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	if (i != start)
 		new_str = extract_substr_and_append(shell, s + start, i - start,
 				new_str);
-	free_and_reset_ptr((void **)&s);
+	//free_and_reset_ptr((void **)&s);
 	/* printf("final string: %s\n", new_str); */
 	return (new_str);
 }
