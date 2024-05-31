@@ -1,18 +1,11 @@
 #include "../../inc/minishell.h"
-#include <unistd.h>
 
 void	handle_input(t_minishell *shell)
 {
 	int	i;
 
-
-
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
-	//shell->usr_input = expand_env_variables(shell, shell->usr_input);
-	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input,
-			'|');
-
-	/* printf("address of input_array on assignment: %p\n", (void *)shell->input_array); */
+	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
 	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));
@@ -27,7 +20,6 @@ void	handle_input(t_minishell *shell)
 		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
-	
 	parse_input(shell);
 	if (shell->pipes_total == 0
 	&& (ft_strncmp(shell->list[0]->token, "cd",	3) == 0
@@ -39,25 +31,16 @@ void	handle_input(t_minishell *shell)
 	|| ft_strncmp(shell->list[0]->token, "unset", 6) == 0
 	|| ft_strncmp(shell->list[0]->token, "unset ", 6) == 0))
 	{
-		/* printf("command token is: %s\n", shell->list[0]->token);
-		printf("cd without argument? %d\n", ft_strncmp(shell->list[0]->token, "cd",
-				3) == 0);
-		printf("cd with argument? %d\n", ft_strncmp(shell->list[0]->token, "cd ",
-				3) == 0);
-		printf("doing command in parent\n"); */
 		shell->stay_in_parent = true;
 		handle_redirections(shell, shell->list[0], STDIN_FILENO);
 	}
 	else if (shell->parsing_exit_status == 0)
 	{
-		/* printf("making children\n"); */
 		handle_pipes_recursive(shell, shell->input_array, shell->pipes_total,
 			STDIN_FILENO);
 	}
 	else
 		shell->last_exit_status = shell->parsing_exit_status;
-	//free_iteration(shell);
-
 }
 /*
 int	main(int argc, char **argv, char **envp)
@@ -118,20 +101,14 @@ int	main(int argc, char **argv, char **envp)
 			char *line;
 			line = get_next_line(fileno(stdin));
 			shell->usr_input = ft_strtrim(shell, line, "\n");
-			//free(line);
 		}
 		if (!shell->usr_input)
-		{
-			/* printf("You pressed CTRL + D\n"); */
 			return (free_all(shell));
-		}
-
 		shell->usr_input = ft_strtrim(shell, shell->usr_input, " \n\f\r\t\v");
 		if (ft_strncmp(shell->usr_input, "\0", 1) != 0)
 		{
 			add_history(shell->usr_input);
 			handle_input(shell);
-			//free_iteration(shell);
 		}
 		free_iteration(shell);
 	}

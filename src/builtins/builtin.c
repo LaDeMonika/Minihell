@@ -47,17 +47,11 @@ int export_no_args(t_minishell  *shell)
     }
     return (0);
 }
-/*
-ft_is_builtin is a function that will check if the command is a builtin command.
-If the command is a builtin command, it will execute the builtin command.
-If the command is not a builtin command, it will return 0.
-*/
+
 bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
 {
     int i;
-    /* int status;
 
-    status = 1; */
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
         *status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
@@ -88,13 +82,10 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
             *status = ft_export(shell, shell->command_array[i]);
             i++;
         }
-
     }
-
     else if (ft_strcmp_btin(shell->command_array[0], "exit") == 0)
         *status = ft_exit(shell, shell->command_array);
     else
         return (false);
-    //printf("\nft_is_buitin [0 = builtin, 2 = not builtin]: %d\n\n", status);
     return (true);
 }

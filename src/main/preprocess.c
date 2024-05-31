@@ -9,7 +9,6 @@ char	*ft_getpid(t_minishell *shell)
 
 	pid = try_malloc(shell, sizeof(char) * 11);
 	i = 0;
-	// fd = try_open(shell, READ, "/proc/self/stat");
 	fd = open("/proc/self/stat", O_RDONLY);
 	if (fd > 0)
 	{
@@ -46,9 +45,7 @@ char	*ft_getenv(t_minishell *shell, char *key)
 		key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
 		if (ft_strcmp(key_in_array, key) == 0)
 		{
-			/* printf("found key: %s\n", key); */
 			value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
-			/* printf("found value: %s\n", value); */
 			free_and_reset_ptr((void **)&key_in_array);
 			return (value);
 		}
@@ -58,8 +55,6 @@ char	*ft_getenv(t_minishell *shell, char *key)
 	return (NULL);
 }
 
-/*if environment value exists to key, then replace it with the value
-returns mallocated string that has to be freed*/
 char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		char *metaquote)
 {
@@ -84,19 +79,15 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 			(*i)++;
 		env_key = ft_substr(shell, base, *start, *i - *start);
 		env_value = ft_getenv(shell, env_key);
-		/* env_value = ft_strdup(shell, getenv(env_key)); */
 		free_and_reset_ptr((void **)&env_key);
 		*start = *i;
 		(*i)--;
 	}
 	else
 	{
-		/* printf("metaquote: %c\n", *metaquote); */
-
 		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
 		{
 			env_value = ft_strdup(shell, "$");
-			//*metaquote = '\0';
 			(*i)--;
 		}
 		else if (base[*i] == '$')
@@ -104,17 +95,12 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		else if (base[*i] == '?')
 			env_value = ft_itoa(shell, shell->last_exit_status);
 		else if (base[*i] == '"' || base[*i] == '\'')
-		{
 			(*i)--;
-			/* printf("after decrementing: %c\n", base[*i]); */
-		}
 		*start = *i + 1;
 	}
-	/* printf("env value: %s\n", env_value); */
 	return (env_value);
 }
 
-/*extract from base a substring and append it to new_str*/
 char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
 		char *new_str)
 {
@@ -126,9 +112,6 @@ char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
 	return (new_str);
 }
 
-/*skip over everything in single quotes and if you find an environment variable,
-	overwrite it with its value.
-returns mallocated string that needs to be freed*/
 char	*expand_env_variables(t_minishell *shell, char *s)
 {
 	int		i;
@@ -143,10 +126,8 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	metaquote = '\0';
 	if (!s[i])
 		new_str = ft_strdup(shell, s);
-	/* printf("string before loop: %s len: %zu\n", s, ft_strlen(s)); */
 	while (s[i])
 	{
-		/* printf("current char: %c\n", s[i]); */
 		if (s[i] == '"' && !metaquote)
 			metaquote = s[i];
 		else if (s[i] == metaquote)
@@ -155,23 +136,18 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 			i = skip_between_metaquotes(s, i, '\'');
 		else if (s[i] == '$' || (s[i] == '~' && !metaquote && (is_space(s[i + 1]) || !s[i + 1])))
 		{
-			new_str = extract_substr_and_append(shell, s + start, i - start,
-					new_str);
-			/* printf("after extracting: %s\n", new_str); */
+			new_str = extract_substr_and_append(shell, s + start, i - start, new_str);
 			env_value = get_env_value(shell, s, &start, &i, &metaquote);
 			new_str = append_suffix(shell, new_str, env_value);
 			free_and_reset_ptr((void **)&env_value);
-			/* printf("after appending: %s\n", new_str); */
 		}
 		if (s[i])
 			i++;
 	}
-	/* printf("new str: %s i: %d start: %d\n", new_str, i, start); */
 	if (i != start)
 		new_str = extract_substr_and_append(shell, s + start, i - start,
 				new_str);
 	free_and_reset_ptr((void **)&s);
-	/* printf("final string: %s\n", new_str); */
 	return (new_str);
 }
 
@@ -189,8 +165,6 @@ char	*append_heredoc(t_minishell *shell, char *base, char metaquote)
 	return (new_str);
 }
 
-/*if there was an odd number of quotes,
-	this will add a heredoc at the end with first quote as EOF marker*/
 char	*append_heredoc_on_missing_quote(t_minishell *shell, char *base)
 {
 	int		i;

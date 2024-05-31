@@ -1,5 +1,4 @@
 #include "../../inc/minishell.h"
-#include <stdbool.h>
 
 int	find_delimiter(char *command, int i)
 {
@@ -28,11 +27,9 @@ void	append_to_command(t_minishell *shell, t_token_list **head,
 	int				end_index;
 	char	*new_token;
 
-	/* printf("about to append to command\n"); */
 	end_index = command_arg - *token;
 	command_arg = ft_strdup(shell, command_arg);
 	new_token = ft_substr(shell, *token, 0, end_index);
-	/* printf("about to free token: %p\n", *token); */
 	free_and_reset_ptr((void **)token);
 	*token = new_token;
 	current = *head;
@@ -51,11 +48,9 @@ void	list_add(t_minishell *shell, t_token_list **head, char *token)
 	t_token_list	*current;
 
 	new = try_malloc(shell, sizeof(t_token_list));
-	/* printf("address of new: %p token: %s\n", new, token); */
 	new->token = token;
 	new->delimiter = shell->pre_delimiter;
 	new->next = NULL;
-	/* printf("new token: %s delimiter: %d next: %p\n", new->token, new->delimiter, new->next); */
 	if (!*head)
 		*head = new;
 	else
@@ -65,14 +60,8 @@ void	list_add(t_minishell *shell, t_token_list **head, char *token)
 			current = current->next;
 		current->next = new;
 	}
-	/* printf("address of new token: %p\n", (void *)new->token); */
 }
 
-/*
-extracts whatever everything between delimiterion symbols,
-	start of string or end of string
-if token is not a command argument, also remove outer quotes
-*/
 void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 		int len)
 {
@@ -83,41 +72,20 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 	token = ft_substr(shell, shell->input_array[index], start, len);
 	temp = token;
 	token = ft_strtrim(shell, token, " ");
-	//free_and_reset_ptr((void **)&temp);
-	/* printf("before expansion token: %s delimiter: %d\n", token, shell->pre_delimiter); */
 	if (shell->pre_delimiter != HEREDOC)
-	{
 		token = expand_env_variables(shell, token);
-		/* printf("token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
-	}
-
-	/* printf("after expansion token: %s delimiter: %d\n", token, shell->pre_delimiter); */
 	if (shell->pre_delimiter != COMMAND)
 	{
-		/* printf("checking if command arg remainder\n"); */
 		temp = token + skip_first_metaquote_pair(token);
 		command_arg = strchr(temp, ' ');
 		if (command_arg)
 			append_to_command(shell, &shell->list[index], command_arg, &token);
-		/* printf("checking command arg token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
-		/* char *old_token = token; */
 		if (has_even_metaquotes(token))
 			token = remove_metaquotes(shell, token);
-		/* printf("address of old token: %p\n", (void *)old_token);
-		printf("after checking quotes token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
 	}
-
-	/* printf("after check token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
-	/* printf("list index: %d\n", index); */
-	/* printf("address of token after removing metaquotes: %p\n", (void *)token); */
 	list_add(shell, &shell->list[index], token);
 }
 
-/*
-find delimiter and add those parts to a linked list with info of delimiter kind
-ignore delimiter symbols if they are in quotes
-if no delimiter is found, it will only add the command to list
-*/
 void	tokenize(t_minishell *shell, char *command,
 		int index)
 {

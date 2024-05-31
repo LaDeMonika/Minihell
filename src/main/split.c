@@ -1,11 +1,5 @@
 #include "../../inc/minishell.h"
-#include <stdbool.h>
 
-
-/*
-if sep is pipe start word count at one and at one for every pipe
-if sep is space,
-	then start word count at zero and only add for space before other character or null-terminator*/
 static int	count_words(char *s, char sep)
 {
 	int	i;
@@ -25,18 +19,10 @@ static int	count_words(char *s, char sep)
 	}
 	return (words);
 }
-/*
-if sep i ' ' then increase len by one so that it also puts the current char.
-returns a malloced string that has to be freed*/
+
 static char	*parse_word(t_minishell *shell, char *word, char sep)
 {
-	/* char	*temp;
-
-	temp = word; */
-
 	word = ft_strtrim(shell, word, " \f\n\r\t\v");
-
-	/* free_and_reset_ptr((void **)&temp); */
 	if (sep == '|' && (!word || !(*word)))
 	{
 
@@ -48,9 +34,6 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 	return (word);
 }
 
-/*
-put word until separator, and skip quotes
-if sep is | and a word is missing, then replace word with | */
 void	put_words(t_minishell *shell, char *s, char sep, char **array)
 {
 	int	i;
@@ -89,13 +72,6 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 
 	words = count_words(s, sep);
 	array = NULL;
-	/* if (sep == '|')
-		array = shell->input_array;
-	else if (sep == ' ')
-		array = shell->command_array;
-	else if (sep == ':')
-		array = shell->path_array;
- */
 	array = try_malloc(shell, (words + 1) * sizeof(char *));
 	i = 0;
 	while (i < words + 1)
@@ -103,27 +79,6 @@ char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 		array[i] = NULL;
 		i++;
 	}
-
 	put_words(shell, s, sep, array);
-	/* printf("sep: %c amount of words: %d\n", sep, words);
-	int j = 0;
-	while (array[j])
-	{
-		printf("word at index %d: %s\n", j, array[j]);
-		j++;
-	} */
-	/* printf("address of sep %c array: %p\n", sep, array); */
 	return (array);
 }
-/* int	main(void)
-{
-	char **array = ft_split("echo \"ls -l | grep m\" | grep i", '|');
-
-	printf("sep: %c amount of words: %d\n", sep, words);
-	int j = 0;
-	while (array[j])
-	{
-		printf("word at index %d: %s\n", j, array[j]);
-		j++;
-	}
-} */

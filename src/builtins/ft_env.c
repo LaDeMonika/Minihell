@@ -3,38 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:57 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 18:36:09 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/31 16:51:44 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-/*
-function for the env command in bash
-prints the linked list of env variables
-#Next:
-- protection
-#Cases:
-- env
-- env -i
-- env -i command
-- env -i command arg1 arg2
-- env -i command arg1 arg2 > file
-- env -i command arg1 arg2 < file
-...
-*/
-
-/* int ft_add_env(char *name, char *value)
-{
-
-} */
-
 int ft_env(t_minishell *shell, char **command_array)
 {
-    // probably will need to implement something for redirections, not sure yet
     int i;
 
     i = 0;
@@ -48,11 +27,6 @@ int ft_env(t_minishell *shell, char **command_array)
                 shell->command_array = command_array + 2;
                 execute_command_array(shell, command_array + 2);
             }
-            else
-            {
-
-            }
-
         }
         else
         {

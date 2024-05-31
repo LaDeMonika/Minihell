@@ -10,7 +10,6 @@ int	count_literal_chars(char *str, char metaquote)
 
 	i = 0;
 	len = 0;
-
 	while (str && str[i])
 	{
 		if (str[i] == '"' || str[i] == '\'')
@@ -29,7 +28,6 @@ int	count_literal_chars(char *str, char metaquote)
 	return (len);
 }
 
-/*first determine new string length and then create new string without outer quotes*/
 char	*remove_metaquotes(t_minishell *shell, char *str)
 {
 	char	*new_str;
@@ -56,7 +54,6 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 				new_str[j] = str[i];
 				j++;
 			}
-
 		}
 		else
 		{
@@ -66,7 +63,6 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 		i++;
 	}
 	new_str[j] = '\0';
-	/* printf("address of old token: %p\n", (void *)str); */
 	free_and_reset_ptr((void **)&str);
 	return (new_str);
 }
@@ -78,9 +74,6 @@ char	*find_command(t_minishell *shell, char **input_array)
 	char	*command_path;
 	int		fd;
 
-	/* path = getenv("PATH");
-	if (!path)
-		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL); */
 	path = ft_getenv(shell, "PATH");
 	if (!path)
 	{
@@ -111,9 +104,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 
 	(void)command_array;
 	path = NULL;
-	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
-	/* printf("is builtin? %d\n", is_builtin); */
 
 	if (!is_builtin)
 	{
@@ -121,61 +112,42 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 			path = shell->command_array[0];
 		else
 			path = find_command(shell, shell->command_array);
-		//free_child(shell);
 		execve(path, shell->command_array, shell->envp);
-		// TODO: also set exit status and custom message for builtins
 		exit_status = 1;
 	}
-	if ((exit_status != 0 /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
-	|| (exit_status != 1 && ft_strcmp_btin(shell->command_array[0], "exit") == 0 */))
+	if ((exit_status != 0))
 	{
-		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
 
 		exit_status = set_exit_status_before_termination(shell,	&custom_message);
 		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
 			exit_status = 1;
-		/* printf("errno in comamnd function: %d\n", errno); */
 		print_error(shell->command_array[0], custom_message);
 	}
-	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->stay_in_parent)
 	{
-		/* printf("child pid: %d\n", getpid()); */
 		if (is_builtin)
 			free_all(shell);
 		exit(exit_status);
 	}
-
 	else
 	 	shell->last_exit_status = exit_status;
-
 }
 
 void	execute_command(t_minishell *shell, char *command)
 {
-
 	int		i;
 
-	//bool	error;
-
-	/* printf("pid: %d\n", getpid());
-	printf("command: %s\n", command); */
 	if (!command || !command[0])
 		exit(EXIT_SUCCESS);
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
-	/* if (!shell->command_array[0])
-		exit(EXIT_SUCCESS); */
 	while (shell->command_array[i])
 	{
-		/* printf("before remove: %s\n", shell->command_array[i]); */
 		shell->command_array[i] = remove_metaquotes(shell,
 				shell->command_array[i]);
-		/* printf("after remove: %s\n", shell->command_array[i]); */
 		i++;
 	}
-	// builtins
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
 	{
 		print_error(".", "filename argument required");
@@ -187,5 +159,4 @@ void	execute_command(t_minishell *shell, char *command)
 		exit (127);
 	}
 	execute_command_array(shell, shell->command_array);
-
 }

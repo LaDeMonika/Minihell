@@ -3,21 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 11:01:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 16:49:44 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/31 17:05:30 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include <linux/limits.h>
 
-
-
-/*
-if current directory includes the home path, then replace home by ~
-*/
 void    append_path(t_minishell *shell)
 {
 	char	*pwd;

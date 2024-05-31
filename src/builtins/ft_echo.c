@@ -3,28 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:09:56 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/20 17:33:22 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/31 16:51:20 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../inc/minishell.h"
-#include <stdbool.h>
-
-/*
-function for the echo command in bash
-handles option -n to print the arguements without a "\n" at the end
-*/
-
-//Next to handle:
-//1.    echo -n -n Hello World      [should not print -n no matter how many times repeated]
-//2.    echo echo -n -n -n Hello World [can print echo and -n as many times there are and prints new line at the end]
-//3.    echo hello -n -n hello [should print everything after first hello]
-//4.    echo -n "hello hello     hellooo" [should print everything in quotes as it is]
-//5.    echo -n hello hello     hellooo [should print every arg separated by one space]
 
 static void ft_putstr_no_newline(char *str)
 {
@@ -40,7 +27,6 @@ bool    contains_only_option_n(char *str)
     int i;
 
     i = 0;
-    /* printf("string: %s\n", str); */
     if (!str || !str[i])
         return (false);
     while (str && str[i])
@@ -73,7 +59,6 @@ int ft_echo(char **command_array)
         i++;
     while (command_array[i])
     {
-        /* printf("argument: %s\n", command_array[i]); */
         ft_putstr_no_newline(command_array[i]);
         if (command_array[i + 1])
             write(1, " ", 1);
