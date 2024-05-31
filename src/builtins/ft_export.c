@@ -145,7 +145,11 @@ int ft_export(t_minishell *shell, char *arg)
 
 
     if (update_value(shell, key, value, append))
+    {
+        free_and_reset_ptr((void **)&value);
         return (0);
+    }
+
     old_size = sizeof_array((void **)shell->envp);
     new_envp = malloc(sizeof(char *) * (old_size + 2));
     if (!new_envp)

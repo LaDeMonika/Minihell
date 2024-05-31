@@ -31,7 +31,7 @@ int ft_cd(t_minishell *shell, char **command_array)
 
     current_pwd = getcwd(NULL, 0);
     if (current_pwd == NULL)
-        printf("Memory allocation failed\n");
+        error_free_all(shell, ERR_GETCWD, NULL, NULL);
     if (command_array[1] && command_array[2])
     {
         errno = U_TOO_MANY_ARGUMENTS;
@@ -58,7 +58,11 @@ int ft_cd(t_minishell *shell, char **command_array)
         new_pwd = command_array[1];
 
     if (chdir(new_pwd) == -1)
+    {
+        free_and_reset_ptr((void **)&current_pwd);
         return (1);
+    }
+
     update_value(shell, ft_strdup(shell, "OLDPWD"),
     current_pwd, 0);
     free_and_reset_ptr((void **)&current_pwd);
