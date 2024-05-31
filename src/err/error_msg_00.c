@@ -128,6 +128,7 @@ int	free_all(t_minishell *shell)
 	last_exit_status = shell->last_exit_status;
 	free_iteration(shell);
 	free_and_reset_array((void ***)&shell->envp, false);
+	/* printf("address of envp before freeing: %p\n", shell->envp); */
 	free_and_reset_ptr((void **)&shell->envp);
 	free_and_reset_ptr((void **)&shell);
 	return (last_exit_status);
