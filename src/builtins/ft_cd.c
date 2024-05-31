@@ -61,7 +61,10 @@ int ft_cd(t_minishell *shell, char **command_array)
         return (1);
     update_value(shell, ft_strdup(shell, "OLDPWD"),
     current_pwd, 0);
-    update_value(shell, ft_strdup(shell, "PWD"), getcwd(NULL, 0), 0);
+    free_and_reset_ptr((void **)&current_pwd);
+    current_pwd = getcwd(NULL, 0);
+    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, 0);
+    free_and_reset_ptr((void **)&current_pwd);
 
     return (0);
 }

@@ -60,7 +60,8 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
             }
             new_entry = append_suffix(shell, new_entry, value);
             /* printf("value before: %s\n", shell->envp[i]); */
-            shell->envp[i] = ft_strdup(shell, new_entry);
+            free_and_reset_ptr((void **)&shell->envp[i]);
+            shell->envp[i] = new_entry;
 
             /* printf("key: %s value: %s new entry: %s updated entry: %s\n", key, value, new_entry, shell->envp[i]); */
             free_and_reset_ptr((void **)&key_in_array);
