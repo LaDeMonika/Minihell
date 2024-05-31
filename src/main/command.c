@@ -131,9 +131,11 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	{
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
-		if (ft_strcmp_btin(shell->command_array[0], "cd") != 0)
-			exit_status = set_exit_status_before_termination(shell,
-				&custom_message);
+
+		exit_status = set_exit_status_before_termination(shell,	&custom_message);
+		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
+			exit_status = 1;
+		/* printf("errno in comamnd function: %d\n", errno); */
 		print_error(shell->command_array[0], custom_message);
 	}
 	/* printf("child exit status: %d\n", exit_status); */

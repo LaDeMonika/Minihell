@@ -34,13 +34,15 @@ int ft_cd(t_minishell *shell, char **command_array)
         error_free_all(shell, ERR_GETCWD, NULL, NULL);
     if (command_array[1] && command_array[2])
     {
+        free_and_reset_ptr((void **)&current_pwd);
+
         errno = U_TOO_MANY_ARGUMENTS;
+        /* printf("errno: %d should be: %d\n", errno, U_TOO_MANY_ARGUMENTS); */
         return (1);
     }
-    ;
     if (!command_array[1] || ft_strcmp(command_array[1], "--") == 0 || ft_strcmp(command_array[1], "~") == 0)
     {
-        new_pwd = getenv("HOME");
+        new_pwd = ft_getenv(shell, "HOME");
     }
     else if (command_array[1][0] == '~')
         new_pwd = ft_strjoin(shell, getenv("HOME"), command_array[1] + 1);
@@ -52,17 +54,18 @@ int ft_cd(t_minishell *shell, char **command_array)
 
     else if (ft_strcmp(command_array[1], "..") == 0)
     {
-        new_pwd = ".."; //go behind one directory
+        new_pwd = ft_strdup(shell, ".."); //go behind one directory
     }
     else
-        new_pwd = command_array[1];
+        new_pwd = ft_strdup(shell, command_array[1]);
 
     if (chdir(new_pwd) == -1)
     {
+        free_and_reset_ptr((void **)&new_pwd);
         free_and_reset_ptr((void **)&current_pwd);
         return (1);
     }
-
+    free_and_reset_ptr((void **)&new_pwd);
     update_value(shell, ft_strdup(shell, "OLDPWD"),
     current_pwd, 0);
     free_and_reset_ptr((void **)&current_pwd);

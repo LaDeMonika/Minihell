@@ -72,7 +72,10 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 	if (base[*i - 1] == '~')
 	{
 		env_value = ft_strdup(shell, getenv("HOME"));
-		*start = *i + 1;
+		if (base[*i])
+			*start = *i + 1;
+		else
+			*start = *i;
 	}
 	else if (ft_isalpha(base[*i]) || base[*i] == '_')
 	{
@@ -140,8 +143,10 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 	metaquote = '\0';
 	if (!s[i])
 		new_str = ft_strdup(shell, s);
+	/* printf("string before loop: %s len: %zu\n", s, ft_strlen(s)); */
 	while (s[i])
 	{
+		/* printf("current char: %c\n", s[i]); */
 		if (s[i] == '"' && !metaquote)
 			metaquote = s[i];
 		else if (s[i] == metaquote)
@@ -158,7 +163,8 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 			free_and_reset_ptr((void **)&env_value);
 			/* printf("after appending: %s\n", new_str); */
 		}
-		i++;
+		if (s[i])
+			i++;
 	}
 	/* printf("new str: %s i: %d start: %d\n", new_str, i, start); */
 	if (i != start)
