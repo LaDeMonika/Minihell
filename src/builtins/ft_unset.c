@@ -35,7 +35,12 @@ int ft_unset(t_minishell *shell, char *key)
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
         /* printf("key in array: %s key: %s\n", key_in_array, key); */
         if (ft_strcmp(key_in_array, key) == 0)
+        {
+            free_and_reset_ptr((void **)&key_in_array);
             break;
+        }
+
+        free_and_reset_ptr((void **)&key_in_array);
         i++;
     }
     if (!shell->envp[i])
@@ -51,10 +56,12 @@ int ft_unset(t_minishell *shell, char *key)
 
         if (j != i)
         {
-            new_envp[k] = ft_strdup(shell, shell->envp[j]);
+            new_envp[k] = shell->envp[j];
             /* printf("k: %d j: %d i: %d shell envp: %s new envp: %s\n", k,j, i, shell->envp[j],new_envp[k]); */
             k++;
         }
+        else
+            free_and_reset_ptr((void **)&shell->envp[j]);
 
 
         j++;
@@ -62,6 +69,7 @@ int ft_unset(t_minishell *shell, char *key)
     }
     new_envp[k] = NULL;
     /* printf("k: %d j: %d i: %d shell envp: %s new envp: %s\n", k,j, i, shell->envp[j],new_envp[k]); */
+    free_and_reset_ptr((void **)&shell->envp);
     shell->envp = new_envp;
     return (0);
 }
