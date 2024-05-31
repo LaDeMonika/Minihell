@@ -28,8 +28,8 @@ void	free_and_reset_list_contents(t_token_list *list)
 
 	while (list)
 	{
-		/* printf("address of token about to be freed: %p node: %p\n", (void *)list->token, (void *)list);
-		printf("about to free token: %s address: %p\n", list->token, list->token); */
+		/* printf("address of token about to be freed: %p node: %p\n", (void *)list->token, (void *)list); */
+		/* printf("about to free token: %s address: %p\n", list->token, list->token); */
 
 		current = list;
 		list = (list)->next;

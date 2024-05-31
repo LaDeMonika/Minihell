@@ -96,6 +96,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
+		free_and_reset_ptr((void **)&heredoc_input);
 		if (isatty(fileno(stdin)))
 			heredoc_input = readline("> ");
 		else
@@ -113,6 +114,8 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	if (!heredoc_input)
 		heredoc_EOF(shell, eof);
 	try_close(shell, pipe_fd[1]);
+	free_and_reset_ptr((void **)&heredoc_input);
+	free_all(shell);
 	exit(EXIT_SUCCESS);
 }
 
@@ -162,7 +165,11 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 	try_pipe(shell, pipe_fd);
 	pid = try_fork(shell);
 	if (pid == 0)
+	{
 		write_to_file(shell, eof, input_file, pipe_fd);
+
+	}
+
 	else
 	{
 		try_close(shell, pipe_fd[1]);
@@ -175,6 +182,7 @@ void	heredoc(t_minishell *shell, char *eof, char *input_file)
 		set_exit_status_after_termination(shell, &shell->parsing_exit_status, 0);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		try_close(shell, pipe_fd[0]);
+		free_and_reset_ptr((void **)&read_buffer);
 	}
 }
 
@@ -222,6 +230,7 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[i];
 		while (list)
 		{
+
 			/* printf("list token: %s list delimiter: %d\n", list->token, list->delimiter); */
 			/* printf("address of token while parsing: %p\n", (void *)list->token); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
@@ -234,7 +243,9 @@ void	parse_input(t_minishell *shell)
 				index = NULL;
 				index = ft_itoa(shell, i);
 				shell->input_file = append_suffix(shell, index, "_input.txt");
+				/* printf("address of token before heredoc: %p\n", (void *)list->token); */
 				heredoc(shell, list->token, shell->input_file);
+				/* printf("address of token after heredoc: %p\n", (void *)list->token); */
 			}
 			list = list->next;
 		}

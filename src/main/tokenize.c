@@ -109,6 +109,7 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 
 	/* printf("after check token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
 	/* printf("list index: %d\n", index); */
+	/* printf("address of token after removing metaquotes: %p\n", (void *)token); */
 	list_add(shell, &shell->list[index], token);
 }
 
