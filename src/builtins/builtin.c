@@ -63,7 +63,7 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
         *status = ft_cd(shell, command_array);
     else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
-        *status = ft_pwd();
+        *status = ft_pwd(shell);
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
         *status = ft_env(shell, command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)

@@ -16,13 +16,16 @@
 pwd prints the current working directory
 */
 
-int ft_pwd()
+int ft_pwd(t_minishell *shell)
 {
 
-    char *current = getcwd(NULL, 0);
+    char *current;
+
+    current = getcwd(NULL, 0);
     if (current == NULL)
-        printf("Memory allocation failed\n");
+        error_free_all(shell, ERR_GETCWD, NULL, NULL);
     else
         printf("%s\n", current);
+    free_and_reset_ptr((void **)&current);
     return (0);
 }

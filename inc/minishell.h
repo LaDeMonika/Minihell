@@ -103,7 +103,8 @@ enum						e_error
 	ERR_PIPE,
 	ERR_FORK,
 	ERR_WAITPID,
-	ERR_GETPID
+	ERR_GETPID,
+	ERR_GETCWD
 };
 
 enum e_custom_errno
@@ -254,7 +255,7 @@ int ft_cd(t_minishell *shell, char **command_array);
 int							ft_env(t_minishell *shell, char **command_array);
 int ft_unset(t_minishell *shell, char *key);
 int							ft_exit(t_minishell *shell, char **command_array);
-int ft_pwd();
+int ft_pwd(t_minishell *shell);
 int ft_export(t_minishell *shell, char *arg);
 int index_of_first_occurence(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);

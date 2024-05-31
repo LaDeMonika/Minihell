@@ -150,6 +150,8 @@ void	error_free_all_second(int err, char *prefix)
 		perror("waitpid");
 	else if (err == ERR_GETPID)
 		write(STDERR_FILENO, "Error getting pid\n", 18);
+	else if (err == ERR_GETCWD)
+		perror("getcwd");
 }
 
 void	error_free_all(t_minishell *shell, int err,

@@ -141,7 +141,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	{
 		/* printf("child pid: %d\n", getpid()); */
 		if (is_builtin)
-			free_iteration(shell);
+			free_all(shell);
 		exit(exit_status);
 	}
 
