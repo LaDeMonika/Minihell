@@ -27,6 +27,7 @@ void	handle_input(t_minishell *shell)
 		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
+	
 	parse_input(shell);
 	if (shell->pipes_total == 0
 	&& (ft_strncmp(shell->list[0]->token, "cd",	3) == 0
@@ -102,6 +103,7 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (perror("malloc"), 1);
 	init_shell_struct(shell, envp);
+
 	if (argc > 1)
 		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);
 	while (1)

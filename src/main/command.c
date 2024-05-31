@@ -111,6 +111,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 
 	(void)command_array;
 	path = NULL;
+	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
 	/* printf("is builtin? %d\n", is_builtin); */
 

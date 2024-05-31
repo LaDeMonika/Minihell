@@ -16,7 +16,20 @@
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
-	shell->envp = envp;
+	int	i;
+	shell->envp = malloc(sizeof(char *) * (sizeof_array((void **)envp) + 1));
+	if (!shell->envp)
+		error_free_all(shell, ERR_MALLOC, NULL, NULL);
+	i = 0;
+	while (envp[i])
+	{
+		shell->envp[i] = ft_strdup(shell, envp[i]);
+		i++;
+	}
+	shell->envp[i] = NULL;
+	/* printf("final i at initialization: %d\n", i); */
+	//shell->envp = envp;
+
 	shell->prompt = NULL;
 	shell->usr_input = NULL;
 	shell->line_count = 0;
@@ -31,7 +44,7 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 }
 void	init_input_iteration(t_minishell *shell)
 {
-	
+
 
 
 	shell->line_count++;

@@ -42,8 +42,10 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
 
 
     i = 0;
+    /* printf("update check envp: %s\n", shell->envp[0]); */
     while (shell->envp[i])
     {
+        /* printf("current i in update value: %d\n", i); */
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
 
         /* printf("key in array: %s key: %s\n", key_in_array, key); */
@@ -61,8 +63,10 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
             shell->envp[i] = ft_strdup(shell, new_entry);
 
             /* printf("key: %s value: %s new entry: %s updated entry: %s\n", key, value, new_entry, shell->envp[i]); */
+            free_and_reset_ptr((void **)&key_in_array);
             return (shell->envp[i]);
         }
+        free_and_reset_ptr((void **)&key_in_array);
         i++;
     }
     return (NULL);
@@ -153,7 +157,7 @@ int ft_export(t_minishell *shell, char *arg)
     }
     if (append)
     {
-        new_entry = append_suffix(shell, key, "=");
+        new_entry = append_suffix(shell, ft_strdup(shell, key), "=");
         new_entry = append_suffix(shell, new_entry, value);
     }
     else
