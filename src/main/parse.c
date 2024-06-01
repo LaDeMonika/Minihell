@@ -66,12 +66,13 @@ void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
 }
 //variation for tester:
 #include "../get_next_line/get_next_line.h"
-void	write_to_file(t_minishell *shell, char *eof, char *input_file,
+void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
 	//char	*current_line;
 	char	*heredoc_input;
+	bool	expand_var;
 
 
 	try_close(shell, pipe_fd[0]);
@@ -85,14 +86,20 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 		char *line;
 		line = get_next_line(fileno(stdin));
 		heredoc_input = ft_strtrim(shell, line, "\n");
-		free_and_reset_ptr((void **)&line);
 	}
-
-
+	if (ft_strchr(*eof, '"') || ft_strchr(*eof, '\''))
+		expand_var = false;
+	else
+		expand_var = true;
+	if (has_even_metaquotes(*eof))
+		*eof = remove_metaquotes(shell, *eof);
 	//current_line = extract_line(shell, heredoc_input, &heredoc_input);
-	while (heredoc_input && (ft_strncmp(heredoc_input, eof, ft_strlen(eof) + 1) != 0))
+	while (heredoc_input && (ft_strncmp(heredoc_input, *eof, ft_strlen(*eof) + 1) != 0))
 	{
-		heredoc_input = expand_env_variables(shell, heredoc_input);
+		/* printf("heredoc input before expansion: %s\n", heredoc_input); */
+		if (expand_var)
+			heredoc_input = expand_env_variables(shell, heredoc_input);
+		/* printf("heredoc input after expansion: %s\n", heredoc_input); */
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
@@ -112,7 +119,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 	if (heredoc_input)
 		try_write(shell, pipe_fd[1], "\n", 1);
 	if (!heredoc_input)
-		heredoc_EOF(shell, eof);
+		heredoc_EOF(shell, *eof);
 	try_close(shell, pipe_fd[1]);
 	free_and_reset_ptr((void **)&heredoc_input);
 	free_all(shell);
@@ -156,7 +163,7 @@ void	write_to_file(t_minishell *shell, char *eof, char *input_file,
 }
  */
 /*heredoc will read input in a child. local line count will increase by 1 for each line and added to global line count in the parent*/
-void	heredoc(t_minishell *shell, char *eof, char *input_file)
+void	heredoc(t_minishell *shell, char **eof, char *input_file)
 {
 	int		pid;
 	int		pipe_fd[2];
@@ -244,7 +251,8 @@ void	parse_input(t_minishell *shell)
 				index = ft_itoa(shell, i);
 				shell->input_file = append_suffix(shell, index, "_input.txt");
 				/* printf("address of token before heredoc: %p\n", (void *)list->token); */
-				heredoc(shell, list->token, shell->input_file);
+
+				heredoc(shell, &list->token, shell->input_file);
 				/* printf("address of token after heredoc: %p\n", (void *)list->token); */
 			}
 			list = list->next;

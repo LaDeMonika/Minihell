@@ -101,7 +101,7 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 			append_to_command(shell, &shell->list[index], command_arg, &token);
 		/* printf("checking command arg token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
 		/* char *old_token = token; */
-		if (has_even_metaquotes(token))
+		if (shell->pre_delimiter != HEREDOC && has_even_metaquotes(token))
 			token = remove_metaquotes(shell, token);
 		/* printf("address of old token: %p\n", (void *)old_token);
 		printf("after checking quotes token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */

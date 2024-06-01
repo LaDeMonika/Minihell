@@ -201,7 +201,7 @@ void						child(t_minishell *shell, int pipes_left,
 								int read_fd);
 // parse + heredoc
 void						parse_input(t_minishell *shell);
-void						heredoc(t_minishell *shell, char *eof,
+void						heredoc(t_minishell *shell, char **eof,
 								char *input_buffer);
 char	*extract_line(t_minishell *shell, char *input, char **heredoc_input);
 
