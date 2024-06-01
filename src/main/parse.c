@@ -1,6 +1,4 @@
 #include "../../inc/minishell.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 void	heredoc_EOF(t_minishell *shell, char *eof)
 {
@@ -26,7 +24,6 @@ char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
 	if (temp)
 	{
 		end_index = temp - input;
-		/* printf("end index: %d\n", end_index); */
 		remain_len = ft_strlen(input) - end_index;
 		line = ft_substr(shell, input, 0, end_index);
 		*heredoc_input = ft_strdup(shell, temp + 1);
@@ -36,7 +33,6 @@ char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
 		line = ft_strdup(shell, input);
 		*heredoc_input = NULL;
 	}
-	/* printf("remaining input: %s\n", shell->heredoc_input); */
 	free_and_reset_ptr((void **)&input);
 	return (line);
 }
@@ -47,7 +43,6 @@ void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
 	int	end_index_for_eof;
 	int	old_len;
 
-	/* printf("eof before: [%s]\n", *eof); */
 	old_eof = *eof;
 	old_len = ft_strlen(*eof);
 	end_index_for_eof = 0;
@@ -58,11 +53,7 @@ void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
 		*heredoc_input = ft_strdup(shell, *heredoc_input + 1);
 		end_index_for_eof = old_len - ft_strlen(*heredoc_input) - 1;
 		*eof = ft_substr(shell, old_eof, 0, end_index_for_eof);
-
-		/* printf("eof after: [%s] end index: %d heredoc input: [%s]\n", *eof, end_index_for_eof, *heredoc_input); */
 	}
-
-
 }
 //variation for tester:
 #include "../get_next_line/get_next_line.h"
@@ -70,7 +61,6 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
-	//char	*current_line;
 	char	*heredoc_input;
 	bool	expand_var;
 
@@ -78,7 +68,6 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
 	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
-	//extract_eof_and_input(shell, &eof, &heredoc_input);
 	if (isatty(fileno(stdin)))
 		heredoc_input = readline("> ");
 	else
@@ -112,9 +101,6 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 			line = get_next_line(fileno(stdin));
 			heredoc_input = ft_strtrim(shell, line, "\n");
 		}
-
-
-		//current_line = extract_line(shell, heredoc_input, &heredoc_input);
 	}
 	if (heredoc_input)
 		try_write(shell, pipe_fd[1], "\n", 1);
@@ -194,8 +180,7 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 }
 
 
-void	error_parsing_input(t_minishell *shell, t_token_list *this,
-		t_token_list *next)
+void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *next)
 {
 	if (this->delimiter == INVALID_PIPE)
 		shell->unexpected_token = "`|'";
@@ -222,8 +207,7 @@ void	error_parsing_input(t_minishell *shell, t_token_list *this,
 	write(STDERR_FILENO, "\n", 1);
 	shell->parsing_exit_status = 2;
 }
-/*creates a list for each piped token and takes input for each heredoc
-if the redirection syntax is wrong, it will print an error*/
+
 void	parse_input(t_minishell *shell)
 {
 	int				i;
@@ -237,9 +221,6 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[i];
 		while (list)
 		{
-
-			/* printf("list token: %s list delimiter: %d\n", list->token, list->delimiter); */
-			/* printf("address of token while parsing: %p\n", (void *)list->token); */
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
@@ -250,15 +231,10 @@ void	parse_input(t_minishell *shell)
 				index = NULL;
 				index = ft_itoa(shell, i);
 				shell->input_file = append_suffix(shell, index, "_input.txt");
-				/* printf("address of token before heredoc: %p\n", (void *)list->token); */
-
-				heredoc(shell, &list->token, shell->input_file);
-				/* printf("address of token after heredoc: %p\n", (void *)list->token); */
+				heredoc(shell, list->token, shell->input_file);
 			}
 			list = list->next;
 		}
 		i++;
 	}
-
-	//free_and_reset_array((void ***)&shell->input_array);
 }

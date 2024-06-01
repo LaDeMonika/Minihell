@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 14:20:35 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 14:21:14 by msimic           ###   ########.fr       */
+/*   Updated: 2024/05/31 17:20:31 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	}
 	return (NULL);
 }
-/*trims s1 by set and frees old s1.
-returns an allocated string that has to be freed*/
+
 char	*ft_strtrim(t_minishell *shell, char const	*s1, char const	*set)
 {
 	int		start;

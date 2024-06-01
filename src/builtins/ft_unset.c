@@ -3,23 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:23:13 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/25 18:38:05 by lilin            ###   ########.fr       */
+/*   Updated: 2024/05/31 16:55:54 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-/*
-Function that will delete the variable from the envp list.
-*/
-
-
 int ft_unset(t_minishell *shell, char *key)
 {
-    // command_array[0] = unset command_array[1] = variable to unset
     int i;
     int j;
     int k;
@@ -27,19 +21,15 @@ int ft_unset(t_minishell *shell, char *key)
     int old_size;
     char    **new_envp;
 
-
-
     i = 0;
     while (shell->envp[i])
     {
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
-        /* printf("key in array: %s key: %s\n", key_in_array, key); */
         if (ft_strcmp(key_in_array, key) == 0)
         {
             free_and_reset_ptr((void **)&key_in_array);
             break;
         }
-
         free_and_reset_ptr((void **)&key_in_array);
         i++;
     }
@@ -53,22 +43,16 @@ int ft_unset(t_minishell *shell, char *key)
     k = 0;
     while (shell->envp[j])
     {
-
         if (j != i)
         {
             new_envp[k] = shell->envp[j];
-            /* printf("k: %d j: %d i: %d shell envp: %s new envp: %s\n", k,j, i, shell->envp[j],new_envp[k]); */
             k++;
         }
         else
             free_and_reset_ptr((void **)&shell->envp[j]);
-
-
         j++;
-
     }
     new_envp[k] = NULL;
-    /* printf("k: %d j: %d i: %d shell envp: %s new envp: %s\n", k,j, i, shell->envp[j],new_envp[k]); */
     free_and_reset_ptr((void **)&shell->envp);
     shell->envp = new_envp;
     return (0);

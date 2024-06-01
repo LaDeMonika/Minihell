@@ -78,9 +78,6 @@ char	*find_command(t_minishell *shell)
 	char	*command_path;
 	int		fd;
 
-	/* path = getenv("PATH");
-	if (!path)
-		return (error_free_all(shell, ERR_PATH_NOT_FOUND, NULL, NULL), NULL); */
 	path = ft_getenv(shell, "PATH");
 	if (!path)
 	{
@@ -172,13 +169,8 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 
 void	execute_command(t_minishell *shell, char *command)
 {
-
 	int		i;
 
-	//bool	error;
-
-	/* printf("pid: %d\n", getpid());
-	printf("command: %s\n", command); */
 	if (!command || !command[0])
 	{
 		free_all(shell);
@@ -187,18 +179,14 @@ void	execute_command(t_minishell *shell, char *command)
 
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
-	/* if (!shell->command_array[0])
-		exit(EXIT_SUCCESS); */
 	while (shell->command_array[i])
 	{
-		/* printf("before remove: %s\n", shell->command_array[i]); */
 		shell->command_array[i] = remove_metaquotes(shell,
 				shell->command_array[i]);
 		/* printf("after remove: %s\n", shell->command_array[i]); */
 		/* printf("address of command array: %p\n", (void *)shell->command_array[i]); */
 		i++;
 	}
-	// builtins
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
 	{
 		print_error(".", "filename argument required");
@@ -212,5 +200,4 @@ void	execute_command(t_minishell *shell, char *command)
 		exit (127);
 	}
 	execute_command_array(shell, shell->command_array);
-
 }

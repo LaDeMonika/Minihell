@@ -1,5 +1,4 @@
 #include "../../inc/minishell.h"
-#include <stdbool.h>
 
 void	child_sigint_handler(int sig)
 {
@@ -24,10 +23,6 @@ void	parent_sigint_handler(int sig)
 	rl_redisplay();
 }
 
-
-/*
-with sigemptyset reset signals that can block the signal handling
-with sa_flags determine no special signal handling*/
 void	set_signals(t_minishell *shell, int mode)
 {
 	bool	is_child;

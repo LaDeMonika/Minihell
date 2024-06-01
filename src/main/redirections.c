@@ -1,9 +1,4 @@
 #include "../../inc/minishell.h"
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 void	temporary_input_redirect(t_minishell *shell, int read_fd)
 {
@@ -30,28 +25,18 @@ void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 	int	fd;
 
 	fd = try_open(shell, mode, file);
-	/* printf("open ok\n"); */
 	try_dup2(shell, fd, fd2);
-	/* printf("dup2 ok\n"); */
 	try_close(shell, fd);
-	/* printf("close ok\n"); */
 }
 
-/*
-regarding input & heredoc: only if it is the most right delimiter,
-	is _stdin will be true, and thus STDIN for the command should be redirected
-*/
 void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 {
 	char	*command;
 
 	command = NULL;
 	(void)read_fd;
-	/* if (read_fd > 0)
-		temporary_input_redirect(shell, read_fd); */
 	while (list)
 	{
-		/* printf("token: %s delimiter: %d\n", list->token, list->delimiter); */
 		if (list->delimiter == COMMAND)
 			command = list->token;
 		else if (list->delimiter == INPUT)
@@ -64,11 +49,7 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 		{
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
 		}
-
-		/* printf("again token: %s delimiter: %d\n", list->token, list->delimiter);
-		printf("next %p\n", (char *)list->next); */
 		list = list->next;
 	}
-
 	execute_command(shell, command);
 }

@@ -1,6 +1,4 @@
 #include "../../inc/minishell.h"
-#include <limits.h>
-#include <stdbool.h>
 
 int	try_open(t_minishell *shell, int mode, char *file)
 {
@@ -55,10 +53,8 @@ void	*try_malloc(t_minishell *shell, int size)
 
 void	try_dup2(t_minishell *shell, int fd, int fd2)
 {
-	/* printf("fd: %d fd2: %d\n", fd, fd2); */
 	if (dup2(fd, fd2) == -1)
 		error_free_all(shell, ERR_DUP2, NULL, NULL);
-	/* printf("fd: %d fd2: %d\n", fd, fd2); */
 }
 
 void	try_pipe(t_minishell *shell, int fd[2])
@@ -76,4 +72,3 @@ int	try_fork(t_minishell *shell)
 		return (error_free_all(shell, ERR_FORK, NULL, NULL), 1);
 	return (pid);
 }
-
