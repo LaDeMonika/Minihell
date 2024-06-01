@@ -27,44 +27,54 @@ char	*find_command(t_minishell *shell, char **input_array)
 	return (NULL);
 }
 
-void	execute_command_array(t_minishell *shell, char **command_array)
+int initialize_and_check_builtin(t_minishell *shell, char **command_array, char **path, int *is_builtin)
 {
-	char	*path;
-	int		exit_status;
-	char	*custom_message;
-	exit_status = 0;
-	int		is_builtin;
+    int exit_status = 0;
+    *path = NULL;
+    *is_builtin = ft_is_builtin(shell, command_array, &exit_status);
+    return exit_status;
+}
 
-	(void)command_array;
-	path = NULL;
-	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
+void execute_non_builtin(t_minishell *shell, char **path, int *exit_status, int is_builtin)
+{
+    if (!is_builtin)
+    {
+        if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0 || access(ft_strjoin(shell, "./", shell->command_array[0]), F_OK) != -1)
+            *path = shell->command_array[0];
+        else
+            *path = find_command(shell, shell->command_array);
+        execve(*path, shell->command_array, shell->envp);
+        *exit_status = 1;
+    }
+}
 
-	if (!is_builtin)
-	{
-		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0 || access(ft_strjoin(shell, "./", shell->command_array[0]), F_OK) != -1)
-			path = shell->command_array[0];
-		else
-			path = find_command(shell, shell->command_array);
-		execve(path, shell->command_array, shell->envp);
-		exit_status = 1;
-	}
-	if ((exit_status != 0))
-	{
-		custom_message = NULL;
+void handle_exit_status_and_cleanup(t_minishell *shell, int exit_status, int is_builtin)
+{
+    char *custom_message = NULL;
+    if ((exit_status != 0))
+    {
+        exit_status = set_exit_status_before_termination(shell, &custom_message);
+        if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
+            exit_status = 1;
+        print_error(shell->command_array[0], custom_message);
+    }
+    if (!shell->stay_in_parent)
+    {
+        if (is_builtin)
+            free_all(shell);
+        exit(exit_status);
+    }
+    else
+        shell->last_exit_status = exit_status;
+}
 
-		exit_status = set_exit_status_before_termination(shell,	&custom_message);
-		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
-			exit_status = 1;
-		print_error(shell->command_array[0], custom_message);
-	}
-	if (!shell->stay_in_parent)
-	{
-		if (is_builtin)
-			free_all(shell);
-		exit(exit_status);
-	}
-	else
-	 	shell->last_exit_status = exit_status;
+void execute_command_array(t_minishell *shell, char **command_array)
+{
+    char *path;
+    int is_builtin;
+    int exit_status = initialize_and_check_builtin(shell, command_array, &path, &is_builtin);
+    execute_non_builtin(shell, &path, &exit_status, is_builtin);
+    handle_exit_status_and_cleanup(shell, exit_status, is_builtin);
 }
 
 void	execute_command(t_minishell *shell, char *command)
