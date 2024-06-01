@@ -71,7 +71,7 @@ char	*remove_metaquotes(t_minishell *shell, char *str)
 	return (new_str);
 }
 
-char	*find_command(t_minishell *shell, char **input_array)
+char	*find_command(t_minishell *shell)
 {
 	char	*path;
 	int		i;
@@ -84,18 +84,24 @@ char	*find_command(t_minishell *shell, char **input_array)
 	path = ft_getenv(shell, "PATH");
 	if (!path)
 	{
-		print_error(input_array[0], "Permission denied");
+		print_error(shell->command_array[0], "Permission denied");
+		free_all(shell);
 		exit (126);
 	}
+	/* printf("command array before search: %s\n", shell->command_array[0]); */
 	shell->path_array = split_while_skipping_quotes(shell, path, ':');
+	free_and_reset_ptr((void **)&path);
 	i = 0;
 	while (shell->path_array[i])
 	{
 		command_path = ft_strjoin(shell, shell->path_array[i], "/");
-		command_path = ft_strjoin(shell, command_path, input_array[0]);
+		command_path = append_suffix(shell, command_path, shell->command_array[0]);
+		/*
+		command_path = ft_strjoin(shell, command_path, input_array[0]); */
 		fd = access(command_path, F_OK & X_OK);
 		if (fd == 0)
 			return (command_path);
+		free_and_reset_ptr((void **)&command_path);
 		i++;
 	}
 	return (NULL);
@@ -108,22 +114,35 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	char	*custom_message;
 	exit_status = 0;
 	int		is_builtin;
+	char	*relative_path;
 
-	(void)command_array;
 	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
 	/* printf("is builtin? %d\n", is_builtin); */
-
+	/* printf("address of command array after builtin check: %p\n", (void *)command_array[0]); */
 	if (!is_builtin)
 	{
-		if (shell->command_array[0][0] == '/' || strncmp(shell->command_array[0], "./", 2) == 0 || access(ft_strjoin(shell, "./", shell->command_array[0]), F_OK) != -1)
-			path = shell->command_array[0];
+		relative_path = ft_strjoin(shell, "./", shell->command_array[0]);
+		if (shell->command_array[0][0] == '/' || ft_strncmp(shell->command_array[0], "./", 2) == 0 || access(relative_path, F_OK) != -1)
+		{
+
+			path = ft_strdup(shell, shell->command_array[0]);
+		}
+
 		else
-			path = find_command(shell, shell->command_array);
+		{
+			free_and_reset_ptr((void **)&relative_path);
+			path = find_command(shell);
+		}
+
+
+		/* printf("command array after search: %s\n", shell->command_array[0]); */
+		if (path)
 		//free_child(shell);
-		execve(path, shell->command_array, shell->envp);
+			execve(path, shell->command_array, shell->envp);
 		// TODO: also set exit status and custom message for builtins
+		free_and_reset_ptr((void **)&path);
 		exit_status = 1;
 	}
 	if ((exit_status != 0 /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
@@ -142,8 +161,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	if (!shell->stay_in_parent)
 	{
 		/* printf("child pid: %d\n", getpid()); */
-		if (is_builtin)
-			free_all(shell);
+		free_all(shell);
 		exit(exit_status);
 	}
 
@@ -162,7 +180,11 @@ void	execute_command(t_minishell *shell, char *command)
 	/* printf("pid: %d\n", getpid());
 	printf("command: %s\n", command); */
 	if (!command || !command[0])
+	{
+		free_all(shell);
 		exit(EXIT_SUCCESS);
+	}
+
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	/* if (!shell->command_array[0])
@@ -173,17 +195,20 @@ void	execute_command(t_minishell *shell, char *command)
 		shell->command_array[i] = remove_metaquotes(shell,
 				shell->command_array[i]);
 		/* printf("after remove: %s\n", shell->command_array[i]); */
+		/* printf("address of command array: %p\n", (void *)shell->command_array[i]); */
 		i++;
 	}
 	// builtins
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
 	{
 		print_error(".", "filename argument required");
+		free_all(shell);
 		exit (2);
 	}
 	if (ft_strcmp(shell->command_array[0], "..") == 0)
 	{
 		print_error("..", "command not found");
+		free_all(shell);
 		exit (127);
 	}
 	execute_command_array(shell, shell->command_array);

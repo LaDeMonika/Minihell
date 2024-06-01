@@ -145,8 +145,7 @@ enum						e_open_mode
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
-char						*find_command(t_minishell *shell,
-								char **input_array);
+char	*find_command(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
 void	execute_command_array(t_minishell *shell, char **command_array);
 

@@ -32,10 +32,28 @@ prints the linked list of env variables
 
 } */
 
+char    **ft_subarray(t_minishell *shell, char **array, int start, int end)
+{
+    char **subarray;
+    int i;
+
+    i = 0;
+    subarray = malloc(sizeof(char *) * (end - start + 1));
+    while (start < end)
+    {
+        subarray[i] = ft_strdup(shell, array[start]);
+        start++;
+        i++;
+    }
+    subarray[i] = NULL;
+    return (subarray);
+}
+
 int ft_env(t_minishell *shell, char **command_array)
 {
     // probably will need to implement something for redirections, not sure yet
     int i;
+    char  **subarray;
 
     i = 0;
     if (command_array[1])
@@ -45,19 +63,21 @@ int ft_env(t_minishell *shell, char **command_array)
             ft_export(shell, command_array[1]);
             if (command_array[2])
             {
-                shell->command_array = command_array + 2;
-                execute_command_array(shell, command_array + 2);
-            }
-            else
-            {
-
+                subarray = ft_subarray(shell, command_array, 1, sizeof_array((void **)command_array));
+                free_and_reset_array((void ***)&shell->command_array, false);
+                free_and_reset_ptr((void **)&shell->command_array);
+                shell->command_array = subarray;
+                execute_command_array(shell, shell->command_array);
             }
 
         }
         else
         {
-            shell->command_array = command_array + 1;
-            execute_command_array(shell, command_array + 1);
+            subarray = ft_subarray(shell, command_array, 1, sizeof_array((void **)command_array));
+            free_and_reset_array((void ***)&shell->command_array, false);
+            free_and_reset_ptr((void **)&shell->command_array);
+            shell->command_array = subarray;
+            execute_command_array(shell, shell->command_array);
         }
 
     }

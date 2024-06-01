@@ -51,7 +51,6 @@ void	free_and_reset_array(void ***array, bool is_list)
 	i = 0;
 	while (array && *array && (*array)[i])
 	{
-
 		if (is_list)
 		{
 			/* printf("in array i: %d about to free list node: %p\n", i,(*array)[i]); */
@@ -59,7 +58,7 @@ void	free_and_reset_array(void ***array, bool is_list)
 
 		}
 
-		/* printf("freeing %p\n", (*array)[i]); */
+
 		/* printf("check1\n"); */
 		else
 			free(((*array))[i]);
@@ -113,7 +112,7 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell->input_file);
 	free_and_reset_array((void ***)&shell->path_array, false);
 	free_and_reset_ptr((void **)&shell->path_array);
-
+	/* printf("address of command_array about to be freed 0: %p 1: %p\n", (void *)shell->command_array[0], (void *)shell->command_array[1]); */
 	free_and_reset_array((void ***)&shell->command_array, false);
 	free_and_reset_ptr((void **)&shell->command_array);
 	free_and_reset_ptr((void **)&shell->pid);
