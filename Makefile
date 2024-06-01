@@ -17,7 +17,7 @@ BUILTIN = builtins/builtin.c builtins/ft_echo.c \
 
 UTILS = utils/strings_1.c utils/strings_2.c \
 			utils/strings_3.c utils/strings_4.c \
-			utils/strings_5.c
+			utils/strings_5.c utils/strings_6.c
 
 ERR = err/error_msg_00.c err/error_msg_01.c
 

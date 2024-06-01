@@ -294,6 +294,9 @@ int							ft_atoi(const char	*nptr, bool *valid_number);
 
 
 //strings_5
-bool    ft_isalpha(char c);
-int sizeof_array(void **array);
+bool    					ft_isalpha(char c);
+int 						sizeof_array(void **array);
+
+// strings_6
+char 						*remove_metaquotes(t_minishell *shell, char *str);
 #endif
