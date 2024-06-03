@@ -12,13 +12,12 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	write(STDERR_FILENO, "')\n", 3);
 	free_and_reset_ptr((void **)&str_line_count);
 }
-
+/*
 char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
 {
 	char	*temp;
 	char	*line;
 	int	end_index;
-	int	remain_len;
 
 	temp = strchr(input, '\n');
 	if (temp)
@@ -54,7 +53,7 @@ void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
 		end_index_for_eof = old_len - ft_strlen(*heredoc_input) - 1;
 		*eof = ft_substr(shell, old_eof, 0, end_index_for_eof);
 	}
-}
+}*/
 //variation for tester:
 #include "../get_next_line/get_next_line.h"
 void	write_to_file(t_minishell *shell, char **eof, char *input_file,
@@ -231,7 +230,7 @@ void	parse_input(t_minishell *shell)
 				index = NULL;
 				index = ft_itoa(shell, i);
 				shell->input_file = append_suffix(shell, index, "_input.txt");
-				heredoc(shell, list->token, shell->input_file);
+				heredoc(shell, &list->token, shell->input_file);
 			}
 			list = list->next;
 		}

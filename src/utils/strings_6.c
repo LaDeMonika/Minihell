@@ -67,6 +67,7 @@ char *finalize(char *new_str, char *str, int j)
     return new_str;
 }
 
+/*first determine new string length and then create new string without outer quotes*/
 char *remove_metaquotes(t_minishell *shell, char *str)
 {
     char metaquote;

@@ -43,6 +43,8 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
             if (append)
             {
                 value_in_array = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+                new_entry = append_suffix(shell, new_entry, value_in_array);
+
             }
             new_entry = append_suffix(shell, new_entry, value);
             free_and_reset_ptr((void **)&shell->envp[i]);

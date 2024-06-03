@@ -25,11 +25,7 @@ void	parent_sigint_handler(int sig)
 
 void	set_signals(t_minishell *shell, int mode)
 {
-	bool	is_child;
 
-	is_child = false;
-	if (mode == CHILD || mode == HEREDOC_CHILD)
-		is_child = true;
 	if (sigemptyset(&shell->sa_sigint.sa_mask) == -1 || sigemptyset(&shell->sa_sigquit.sa_mask) == -1)
 		error_free_all(shell, ERR_SIGEMPTYSET, NULL, NULL);
 	shell->sa_sigint.sa_flags = 0;
