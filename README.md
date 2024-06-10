@@ -46,3 +46,62 @@ s
 ```
 
 And it shows where leaks coming from
+
+
+# Heredoc
+<br>
+1)
+
+### Bash
+
+        ```bash
+        $ ls | cat << stop > herdoc2.txt
+        > is this good
+        > stop
+        $
+        ```
+
+### Minishell
+        ```bash
+        $ ls | cat << stop > herdoc1.txt
+        > is this good
+        > stop
+
+        $
+        ```
+<br>
+2)
+
+### Bash
+        ```bash
+        $ ls | cat << stop | ls -la | cat << stop1
+        > 12
+        > 32232
+        > 23
+        > stop
+        > awdaw
+        > daswd
+        > stop1
+        awdaw
+        daswd
+        $
+        ```
+
+### Minishell
+        ```bash
+        $ ls | cat << stop | ls -la | cat << stop1
+        > 12
+        > 32232
+        > 23
+        > stop
+        > awdaw
+        > daswd
+        > stop1
+        awdaw
+        daswd
+
+        $
+        ```
+
+- so what is happening on all of those cases is that our here dock add extra new line [need to be fixed]
+- after finishing _inputfiles are staying
