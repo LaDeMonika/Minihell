@@ -210,7 +210,7 @@ int							find_redirect(char *command, int i);
 void						redirect_stream(t_minishell *shell, char *file,
 								int mode, int fd2);
 void						handle_redirections(t_minishell *shell,
-								t_token_list *list, int read_fd);
+								t_token_list *list, int read_fd, int index);
 char						*remove_metaquotes(t_minishell *shell,
 								char *command);
 // signals

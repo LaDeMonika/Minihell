@@ -32,7 +32,7 @@ void	handle_input(t_minishell *shell)
 	|| ft_strncmp(shell->list[0]->token, "unset ", 6) == 0))
 	{
 		shell->stay_in_parent = true;
-		handle_redirections(shell, shell->list[0], STDIN_FILENO);
+		handle_redirections(shell, shell->list[0], STDIN_FILENO, 0);
 	}
 	else if (shell->parsing_exit_status == 0)
 	{

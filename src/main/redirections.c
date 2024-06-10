@@ -29,9 +29,10 @@ void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 	try_close(shell, fd);
 }
 
-void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
+void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd, int index)
 {
 	char	*command;
+	char			*index_as_str;
 
 	command = NULL;
 	(void)read_fd;
@@ -48,10 +49,13 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 		else if (list->delimiter == HEREDOC)
 		{
 			//printf("trying to redirect from %s\n", shell->input_file);
+			index_as_str = NULL;
+			index_as_str = ft_itoa(shell, index);
+			shell->input_file = append_suffix(shell, index_as_str, "_input.txt");
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
-			/* if (unlink(shell->input_file) == -1)
+			if (unlink(shell->input_file) == -1)
 				error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);
-			printf("unlinked %s\n", shell->input_file); */
+			//printf("unlinked %s\n", shell->input_file);
 			free_and_reset_ptr((void **)&shell->input_file);
 		}
 		list = list->next;

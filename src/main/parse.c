@@ -231,7 +231,7 @@ void	parse_input(t_minishell *shell)
 				index = ft_itoa(shell, i);
 				shell->input_file = append_suffix(shell, index, "_input.txt");
 				heredoc(shell, &list->token, shell->input_file);
-
+				free_and_reset_ptr((void **)&shell->input_file);
 			}
 			list = list->next;
 		}
