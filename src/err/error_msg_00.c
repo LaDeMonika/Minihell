@@ -118,8 +118,8 @@ void	error_free_all_second(int err, char *prefix)
 void	error_free_all(t_minishell *shell, int err,
 			char *prefix, char *custom_error)
 {
+
 	(void)custom_error;
-	free_all(shell);
 	if (err == ERR_TOO_MANY_ARGS)
 		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
 	else if (err == ERR_MALLOC)
@@ -134,7 +134,9 @@ void	error_free_all(t_minishell *shell, int err,
 		print_error(prefix, NULL);
 	else if (err == ERR_DUP2)
 		print_error(prefix, NULL);
-	error_free_all_second(err, prefix);
+	else
+		error_free_all_second(err, prefix);
+	free_all(shell);
 	if (err == EXIT)
 		exit(253);
 	exit(EXIT_FAILURE);

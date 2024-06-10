@@ -47,11 +47,12 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
 		else if (list->delimiter == HEREDOC)
 		{
-			/* printf("trying to redirect from %s\n", shell->input_file); */
+			//printf("trying to redirect from %s\n", shell->input_file);
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
 			/* if (unlink(shell->input_file) == -1)
 				error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);
 			printf("unlinked %s\n", shell->input_file); */
+			free_and_reset_ptr((void **)&shell->input_file);
 		}
 		list = list->next;
 	}
