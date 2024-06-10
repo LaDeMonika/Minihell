@@ -100,6 +100,7 @@ enum						e_error
 	ERR_READ,
 	ERR_WRITE,
 	ERR_CLOSE,
+	ERR_UNLINK,
 	ERR_PIPE,
 	ERR_FORK,
 	ERR_WAITPID,

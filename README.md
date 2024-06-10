@@ -24,7 +24,6 @@ make && valgrind --suppressions=readline.supp --leak-check=full --show-leak-kind
 
 - correct exit status code when parsin fails (now it's always 2)
 - next: exit status, errno and perror of cd
-- maybe need to update PWD in env
 - improve error message: include bash and command argument if necessary
 - quote behaviour in heredoc
 - export and env should show the exact same elements as bash?

@@ -101,6 +101,8 @@ void	error_free_all_second(int err, char *prefix)
 		print_error(prefix, NULL);
 	else if (err == ERR_CLOSE)
 		perror("close");
+	else if (err == ERR_UNLINK)
+		perror("unlink");
 	else if (err == ERR_PIPE)
 		perror("pipe");
 	else if (err == ERR_FORK)
