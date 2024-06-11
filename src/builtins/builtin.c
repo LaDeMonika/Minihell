@@ -48,20 +48,20 @@ int export_no_args(t_minishell  *shell)
     return (0);
 }
 
-bool handle_unset(t_minishell *shell, char **command_array, int *status)
+bool handle_unset(t_minishell *shell, char **command_array, int *status, int *custom_errno)
 {
     int i;
 
     i = 1;
     while (command_array[i])
     {
-        *status = ft_unset(shell, command_array[i]);
+        *status = ft_unset(shell, command_array[i], custom_errno);
         i++;
     }
     return (true);
 }
 
-bool handle_export(t_minishell *shell, char **command_array, int *status)
+bool handle_export(t_minishell *shell, char **command_array, int *status, int *custom_errno)
 {
     int i;
 
@@ -73,28 +73,28 @@ bool handle_export(t_minishell *shell, char **command_array, int *status)
     i = 1;
     while (command_array[i])
     {
-        *status = ft_export(shell, command_array[i]);
+        *status = ft_export(shell, command_array[i], custom_errno);
         i++;
     }
     return (true);
 }
 
-bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
+bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno)
 {
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
         *status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
-        *status = ft_cd(shell, command_array);
+        *status = ft_cd(shell, command_array, custom_errno);
     else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
         *status = ft_pwd(shell);
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
-        *status = ft_env(shell, command_array);
+        *status = ft_env(shell, command_array, custom_errno);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
-        return (handle_unset(shell, command_array, status));
+         return(handle_unset(shell, command_array, status, custom_errno));
     else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
-        return (handle_export(shell, command_array, status));
+        return (handle_export(shell, command_array, status, custom_errno));
     else if (ft_strcmp_btin(shell->command_array[0], "exit") == 0)
-        *status = ft_exit(shell, shell->command_array);
+        *status = ft_exit(shell, shell->command_array, custom_errno);
     else
         return (false);
     return (true);

@@ -1,6 +1,6 @@
 #include "../../inc/minishell.h"
 
-int	ft_exit(t_minishell *shell, char **command_array)
+int	ft_exit(t_minishell *shell, char **command_array, int *custom_errno)
 {
 	bool valid_number;
 	int	exit_code;
@@ -15,7 +15,7 @@ int	ft_exit(t_minishell *shell, char **command_array)
 		{
 			if (command_array[2])
 			{
-				errno = U_TOO_MANY_ARGUMENTS;
+				*custom_errno = U_TOO_MANY_ARGUMENTS;
 				return (1);
 			}
 			shell->last_exit_status = exit_code % 256;

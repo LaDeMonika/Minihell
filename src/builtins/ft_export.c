@@ -93,7 +93,7 @@ bool    valid_arg(char *str)
     return (true);
 }
 
-int ft_export(t_minishell *shell, char *arg)
+int ft_export(t_minishell *shell, char *arg, int *custom_errno)
 {
     char  *key;
     char    *value;
@@ -103,9 +103,14 @@ int ft_export(t_minishell *shell, char *arg)
     char    *new_entry;
     int i;
 
+    if (arg[0] == '-')
+    {
+        *custom_errno = U_INVALID_OPTION;
+        return (2);
+    }
     if (!valid_arg(arg))
     {
-        errno = U_INVALID_IDENTIFIER;
+        *custom_errno = U_INVALID_IDENTIFIER;
         return(1);
     }
     if (count_occurences_of_char(arg, '=') < 1)

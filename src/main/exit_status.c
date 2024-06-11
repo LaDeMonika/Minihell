@@ -1,21 +1,24 @@
 #include "../../inc/minishell.h"
 
-int	set_exit_status_before_termination(t_minishell *shell, char **custom_message)
+void	set_exit_status_before_termination(t_minishell *shell, char **custom_message, int *exit_status, int custom_errno)
 {
 	(void)shell;
-	if (errno == U_INVALID_IDENTIFIER)
+	if (custom_errno == U_INVALID_IDENTIFIER)
 		*custom_message = ("not a valid identifier");
-	if (errno == U_TOO_MANY_ARGUMENTS)
+	else if (custom_errno == U_INVALID_OPTION)
+		*custom_message = ("invalid option");
+	else if (custom_errno == U_TOO_MANY_ARGUMENTS)
 		*custom_message = ("too many arguments");
 	else if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
 	{
 		if (errno == EFAULT || (errno == EACCES && !shell->command_array[0][0]))
 			*custom_message = ("command not found");
-		return (127);
+		*exit_status = 127;
 	}
 	else if (errno == EACCES)
-		return (126);
-	return (EXIT_FAILURE);
+		*exit_status = 126;
+
+
 }
 
 void	set_exit_status_after_termination(t_minishell *shell, int *child_status,

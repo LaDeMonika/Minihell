@@ -12,10 +12,10 @@
 
 #include "../../inc/minishell.h"
 
-int handle_to_many_args(char **current_pwd)
+int handle_to_many_args(char **current_pwd, int *custom_errno)
 {
     free_and_reset_ptr((void **)current_pwd);
-    errno = U_TOO_MANY_ARGUMENTS;
+    *custom_errno = U_TOO_MANY_ARGUMENTS;
     return (1);
 }
 
@@ -56,7 +56,7 @@ int change_directory(t_minishell *shell, char *new_pwd, char *current_pwd)
     return (0);
 }
 
-int ft_cd(t_minishell *shell, char **command_array)
+int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
 {
     char    *new_pwd;
     char *current_pwd;
@@ -65,7 +65,7 @@ int ft_cd(t_minishell *shell, char **command_array)
     if (current_pwd == NULL)
         error_free_all(shell, ERR_GETCWD, NULL, NULL);
     if (command_array[1] && command_array[2])
-        return (handle_to_many_args(&current_pwd));
+        return (handle_to_many_args(&current_pwd, custom_errno));
     new_pwd = get_new_pwd(shell, command_array);
     return (change_directory(shell, new_pwd, current_pwd));
     return (0);

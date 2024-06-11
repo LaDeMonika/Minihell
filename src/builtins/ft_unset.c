@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-int ft_unset(t_minishell *shell, char *key)
+int ft_unset(t_minishell *shell, char *key, int *custom_errno)
 {
     int i;
     int j;
@@ -22,6 +22,11 @@ int ft_unset(t_minishell *shell, char *key)
     char    **new_envp;
 
     i = 0;
+    if (key[0] == '-')
+    {
+        *custom_errno = U_INVALID_OPTION;
+        return (2);
+    }
     while (shell->envp[i])
     {
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));

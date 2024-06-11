@@ -111,7 +111,8 @@ enum						e_error
 enum e_custom_errno
 {
 	U_TOO_MANY_ARGUMENTS,
-	U_INVALID_IDENTIFIER
+	U_INVALID_IDENTIFIER,
+	U_INVALID_OPTION
 };
 
 enum						e_token_delimiter
@@ -153,8 +154,7 @@ void	execute_command_array(t_minishell *shell, char **command_array);
 // main
 void						handle_input(t_minishell *shell);
 //exit status
-int							set_exit_status_before_termination(
-								t_minishell *shell, char **custom_message);
+void	set_exit_status_before_termination(t_minishell *shell, char **custom_message, int *exit_status, int custom_errno);
 void						set_exit_status_after_termination(
 								t_minishell *shell, int *child_status,
 								int remaining_children);
@@ -247,16 +247,15 @@ int							try_fork(t_minishell *shell);
 
 //********************src/builtins
 int							ft_strcmp(char *s1, char *s2);
-bool						ft_is_builtin(t_minishell *shell,
-								char **command_array, int *status);
+bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);
 int							ft_echo(char **command_array);
-int ft_cd(t_minishell *shell, char **command_array);
-int							ft_env(t_minishell *shell, char **command_array);
-int ft_unset(t_minishell *shell, char *key);
-int							ft_exit(t_minishell *shell, char **command_array);
+int ft_cd(t_minishell *shell, char **command_array, int *custom_errno);
+int ft_env(t_minishell *shell, char **command_array, int *custom_errno);
+int ft_unset(t_minishell *shell, char *key, int *custom_errno);
+int							ft_exit(t_minishell *shell, char **command_array, int *custom_errno);
 int ft_pwd(t_minishell *shell);
-int ft_export(t_minishell *shell, char *arg);
+int ft_export(t_minishell *shell, char *arg, int *custom_errno);
 int index_of_first_occurence(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
 

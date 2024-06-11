@@ -15,9 +15,9 @@ char	*find_command(t_minishell *shell)
 	path = ft_getenv(shell, "PATH");
 	if (!path)
 	{
-		print_error(shell->command_array[0], "Permission denied");
+		print_error(shell->command_array[0], "No such file or directory");
 		free_all(shell);
-		exit (126);
+		exit (127);
 	}
 	/* printf("command array before search: %s\n", shell->command_array[0]); */
 	shell->path_array = split_while_skipping_quotes(shell, path, ':');
@@ -46,10 +46,12 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	exit_status = 0;
 	int		is_builtin;
 	char	*relative_path;
+	int	custom_errno;
 
 	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
-	is_builtin = ft_is_builtin(shell, command_array, &exit_status);
+	custom_errno = -1;
+	is_builtin = ft_is_builtin(shell, command_array, &exit_status, &custom_errno);
 	/* printf("is builtin? %d\n", is_builtin); */
 	/* printf("address of command array after builtin check: %p\n", (void *)command_array[0]); */
 	if (!is_builtin)
@@ -82,7 +84,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
 
-		exit_status = set_exit_status_before_termination(shell,	&custom_message);
+		set_exit_status_before_termination(shell, &custom_message, &exit_status, custom_errno);
 		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
 			exit_status = 1;
 		/* printf("errno in comamnd function: %d\n", errno); */

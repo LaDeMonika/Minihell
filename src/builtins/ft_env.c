@@ -40,11 +40,11 @@ void handle_subarray_extention(t_minishell *shell, char **command_array, int sta
     execute_command_array(shell, shell->command_array);
 }
 
-void export_and_execute(t_minishell *shell, char **command_array)
+void export_and_execute(t_minishell *shell, char **command_array, int *custom_errno)
 {
     if (ft_strchr(command_array[1], '='))
     {
-        ft_export(shell, command_array[1]);
+        ft_export(shell, command_array[1], custom_errno);
         if (command_array[2])
             handle_subarray_extention(shell, command_array, 2);
     }
@@ -64,10 +64,10 @@ void print_env(t_minishell *shell)
     }
 }
 
-int ft_env(t_minishell *shell, char **command_array)
+int ft_env(t_minishell *shell, char **command_array, int *custom_errno)
 {
     if (command_array[1])
-        export_and_execute(shell, command_array);
+        export_and_execute(shell, command_array, custom_errno);
     else
         print_env(shell);
     return (0);
