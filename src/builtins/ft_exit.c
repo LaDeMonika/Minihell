@@ -5,8 +5,6 @@ int	ft_exit(t_minishell *shell, char **command_array, int *custom_errno)
 	bool valid_number;
 	int	exit_code;
 
-	(void)shell;
-	/* printf("exit\n"); */
 	valid_number = true;
 	if (command_array[1])
 	{
