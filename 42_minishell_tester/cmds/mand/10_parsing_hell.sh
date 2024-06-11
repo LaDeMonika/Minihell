@@ -241,8 +241,8 @@ echo $T
 
 e""""""""""""cho
 
-# export T='|'
-# echo $T echo lala $T echo $T echo ?
+export T='|'
+echo $T echo lala $T echo $T echo ?
 
 export T="<<"
 $T.
@@ -302,17 +302,17 @@ echo "$"$'$'$"$"$"$"$'$'
 
 # echo $/ $/
 
-# echo $U/SER
+echo $U/SER
 
 # echo "$/ $/"
 
 # echo $/"$/"
 
-# echo '$/'
+echo '$/'
 
-# exit 9223372036854775805
+exit 9223372036854775805
 
-# exit 123"123"
+exit 123"123"
 
 <| echo ok
 

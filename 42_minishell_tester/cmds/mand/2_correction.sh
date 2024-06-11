@@ -36,21 +36,21 @@ echo -n -n -n 42
 
 echo -n -n -n -n 42
 
-# exit
+exit
 
-# exit 42
+exit 42
 
-# exit ""
+exit ""
 
-# exit 1 2 3
+exit 1 2 3
 
-# exit 42 42
+exit 42 42
 
-# exit A
+exit A
 
-# exit A 1
+exit A 1
 
-# exit 1 A
+exit 1 A
 
 /bin/echo 42
 echo $?

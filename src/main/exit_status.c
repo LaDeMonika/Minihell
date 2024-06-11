@@ -31,7 +31,7 @@ void	set_exit_status_after_termination(t_minishell *shell, int *child_status,
 			if (remaining_children == 0)
 				write(2, "Quit (core dumped)\n", 19);
 		}
-		else if (remaining_children < 2)
-			write(2, "\n", 1);
+		/* else if (remaining_children < 2)
+			write(2, "\n", 1); */
 	}
 }

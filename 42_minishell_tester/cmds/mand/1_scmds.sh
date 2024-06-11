@@ -16,10 +16,10 @@ touch "  "
 /bin/rm -f "  "
 
 
-# touch "
-# "
-# /bin/rm -f "
-# "
+touch "
+"
+/bin/rm -f "
+"
 
 mkdir " "
 /bin/rm -rf " "
@@ -81,7 +81,7 @@ rm -rf " with spaces"
 #                                  BROKEN SCMD                                 #
 # **************************************************************************** #
 
-# "."
+"."
 
 .ls
 
