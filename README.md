@@ -11,8 +11,9 @@ Valgrind: run it with this flag to suppress all readline leaks:
 make && valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes ./minishell
 
 ### Monika's Task
-    - Builtins.
-    - Implement error handling.
+    - refactoring
+    - norminette
+    - test some cases
 
 ### Lilie's Task
     - remove libft and adjust makefile

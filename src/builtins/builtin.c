@@ -48,10 +48,39 @@ int export_no_args(t_minishell  *shell)
     return (0);
 }
 
-bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
+bool handle_unset(t_minishell *shell, char **command_array, int *status)
 {
     int i;
 
+    i = 1;
+    while (command_array[i])
+    {
+        *status = ft_unset(shell, command_array[i]);
+        i++;
+    }
+    return (true);
+}
+
+bool handle_export(t_minishell *shell, char **command_array, int *status)
+{
+    int i;
+
+    if (!command_array[1])
+    {
+        *status = export_no_args(shell);
+        return (true);
+    }
+    i = 1;
+    while (command_array[i])
+    {
+        *status = ft_export(shell, command_array[i]);
+        i++;
+    }
+    return (true);
+}
+
+bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
+{
     if (ft_strcmp_btin(command_array[0], "echo") == 0)
         *status = ft_echo(command_array + 1);
     else if (ft_strcmp_btin(command_array[0], "cd") == 0)
@@ -61,28 +90,9 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status)
     else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
         *status = ft_env(shell, command_array);
     else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
-    {
-        i = 1;
-        while (shell->command_array[i])
-        {
-            *status = ft_unset(shell, command_array[i]);
-            i++;
-        }
-    }
+        return (handle_unset(shell, command_array, status));
     else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
-    {
-        if (!command_array[1])
-        {
-            *status = export_no_args(shell);
-            return (true);
-        }
-        i = 1;
-        while (shell->command_array[i])
-        {
-            *status = ft_export(shell, shell->command_array[i]);
-            i++;
-        }
-    }
+        return (handle_export(shell, command_array, status));
     else if (ft_strcmp_btin(shell->command_array[0], "exit") == 0)
         *status = ft_exit(shell, shell->command_array);
     else
