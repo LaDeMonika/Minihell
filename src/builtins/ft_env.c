@@ -6,13 +6,11 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:57 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/31 16:51:44 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/11 14:00:09 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-
 
 char    **ft_subarray(t_minishell *shell, char **array, int start, int end)
 {
@@ -31,44 +29,46 @@ char    **ft_subarray(t_minishell *shell, char **array, int start, int end)
     return (subarray);
 }
 
-int ft_env(t_minishell *shell, char **command_array)
+void handle_subarray_extention(t_minishell *shell, char **command_array, int start_index)
 {
-    int i;
-    char  **subarray;
+    char **subarray;
 
-    i = 0;
-    if (command_array[1])
+    subarray = ft_subarray(shell, command_array, start_index, sizeof_array((void **)command_array));
+    free_and_reset_array((void ***)&shell->command_array, false);
+    free_and_reset_ptr((void **)&shell->command_array);
+    shell->command_array = subarray;
+    execute_command_array(shell, shell->command_array);
+}
+
+void export_and_execute(t_minishell *shell, char **command_array)
+{
+    if (ft_strchr(command_array[1], '='))
     {
-        if (strchr(command_array[1], '='))
-        {
-            ft_export(shell, command_array[1]);
-            if (command_array[2])
-            {
-                subarray = ft_subarray(shell, command_array, 1, sizeof_array((void **)command_array));
-                free_and_reset_array((void ***)&shell->command_array, false);
-                free_and_reset_ptr((void **)&shell->command_array);
-                shell->command_array = subarray;
-                execute_command_array(shell, shell->command_array);
-            }
-
-        }
-        else
-        {
-            subarray = ft_subarray(shell, command_array, 1, sizeof_array((void **)command_array));
-            free_and_reset_array((void ***)&shell->command_array, false);
-            free_and_reset_ptr((void **)&shell->command_array);
-            shell->command_array = subarray;
-            execute_command_array(shell, shell->command_array);
-        }
-
+        ft_export(shell, command_array[1]);
+        if (command_array[2])
+            handle_subarray_extention(shell, command_array, 2);
     }
     else
+        handle_subarray_extention(shell, command_array, 1);
+}
+
+void print_env(t_minishell *shell)
+{
+    int i;
+
+    i = 0;
+    while (shell->envp[i])
     {
-        while (shell->envp[i])
-        {
-            printf("%s\n", shell->envp[i]);
-            i++;
-        }
+        printf("%s\n", shell->envp[i]);
+        i++;
     }
+}
+
+int ft_env(t_minishell *shell, char **command_array)
+{
+    if (command_array[1])
+        export_and_execute(shell, command_array);
+    else
+        print_env(shell);
     return (0);
 }
