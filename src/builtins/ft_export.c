@@ -6,7 +6,7 @@
 /*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:22:36 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/31 16:55:02 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/11 15:25:33 by msimic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
             {
                 value_in_array = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
                 new_entry = append_suffix(shell, new_entry, value_in_array);
-
             }
             new_entry = append_suffix(shell, new_entry, value);
             free_and_reset_ptr((void **)&shell->envp[i]);
@@ -72,8 +71,6 @@ int count_occurences_of_char(char *str, char c)
     }
     return (count);
 }
-
-
 
 bool    valid_arg(char *str)
 {
