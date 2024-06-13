@@ -37,9 +37,7 @@ void    append_hostname(t_minishell *shell)
 	char	hostname[254];
 	char	*hostname_remainder;
 
-    hostname_file = open("/etc/hostname", O_RDONLY);
-	if (hostname_file == -1)
-		error_free_all(shell, ERR_OPEN, NULL, NULL);
+	hostname_file = try_open(shell, "/etc/hostname", READ);
 	if (read(hostname_file, hostname, 254) == -1)
 		error_free_all(shell, ERR_READ, NULL, NULL);
 	if (close(hostname_file) == -1)

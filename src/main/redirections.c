@@ -1,30 +1,11 @@
 #include "../../inc/minishell.h"
 
-void	temporary_input_redirect(t_minishell *shell, int read_fd)
-{
-	char	*temp_index;
-	char	*temp_file;
-	int		temp_fd;
-	char	*buffer;
-
-	temp_index = ft_itoa(shell, read_fd);
-	temp_file = append_suffix(shell, temp_index, "_temp_input");
-	temp_fd = try_open(shell, WRITE_TRUNCATE, temp_file);
-	buffer = try_malloc(shell, sizeof(char) * 1);
-	while (try_read(shell, STDIN_FILENO, &buffer, temp_file) > 0)
-		try_write(shell, temp_fd, buffer, 1);
-	try_close(shell, temp_fd);
-	temp_fd = try_open(shell, READ, temp_file);
-	free_and_reset_ptr((void **)&temp_file);
-	try_dup2(shell, temp_fd, STDIN_FILENO);
-	try_close(shell, temp_fd);
-}
 
 void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 {
 	int	fd;
 
-	fd = try_open(shell, mode, file);
+	fd = try_open(shell, file, mode);
 	try_dup2(shell, fd, fd2);
 	try_close(shell, fd);
 }

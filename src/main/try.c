@@ -1,6 +1,6 @@
 #include "../../inc/minishell.h"
 
-int	try_open(t_minishell *shell, int mode, char *file)
+int	try_open(t_minishell *shell, char *file, int mode)
 {
 	int fd;
 

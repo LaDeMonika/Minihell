@@ -82,6 +82,7 @@ typedef struct s_minishell
 	char					**command_array;
 	bool					stay_in_parent;
 	char					*heredoc_input;
+
 }							t_minishell;
 
 /****************************ENUM****************************/
@@ -241,7 +242,7 @@ int							try_read(t_minishell *shell, int fd, char **buffer,
 int							try_write(t_minishell *shell, int fd, char *buffer,
 								int bytes);
 void						try_close(t_minishell *shell, int fd);
-int							try_open(t_minishell *shell, int mode, char *file);
+int	try_open(t_minishell *shell, char *file, int mode);
 void						*try_malloc(t_minishell *shell, int size);
 void						try_dup2(t_minishell *shell, int fd, int fd2);
 void						try_pipe(t_minishell *shell, int fd[2]);

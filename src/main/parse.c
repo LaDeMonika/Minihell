@@ -24,7 +24,7 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
-	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
+	file_fd = try_open(shell, input_file, WRITE_TRUNCATE);
 	if (isatty(fileno(stdin)))
 		heredoc_input = readline("> ");
 	else

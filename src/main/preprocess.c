@@ -9,7 +9,7 @@ char	*ft_getpid(t_minishell *shell)
 
 	pid = try_malloc(shell, sizeof(char) * 11);
 	i = 0;
-	fd = open("/proc/self/stat", O_RDONLY);
+	fd = try_open(shell, "/proc/self/stat", READ);
 	if (fd > 0)
 	{
 		while (read(fd, buffer, 1) > 0)
