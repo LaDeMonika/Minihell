@@ -41,9 +41,7 @@ int ft_unset(t_minishell *shell, char *key, int *custom_errno)
     if (!shell->envp[i])
         return (0);
     old_size = sizeof_array((void **)shell->envp);
-    new_envp = malloc(sizeof(char *) * (old_size));
-    if (!new_envp)
-        error_free_all(shell, ERR_MALLOC, NULL, NULL);
+    new_envp = try_malloc(shell, sizeof(char *) * (old_size));
     j = 0;
     k = 0;
     while (shell->envp[j])

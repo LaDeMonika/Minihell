@@ -15,9 +15,7 @@
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
 	int	i;
-	shell->envp = malloc(sizeof(char *) * (sizeof_array((void **)envp) + 1));
-	if (!shell->envp)
-		error_free_all(shell, ERR_MALLOC, NULL, NULL);
+	shell->envp = try_malloc(shell, sizeof(char *) * (sizeof_array((void **)envp) + 1));
 	i = 0;
 	while (envp[i])
 	{

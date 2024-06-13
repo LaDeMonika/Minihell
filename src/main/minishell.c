@@ -46,7 +46,7 @@ void	handle_input(t_minishell *shell)
 		shell->last_exit_status = shell->parsing_exit_status;
 }
 
-int	main(int argc, char **argv, char **envp)
+/* int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
 
@@ -56,7 +56,6 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (perror("malloc"), 1);
 	init_shell_struct(shell, envp);
-
 	if (argc > 1)
 		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);
 	while (1)
@@ -76,9 +75,9 @@ int	main(int argc, char **argv, char **envp)
 		free_iteration(shell);
 	}
 	return (free_all(shell));
-}
+} */
 //main for tester:
-/* #include "../get_next_line/get_next_line.h"
+#include "../get_next_line/get_next_line.h"
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
@@ -89,7 +88,6 @@ int	main(int argc, char **argv, char **envp)
 	if (!shell)
 		return (perror("malloc"), 1);
 	init_shell_struct(shell, envp);
-
 	if (argc > 1)
 		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);
 	while (1)
@@ -117,4 +115,3 @@ int	main(int argc, char **argv, char **envp)
 	}
 	return (free_all(shell));
 }
- */

@@ -124,9 +124,7 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
         return (0);
     }
     old_size = sizeof_array((void **)shell->envp);
-    new_envp = malloc(sizeof(char *) * (old_size + 2));
-    if (!new_envp)
-        error_free_all(shell, ERR_MALLOC, NULL, NULL);
+    new_envp = try_malloc(shell, sizeof(char *) * (old_size + 2));
     i = 0;
     while (shell->envp[i])
     {

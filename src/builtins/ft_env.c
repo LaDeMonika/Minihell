@@ -18,7 +18,7 @@ char    **ft_subarray(t_minishell *shell, char **array, int start, int end)
     int i;
 
     i = 0;
-    subarray = malloc(sizeof(char *) * (end - start + 1));
+    subarray = try_malloc(shell, sizeof(char *) * (end - start + 1));
     while (start < end)
     {
         subarray[i] = ft_strdup(shell, array[start]);
