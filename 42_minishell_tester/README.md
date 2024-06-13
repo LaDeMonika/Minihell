@@ -50,7 +50,7 @@ So it should look like something like this:
 		char *line;
 		line = get_next_line(fileno(stdin));
 		shell->prompt = ft_strtrim(line, "\n");
-		//free(line);
+		free(line);
 	}
 ```
 
@@ -90,7 +90,7 @@ bash tester.sh a
 To install the script, copy and run following command:
 
 ```
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/zstenger93/42_minishell_tester/master/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/zstenger93/42_minishell_tester/master/install.sh)" 
 ```
 
 The tester will be installed in the `$HOME/42_minishell_tester` directory.

@@ -48,10 +48,10 @@ int change_directory(t_minishell *shell, char *new_pwd, char *current_pwd)
         return (1);
     }
     free_and_reset_ptr((void **)&new_pwd);
-    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, 0);
+    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, false);
     free_and_reset_ptr((void **)&current_pwd);
     current_pwd = getcwd(NULL, 0);
-    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, 0);
+    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, false);
     free_and_reset_ptr((void **)&current_pwd);
     return (0);
 }

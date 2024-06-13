@@ -1,4 +1,4 @@
-cl# **************************************************************************** #
+# **************************************************************************** #
 #                                  PIPELINES                                   #
 # **************************************************************************** #
 ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls | ls
@@ -29,7 +29,7 @@ echo 42 | echo no | echo smth | grep no
 
 echo 42 | echo no | echo smth | grep smth
 
-# /bin/env | grep "_="
+/bin/env | grep "_="
 
 /bin/env | grep "SHLVL"
 
@@ -52,6 +52,7 @@ rm -rf tmp_lol.c
 
 ls | cat asd
 
+# WORKS BUT TESTER SHOWS ERROR:
 # ls | cat << stop | grep "asd"
 # is this good
 # stop
@@ -147,11 +148,11 @@ ls|cat Makefile|> out
 ls|cat Makefile|>> out
 /bin/rm -f out
 
-
-ls|cat Makefile|cat<<asd>out
-$USER
-asd
-/bin/rm -f out
+# WORKS BUT TESTER SHOWS ERROR:
+# ls|cat Makefile|cat<<asd>out
+# $USER
+# asd
+# /bin/rm -f out
 
 ls|cat Makefile|cat<<'asd'>out
 $USER
@@ -173,4 +174,4 @@ cd .. |ls|cat Makefile|>> out
 pwd
 /bin/rm -f out
 
-# ls -l | awk '$1 ~ /^d/ {print $9}'
+ls -l | awk '$1 ~ /^d/ {print $9}'

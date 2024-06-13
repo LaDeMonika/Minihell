@@ -12,48 +12,6 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	write(STDERR_FILENO, "')\n", 3);
 	free_and_reset_ptr((void **)&str_line_count);
 }
-/*
-char	*extract_line(t_minishell *shell, char *input, char **heredoc_input)
-{
-	char	*temp;
-	char	*line;
-	int	end_index;
-
-	temp = strchr(input, '\n');
-	if (temp)
-	{
-		end_index = temp - input;
-		remain_len = ft_strlen(input) - end_index;
-		line = ft_substr(shell, input, 0, end_index);
-		*heredoc_input = ft_strdup(shell, temp + 1);
-	}
-	else
-	{
-		line = ft_strdup(shell, input);
-		*heredoc_input = NULL;
-	}
-	free_and_reset_ptr((void **)&input);
-	return (line);
-}
-
-void	extract_eof_and_input(t_minishell *shell, char **eof, char **heredoc_input)
-{
-	char	*old_eof;
-	int	end_index_for_eof;
-	int	old_len;
-
-	old_eof = *eof;
-	old_len = ft_strlen(*eof);
-	end_index_for_eof = 0;
-	*heredoc_input = NULL;
-	*heredoc_input = strchr(*eof, '\n');
-	if (*heredoc_input)
-	{
-		*heredoc_input = ft_strdup(shell, *heredoc_input + 1);
-		end_index_for_eof = old_len - ft_strlen(*heredoc_input) - 1;
-		*eof = ft_substr(shell, old_eof, 0, end_index_for_eof);
-	}
-}*/
 //variation for tester:
 #include "../get_next_line/get_next_line.h"
 void	write_to_file(t_minishell *shell, char **eof, char *input_file,
@@ -81,13 +39,10 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		expand_var = true;
 	if (has_even_metaquotes(*eof))
 		*eof = remove_metaquotes(shell, *eof);
-	//current_line = extract_line(shell, heredoc_input, &heredoc_input);
 	while (heredoc_input && (ft_strncmp(heredoc_input, *eof, ft_strlen(*eof) + 1) != 0))
 	{
-		/* printf("heredoc input before expansion: %s\n", heredoc_input); */
 		if (expand_var)
 			heredoc_input = expand_env_variables(shell, heredoc_input);
-		/* printf("heredoc input after expansion: %s\n", heredoc_input); */
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
@@ -113,37 +68,41 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 
 
 /*writes input to input_file and sends for each input a newline character to pipe to increment line count*/
-/* void	write_to_file(t_minishell *shell, char *eof, char *input_file,
+/* void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
-	char	*current_line;
 	char	*heredoc_input;
+	bool	expand_var;
 
 
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
 	file_fd = try_open(shell, WRITE_TRUNCATE, input_file);
-	heredoc_input = NULL;
-	extract_eof_and_input(shell, &eof, &heredoc_input);
-	if (!heredoc_input)
-		heredoc_input = readline("> ");
-	current_line = extract_line(shell, heredoc_input, &heredoc_input);
-	while (current_line && (ft_strncmp(current_line, eof, ft_strlen(eof) + 1) != 0))
+	heredoc_input = readline("> ");
+	if (ft_strchr(*eof, '"') || ft_strchr(*eof, '\''))
+		expand_var = false;
+	else
+		expand_var = true;
+	if (has_even_metaquotes(*eof))
+		*eof = remove_metaquotes(shell, *eof);
+	while (heredoc_input && (ft_strncmp(heredoc_input, *eof, ft_strlen(*eof) + 1) != 0))
 	{
-		current_line = expand_env_variables(shell, current_line);
+		if (expand_var)
+			heredoc_input = expand_env_variables(shell, heredoc_input);
 		try_write(shell, pipe_fd[1], "\n", 1);
-		try_write(shell, file_fd, current_line, ft_strlen(current_line));
+		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
-		if (!heredoc_input)
-			heredoc_input = readline("> ");
-		current_line = extract_line(shell, heredoc_input, &heredoc_input);
+		free_and_reset_ptr((void **)&heredoc_input);
+		heredoc_input = readline("> ");
 	}
-	if (current_line)
+	if (heredoc_input)
 		try_write(shell, pipe_fd[1], "\n", 1);
-	if (!current_line)
-		heredoc_EOF(shell, eof);
+	if (!heredoc_input)
+		heredoc_EOF(shell, *eof);
 	try_close(shell, pipe_fd[1]);
+	free_and_reset_ptr((void **)&heredoc_input);
+	free_all(shell);
 	exit(EXIT_SUCCESS);
 }
  */
@@ -171,7 +130,9 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 		read_buffer = try_malloc(shell, sizeof(char));
 		while (try_read(shell, pipe_fd[0], &read_buffer, NULL) > 0)
 			shell->line_count++;
+		/* printf("parsing exit status before setting: %d\n", shell->parsing_exit_status); */
 		set_exit_status_after_termination(shell, &shell->parsing_exit_status, 0);
+		/* printf("parsing exit status after setting: %d\n", shell->parsing_exit_status); */
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		try_close(shell, pipe_fd[0]);
 		free_and_reset_ptr((void **)&read_buffer);
@@ -210,10 +171,14 @@ void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *n
 void	parse_input(t_minishell *shell)
 {
 	int				i;
+	int	j;
 	char			*index;
 	t_token_list	*list;
+	int				exit_status_after_parsing;
+	char 	**args;
 
 	shell->parsing_exit_status = 0;
+	exit_status_after_parsing = 0;
 	i = 0;
 	while (shell->input_array[i])
 	{
@@ -223,18 +188,61 @@ void	parse_input(t_minishell *shell)
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
-				return ;
-			}
-			else if (list->delimiter == HEREDOC)
-			{
-				index = NULL;
-				index = ft_itoa(shell, i);
-				shell->input_file = append_suffix(shell, index, "_input.txt");
-				heredoc(shell, &list->token, shell->input_file);
-				free_and_reset_ptr((void **)&shell->input_file);
+				exit_status_after_parsing = 2;
+				break ;
 			}
 			list = list->next;
 		}
+		if (shell->parsing_exit_status != 0)
+			break ;
 		i++;
 	}
+	j = 0;
+	while (shell->input_array[j])
+	{
+		list = shell->list[j];
+		while (list)
+		{
+			if (shell->pipes_total == 0 && shell->parsing_exit_status == 0 && list->delimiter == COMMAND && list->token)
+			{
+				if (list->token[0])
+				{
+					args = split_while_skipping_quotes(shell, list->token, ' ');
+					update_value(shell, ft_strdup(shell, "_"), args[sizeof_array((void **)args) - 1], false);
+					free_and_reset_array((void ***)&args, false);
+					free_and_reset_ptr((void **)&args);
+				}
+				else
+					update_value(shell, ft_strdup(shell, "_"), "", false);
+
+			}
+
+			if (list->delimiter == HEREDOC && j < i)
+			{
+				/* printf("j: %d\n", j); */
+
+				index = NULL;
+				index = ft_itoa(shell, j);
+				shell->input_file = append_suffix(shell, index, "_input.txt");
+				/* printf("parsing exit status before heredoc: %d\n", shell->parsing_exit_status); */
+				heredoc(shell, &list->token, shell->input_file);
+				if (shell->parsing_exit_status != 0)
+				{
+					if (unlink(shell->input_file) == -1)
+					{
+						free_and_reset_ptr((void **)&shell->input_file);
+						error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);
+					}
+
+				}
+				free_and_reset_ptr((void **)&shell->input_file);
+
+			}
+			list = list->next;
+		}
+		j++;
+	}
+	if (exit_status_after_parsing == 2 && (shell->parsing_exit_status == 0 || shell->parsing_exit_status == 2))
+		shell->parsing_exit_status = 2;
+	//printf("parsing exit status: %d\n", shell->parsing_exit_status);
 }

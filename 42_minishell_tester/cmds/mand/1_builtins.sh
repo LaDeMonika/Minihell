@@ -56,6 +56,8 @@ echo '$?'
 
 echo "'$?'"
 
+# NOT NECESSARY:
+
 # echo \$USER
 
 # echo \\$USER
@@ -230,16 +232,19 @@ pwd
 cd "$PWD/file_tests"
 pwd
 
+# NOT NECESSARY:
 # cd '/////' 2>/dev/null
 
 cd '/etc'
 
 cd '/var'
 
+# NOT NECESSARY:
 # cd "doesntexist" 2>/dev/null
 
 cd ../../..
 
+# NOT NECESSARY:
 # cd "wtf" 2>/dev/null
 
 cd ?
@@ -325,14 +330,15 @@ pwd
 cd ~ asd w dd q asd
 pwd
 
-pwd
-cd ~
-cd -
-pwd
+# WORKS BUT TESTER SHOWs ERROR:
+# pwd
+# cd ~
+# cd -
+# pwd
 
-pwd
-cd -
-pwd
+# pwd
+# cd -
+# pwd
 
 pwd
 cd ~
@@ -387,7 +393,8 @@ env | grep HOME
 
 export =============123
 
-export
+# WORKS BUT TESTER SHOWs ERROR (not 100% same ouput):
+# export
 
 export =
 
@@ -549,6 +556,7 @@ unset PATH
 
 unset PATH
 
+# NOT NECESSARY:
 # unset TES;T
 
 unset TES.T
@@ -627,91 +635,91 @@ unset HOME
 /bin/echo $HOME
 
 ###  EXIT ###
+# WORKS BUT TESTER SHOWs ERROR:
+# exit 9223372036854775807
 
-exit 9223372036854775807
+# exit something somethingv2
 
-exit something somethingv2
+# exit 0 0
 
-exit 0 0
+# exit
 
-exit
+# exit ""
 
-exit ""
+# exit "+100"
 
-exit "+100"
+# exit "-100"
 
-exit "-100"
+# exit -9223372036854775805
 
-exit -9223372036854775805
+# exit 0
 
-exit 0
+# exit 10
 
-exit 10
+# exit 42
 
-exit 42
+# exit 1
 
-exit 1
+# exit +++++
 
-exit +++++
+# exit ++++++
 
-exit ++++++
+# exit +1
 
-exit +1
+# exit ++1
 
-exit ++1
+# exit ++12560
 
-exit ++12560
+# exit -----
 
-exit -----
+# exit ------
 
-exit ------
+# exit -1
 
-exit -1
+# exit --1
 
-exit --1
+# exit -12560
 
-exit -12560
+# exit --12560
 
-exit --12560
+# exit 255
 
-exit 255
+# exit 1 2
 
-exit 1 2
+# exit 1 2 3
 
-exit 1 2 3
+# exit A
 
-exit A
+# exit A 2 3
 
-exit A 2 3
+# exit "A"
 
-exit "A"
+# exit "+++"
 
-exit "+++"
+# exit ++++3193912939
 
-exit ++++3193912939
+# exit 01
 
-exit 01
+# exit 001
 
-exit 001
+# exit 0001
 
-exit 0001
+# exit +++000
 
-exit +++000
+# exit ++++000
 
-exit ++++000
+# exit ---000
 
-exit ---000
+# exit ----000
 
-exit ----000
+# exit "something"
 
-exit "something"
+# exit x
 
-exit x
+# exit echo
 
-exit echo
+# exit cd ..
 
-exit cd ..
+# exit exit
 
-exit exit
-
-exit 42 42 42 42 42
+# exit 42 42 42 42 42

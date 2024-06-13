@@ -14,6 +14,7 @@
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <unistd.h>
+#include <sys/stat.h>
 
 /**************************DEFINES***************************/
 #define	NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
@@ -105,7 +106,8 @@ enum						e_error
 	ERR_FORK,
 	ERR_WAITPID,
 	ERR_GETPID,
-	ERR_GETCWD
+	ERR_GETCWD,
+	ERR_STAT
 };
 
 enum e_custom_errno

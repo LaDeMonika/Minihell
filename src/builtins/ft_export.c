@@ -34,6 +34,7 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
     char  *new_entry;
 
     i = 0;
+
     while (shell->envp[i])
     {
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));

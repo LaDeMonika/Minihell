@@ -72,8 +72,9 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		else
 			*start = *i;
 	}
-	else if (ft_isalpha(base[*i]) || base[*i] == '_')
+	else if (ft_isalpha(base[*i]) || (base[*i] == '_' && (base[*i + 1] == '_' || ft_isalnum(base[*i + 1]))))
 	{
+
 		*start = *i;
 		while (ft_isalnum(base[*i]) || base[*i] == '_')
 			(*i)++;
@@ -85,6 +86,7 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 	}
 	else
 	{
+
 		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
 		{
 			env_value = ft_strdup(shell, "$");
@@ -94,6 +96,8 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 			env_value = ft_getpid(shell);
 		else if (base[*i] == '?')
 			env_value = ft_itoa(shell, shell->last_exit_status);
+		else if (base[*i] == '_')
+			env_value = ft_getenv(shell, "_");
 		else if (base[*i] == '"' || base[*i] == '\'')
 			(*i)--;
 		*start = *i + 1;

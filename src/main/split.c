@@ -13,9 +13,10 @@ static int	count_words(char *s, char sep)
 			i = skip_between_metaquotes(s, i, s[i]);
 		if (SKIP_FORCE_WRITE)
 			i++;
-		else if (NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
+		else if (!s[i] || NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
 			words++;
-		i++;
+		if (s[i])
+			i++;
 	}
 	return (words);
 }
@@ -45,14 +46,13 @@ void	put_words(t_minishell *shell, char *s, char sep, char **array)
 	word = 0;
 	while (s[i])
 	{
-
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_metaquotes(s, i, s[i]);
 		if (SKIP_FORCE_WRITE)
 			i++;
 		else if (!s[i] || NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
 		{
-			if (sep == ' ' || (sep == '|' && (!s[i + 1] || i == 0)))
+			if (s[i] && (sep == ' ' || (sep == '|' && (!s[i + 1] || i == 0))))
 				array[word] = ft_substr(shell, s, start, i - start + 1);
 			else
 				array[word] = ft_substr(shell, s, start, i - start);
@@ -60,7 +60,8 @@ void	put_words(t_minishell *shell, char *s, char sep, char **array)
 			word++;
 			start = i + 1;
 		}
-		i++;
+		if (s[i])
+			i++;
 	}
 }
 

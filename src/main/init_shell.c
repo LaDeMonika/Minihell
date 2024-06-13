@@ -22,8 +22,11 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	while (envp[i])
 	{
 		shell->envp[i] = ft_strdup(shell, envp[i]);
+		if (ft_strncmp(envp[i], "_=", 2) == 0)
+			update_value(shell, ft_strdup(shell, "_"), "nd", 0);
 		i++;
 	}
+
 	shell->envp[i] = NULL;
 	shell->prompt = NULL;
 	shell->usr_input = NULL;

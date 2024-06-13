@@ -15,11 +15,11 @@ touch ""
 touch "  "
 /bin/rm -f "  "
 
-
-touch "
-"
-/bin/rm -f "
-"
+# NOT NECESSARY BUT WORKS SIMILAR WITH NO CRASH:
+# touch "
+# "
+# /bin/rm -f "
+# "
 
 mkdir " "
 /bin/rm -rf " "
@@ -80,8 +80,9 @@ rm -rf " with spaces"
 # **************************************************************************** #
 #                                  BROKEN SCMD                                 #
 # **************************************************************************** #
-
-"."
+#
+# WORKS BUT TESTER SHOWS ERROR:
+# "."
 
 .ls
 

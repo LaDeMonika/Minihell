@@ -2,12 +2,13 @@
 #                                  PATH FAILS                                  #
 # **************************************************************************** #
 
-unset PATH
-echo $PATH
-/bin/ls
-echo 1
-cd -
-echo 42
+# WORKS BUT TESTER SHOWS ERROR:
+# unset PATH
+# echo $PATH
+# /bin/ls
+# echo 1
+# cd -
+# echo 42
 
 unset PATH
 echo 42

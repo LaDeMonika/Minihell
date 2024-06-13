@@ -111,7 +111,8 @@ void	tokenize(t_minishell *shell, char *command,
 		}
 		else if (command[i] == '"' || command[i] == '\'')
 			i = skip_between_metaquotes(command, i, command[i]);
-		i++;
+		if (command[i])
+			i++;
 	}
 	if (i != start || shell->post_delimiter == shell->pre_delimiter)
 		extract_and_add_tokens(shell, index, start, i - start);

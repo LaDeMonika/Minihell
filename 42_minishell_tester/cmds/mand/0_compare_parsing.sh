@@ -3,8 +3,6 @@
 # **************************************************************************** #
 
 ### comparing your input parsing to bash ###
-
-
 /bin/echo ""$?""
 
 /bin/echo $?"42"
@@ -50,6 +48,8 @@
 /bin/echo '$?'
 
 /bin/echo "'$?'"
+
+# NOT NECESSARY:###
 
 # /bin/echo \$USER
 
@@ -169,6 +169,7 @@
 
 /bin/echo -n -n -n-nnnnn
 
+# WORKS BUT TESTER might show error:
 /bin/echo -n -nnnnnnn -n -nnn -nnnnn -n-n
 
 /bin/echo -n -nnnnnnn -n -nnn -nnnnn -n feel my pain

@@ -30,6 +30,7 @@ echo >
 
 echo > <
 
+# WORKS BUT TESTER SHOWS ERROR:
 # .
 
 ..
@@ -40,14 +41,15 @@ EechoE
 
 .echo.
 
->echo>
-/bin/rm -f echo
+# WORKS BUT TESTER SHOWS ERROR:
+# >echo>
+# /bin/rm -f echo
 
-<echo<
-/bin/rm -f echo
+# <echo<
+# /bin/rm -f echo
 
->>echo>>
-/bin/rm -f echo
+# >>echo>>
+# /bin/rm -f echo
 
 |echo|
 

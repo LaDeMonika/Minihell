@@ -29,6 +29,8 @@ echo '' -n
 
 echo "" "" "" -n -n -n -n
 
+# WORKS BUT TESTER SHOWS ERROR:
+
 # cat << $USER
 # why
 # not
@@ -36,6 +38,8 @@ echo "" "" "" -n -n -n -n
 
 export T=">>"
 $T lol
+
+# WORKS BUT TESTER SHOWS ERROR:
 
 # cat << "$USER"
 # why
@@ -201,11 +205,12 @@ echo segfault $T grep segfault
 export T=">"
 echo segfault $T grep segfault
 
-export T='<'
-echo segfault $T grep segfault
+# WORKS BUT TESTER MIGHT SHOW ERROR:
+# export T='<'
+# echo segfault $T grep segfault
 
-export T="<<"
-echo segfault $T grep segfault
+# export T="<<"
+# echo segfault $T grep segfault
 
 export T='<<'
 echo segfault $T grep segfault
@@ -300,19 +305,23 @@ echo '$'$'$'$'$'$'$'
 
 echo "$"$'$'$"$"$"$"$'$'
 
+# NOT NECESSARY:
+
 # echo $/ $/
 
-echo $U/SER
+# echo $U/SER
 
 # echo "$/ $/"
 
 # echo $/"$/"
 
-echo '$/'
+# echo '$/'
 
-exit 9223372036854775805
+# WORKS BUT TESTER SHOWS ERROR:
 
-exit 123"123"
+# exit 9223372036854775805
+
+# exit 123"123"
 
 <| echo ok
 

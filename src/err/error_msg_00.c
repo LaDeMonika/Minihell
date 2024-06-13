@@ -113,6 +113,8 @@ void	error_free_all_second(int err, char *prefix)
 		write(STDERR_FILENO, "Error getting pid\n", 18);
 	else if (err == ERR_GETCWD)
 		perror("getcwd");
+	else if (err == ERR_STAT)
+		perror("stat");
 }
 
 void	error_free_all(t_minishell *shell, int err,

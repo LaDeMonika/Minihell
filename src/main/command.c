@@ -10,16 +10,26 @@ char	*find_command(t_minishell *shell)
 	char	*path;
 	int		i;
 	char	*command_path;
-	int		fd;
+	struct stat path_stat;
+
 
 	path = ft_getenv(shell, "PATH");
-	if (!path)
+	if (!path || !path[0])
 	{
-		print_error(shell->command_array[0], "No such file or directory");
-		free_all(shell);
-		exit (127);
+		if(stat(shell->command_array[0], &path_stat) == 0)
+		{
+			print_error(shell->command_array[0], "Permission denied");
+			free_all(shell);
+			exit (126);
+		}
+		else
+		{
+			print_error(shell->command_array[0], "No such file or directory");
+			free_all(shell);
+			exit (127);
+		}
+
 	}
-	/* printf("command array before search: %s\n", shell->command_array[0]); */
 	shell->path_array = split_while_skipping_quotes(shell, path, ':');
 	free_and_reset_ptr((void **)&path);
 	i = 0;
@@ -29,8 +39,7 @@ char	*find_command(t_minishell *shell)
 		command_path = append_suffix(shell, command_path, shell->command_array[0]);
 		/*
 		command_path = ft_strjoin(shell, command_path, input_array[0]); */
-		fd = access(command_path, F_OK & X_OK);
-		if (fd == 0)
+		if (access(command_path, F_OK & X_OK) == 0)
 			return (command_path);
 		free_and_reset_ptr((void **)&command_path);
 		i++;
@@ -45,8 +54,9 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	char	*custom_message;
 	exit_status = 0;
 	int		is_builtin;
-	char	*relative_path;
 	int	custom_errno;
+	struct stat path_stat;
+	char	cwd[1024];
 
 	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
@@ -56,24 +66,43 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	/* printf("address of command array after builtin check: %p\n", (void *)command_array[0]); */
 	if (!is_builtin)
 	{
-		relative_path = ft_strjoin(shell, "./", shell->command_array[0]);
-		if (shell->command_array[0][0] == '/' || ft_strncmp(shell->command_array[0], "./", 2) == 0 || access(relative_path, F_OK) != -1)
+		if (getcwd(cwd, sizeof(cwd)) && ft_strcmp(cwd, "/usr/bin") == 0)
 		{
-
-			path = ft_strdup(shell, shell->command_array[0]);
+			path = ft_strjoin(shell, "./", shell->command_array[0]);
 		}
 
+		/* if (shell->command_array[0][0] == '/' || ft_strncmp(shell->command_array[0], "./", 2) == 0 || access(relative_path, F_OK) != -1) */
+		else if (shell->command_array[0][0] == '/' || ft_strncmp(shell->command_array[0], "./", 2) == 0)
+		{
+			//free_and_reset_ptr((void **)&relative_path);
+			if(stat(shell->command_array[0], &path_stat) == -1)
+			{
+				print_error(shell->command_array[0], "No such file or directory");
+				free_all(shell);
+				exit (127);
+			}
+			if (S_ISDIR(path_stat.st_mode))
+			{
+				print_error(shell->command_array[0], "Is a directory");
+				free_all(shell);
+				exit (126);
+			}
+			path = ft_strdup(shell, shell->command_array[0]);
+		}
 		else
 		{
-			free_and_reset_ptr((void **)&relative_path);
+			//free_and_reset_ptr((void **)&relative_path);
 			path = find_command(shell);
 		}
 
 
-		/* printf("command array after search: %s\n", shell->command_array[0]); */
-		if (path)
+		//
 		//free_child(shell);
+		if (path)
 			execve(path, shell->command_array, shell->envp);
+		/* print_error(shell->command_array[0], "command not found");
+		free_all(shell);
+		exit (127); */
 		// TODO: also set exit status and custom message for builtins
 		free_and_reset_ptr((void **)&path);
 		exit_status = 1;
@@ -83,7 +112,6 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	{
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
-
 		set_exit_status_before_termination(shell, &custom_message, &exit_status, custom_errno);
 		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
 			exit_status = 1;
@@ -114,6 +142,7 @@ void	execute_command(t_minishell *shell, char *command)
 	}
 
 	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
+
 	i = 0;
 	while (shell->command_array[i])
 	{
@@ -123,9 +152,12 @@ void	execute_command(t_minishell *shell, char *command)
 		/* printf("address of command array: %p\n", (void *)shell->command_array[i]); */
 		i++;
 	}
+
+	update_value(shell, ft_strdup(shell, "_"), shell->command_array[i - 1], false);
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
 	{
 		print_error(".", "filename argument required");
+		print_error(".", "usage: . filename [arguments]");
 		free_all(shell);
 		exit (2);
 	}

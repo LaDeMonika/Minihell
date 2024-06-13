@@ -43,6 +43,8 @@ int export_no_args(t_minishell  *shell)
         key = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
         value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
         printf("declare -x %s=\"%s\"\n", key, value);
+        free_and_reset_ptr((void **)&key);
+        free_and_reset_ptr((void **)&value);
         i++;
     }
     return (0);
