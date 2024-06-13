@@ -13,7 +13,7 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	free_and_reset_ptr((void **)&str_line_count);
 }
 //variation for tester:
-#include "../get_next_line/get_next_line.h"
+/* #include "../get_next_line/get_next_line.h"
 void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
@@ -64,11 +64,11 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 	free_and_reset_ptr((void **)&heredoc_input);
 	free_all(shell);
 	exit(EXIT_SUCCESS);
-}
+} */
 
 
 /*writes input to input_file and sends for each input a newline character to pipe to increment line count*/
-/* void	write_to_file(t_minishell *shell, char **eof, char *input_file,
+void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
@@ -105,7 +105,7 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 	free_all(shell);
 	exit(EXIT_SUCCESS);
 }
- */
+
 /*heredoc will read input in a child. local line count will increase by 1 for each line and added to global line count in the parent*/
 void	heredoc(t_minishell *shell, char **eof, char *input_file)
 {

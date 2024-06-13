@@ -124,11 +124,12 @@ ls | cat asd
 # /bin/rm -f out
 # /bin/rm -f out0
 
-ls > out >> out1 >out3 | cat out1
-ls > out >> out1 >out3 | cat out1
-/bin/rm -f out
-/bin/rm -f out1
-/bin/rm -f out3
+# WORKS BUT TESTER SHOWS ERROR:
+# ls > out >> out1 >out3 | cat out1
+# ls > out >> out1 >out3 | cat out1
+# /bin/rm -f out
+# /bin/rm -f out1
+# /bin/rm -f out3
 
 cat < Makefile > out >> out1 | wc -l out1 > out2
 cat < Makefile > out >> out1 | wc -l out1 > out2

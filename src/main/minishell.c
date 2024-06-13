@@ -46,7 +46,7 @@ void	handle_input(t_minishell *shell)
 		shell->last_exit_status = shell->parsing_exit_status;
 }
 
-/* int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
 
@@ -76,9 +76,9 @@ void	handle_input(t_minishell *shell)
 		free_iteration(shell);
 	}
 	return (free_all(shell));
-} */
+}
 //main for tester:
-#include "../get_next_line/get_next_line.h"
+/* #include "../get_next_line/get_next_line.h"
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*shell;
@@ -117,3 +117,4 @@ int	main(int argc, char **argv, char **envp)
 	}
 	return (free_all(shell));
 }
+ */
