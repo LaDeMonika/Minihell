@@ -86,7 +86,7 @@ int	main(int argc, char **argv, char **envp)
 	shell = NULL;
 	shell = malloc(sizeof(t_minishell));
 	if (!shell)
-		return (perror("malloc"), 1);
+		return (perror("malloc"), EXIT_FAILURE);
 	init_shell_struct(shell, envp);
 	if (argc > 1)
 		return (error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL), 1);

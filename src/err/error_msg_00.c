@@ -41,8 +41,20 @@ void	free_and_reset_array(void ***array, bool is_list)
 	int	i;
 
 	i = 0;
+	/* if (array)
+	{
+		printf("array address: %p content: %s\n", array, (char *)array);
+		if (*array)
+		{
+			printf("*array address: %p content: %s\n", *array, (char *)*array);
+			if ((*array)[0])
+				printf("*array[0] address: %p content: %s\n", (*array)[0], (char *)(*array)[0]);
+		}
+
+	} */
 	while (array && *array && (*array)[i])
 	{
+		/* printf("*array[i] address: %p content: %s\n", (*array)[i], (char *)(*array)[i]); */
 		if (is_list)
 			free_and_reset_list_contents((t_token_list *)(*array)[i]);
 		else
@@ -50,35 +62,23 @@ void	free_and_reset_array(void ***array, bool is_list)
 		(*array)[i] = NULL;
 		i++;
 	}
+	free_and_reset_ptr((void **)array);
+	/* printf("i: %d\n", i); */
 }
 
-void	free_child(t_minishell *shell)
-{
-	free_and_reset_ptr((void **)&shell->prompt);
-	free_and_reset_ptr((void **)&shell->usr_input);
-	free_and_reset_array((void ***)&shell->input_array, false);
-	free_and_reset_array((void ***)&shell->list, true);
-	free_and_reset_ptr((void **)shell->list);
-	free_and_reset_ptr((void **)&shell->input_file);
-	free_and_reset_array((void ***)&shell->path_array, false);
-	free_and_reset_ptr((void **)&shell->path_array);
-	free_and_reset_ptr((void **)&shell->pid);
-}
+
 
 void	free_iteration(t_minishell *shell)
 {
 	free_and_reset_ptr((void **)&shell->prompt);
 	free_and_reset_ptr((void **)&shell->usr_input);
 	free_and_reset_array((void ***)&shell->input_array, false);
-	free_and_reset_ptr((void **)&shell->input_array);
 	free_and_reset_array((void ***)&shell->list, true);
-	free_and_reset_ptr((void **)&shell->list);
 	free_and_reset_ptr((void **)&shell->input_file);
 	free_and_reset_array((void ***)&shell->path_array, false);
-	free_and_reset_ptr((void **)&shell->path_array);
 	free_and_reset_array((void ***)&shell->command_array, false);
-	free_and_reset_ptr((void **)&shell->command_array);
 	free_and_reset_ptr((void **)&shell->pid);
+	free_and_reset_array((void ***)&shell->env_subarray, false);
 }
 
 int	free_all(t_minishell *shell)
@@ -88,7 +88,6 @@ int	free_all(t_minishell *shell)
 	last_exit_status = shell->last_exit_status;
 	free_iteration(shell);
 	free_and_reset_array((void ***)&shell->envp, false);
-	free_and_reset_ptr((void **)&shell->envp);
 	free_and_reset_ptr((void **)&shell);
 	return (last_exit_status);
 }
@@ -118,10 +117,10 @@ void	error_free_all_second(int err, char *prefix)
 }
 
 void	error_free_all(t_minishell *shell, int err,
-			char *prefix, char *custom_error)
+			char *prefix, char *custom_message)
 {
 
-	(void)custom_error;
+	(void)custom_message;
 	if (err == ERR_TOO_MANY_ARGS)
 		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
 	else if (err == ERR_MALLOC)
@@ -139,7 +138,12 @@ void	error_free_all(t_minishell *shell, int err,
 	else
 		error_free_all_second(err, prefix);
 	free_all(shell);
-	if (err == EXIT)
-		exit(253);
 	exit(EXIT_FAILURE);
 }
+
+
+/* void	error_free_all_exit(t_minishell *shell, int err, char *prefix, char *custom_message)
+{
+	error_free_all(shell, err, prefix, custom_message);
+	exit(EXIT_FAILURE);
+} */

@@ -76,3 +76,16 @@ char *remove_metaquotes(t_minishell *shell, char *str)
     process_string(str, new_str, &metaquote, &i, &j);
     return finalize(new_str, str, j);
 }
+
+char    **fill_array_with_null(char **array, int size)
+{
+    int i;
+
+    i = 0;
+    while (i < size)
+    {
+        array[i] = NULL;
+        i++;
+    }
+    return (array);
+}

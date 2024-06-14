@@ -12,13 +12,13 @@
 
 #include "../../inc/minishell.h"
 
-void	print_error(char *prefix, char *custom_error)
+void	print_error(char *prefix, char *custom_message)
 {
 	write(STDERR_FILENO, prefix, ft_strlen(prefix));
 	write(STDERR_FILENO, ": ", 2);
-	if (custom_error)
+	if (custom_message)
 	{
-		write(STDERR_FILENO, custom_error, ft_strlen(custom_error));
+		write(STDERR_FILENO, custom_message, ft_strlen(custom_message));
 		write(STDERR_FILENO, "\n", 1);
 	}
 	else

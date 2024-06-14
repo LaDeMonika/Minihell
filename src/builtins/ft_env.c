@@ -12,59 +12,50 @@
 
 #include "../../inc/minishell.h"
 
-char    **ft_subarray(t_minishell *shell, char **array, int start, int end)
+void	extract_command_and_execute(t_minishell *shell, int start)
 {
-    char **subarray;
-    int i;
+	int		end;
+	int		i;
 
-    i = 0;
-    subarray = try_malloc(shell, sizeof(char *) * (end - start + 1));
-    while (start < end)
-    {
-        subarray[i] = ft_strdup(shell, array[start]);
-        start++;
-        i++;
-    }
-    subarray[i] = NULL;
-    return (subarray);
+	end = sizeof_array((void **)shell->command_array);
+	shell->env_subarray = try_malloc(shell, sizeof(char *) * (end - start + 1));
+	shell->env_subarray = fill_array_with_null(shell->env_subarray, end - start + 1);
+	i = 0;
+	while (start < end)
+	{
+		shell->env_subarray[i] = ft_strdup(shell, shell->command_array[start]);
+		start++;
+		i++;
+	}
+	free_and_reset_array((void ***)&shell->command_array, false);
+	shell->command_array = shell->env_subarray;
+    shell->env_subarray = NULL;
+	execute_command_array(shell, shell->command_array);
 }
 
-void extract_command(t_minishell *shell, char **command_array, int start_index)
+int	ft_env(t_minishell *shell, int *custom_errno)
 {
-    char **new_command_array;
+	int	i;
 
-    new_command_array = ft_subarray(shell, command_array, start_index, sizeof_array((void **)command_array));
-    free_and_reset_array((void ***)&shell->command_array, false);
-    free_and_reset_ptr((void **)&shell->command_array);
-    shell->command_array = new_command_array;
-    execute_command_array(shell, shell->command_array);
-}
-
-
-
-int ft_env(t_minishell *shell, char **command_array, int *custom_errno)
-{
-    int i;
-
-    if (command_array[1])
-    {
-        if (ft_strchr(command_array[1], '='))
-        {
-            ft_export(shell, command_array[1], custom_errno);
-            if (command_array[2])
-                extract_command(shell, command_array, 2);
-        }
-        else
-            extract_command(shell, command_array, 1);
-    }
-    else
-    {
-        i = 0;
-        while (shell->envp[i])
-        {
-            printf("%s\n", shell->envp[i]);
-            i++;
-        }
-    }
-    return (0);
+	if (shell->command_array[1])
+	{
+		if (ft_strchr(shell->command_array[1], '='))
+		{
+			ft_export(shell, shell->command_array[1], custom_errno);
+			if (shell->command_array[2])
+				extract_command_and_execute(shell, 2);
+		}
+		else
+			extract_command_and_execute(shell, 1);
+	}
+	else
+	{
+		i = 0;
+		while (shell->envp[i])
+		{
+			printf("%s\n", shell->envp[i]);
+			i++;
+		}
+	}
+	return (0);
 }

@@ -82,7 +82,7 @@ typedef struct s_minishell
 	char					**command_array;
 	bool					stay_in_parent;
 	char					*heredoc_input;
-
+	char	**env_subarray;
 }							t_minishell;
 
 /****************************ENUM****************************/
@@ -169,11 +169,12 @@ void						init_input_iteration(t_minishell *shell);
 
 // err
 void						error_free_all(t_minishell *shell, int err,
-								char *prefix, char *custom_error);
+								char *prefix, char *custom_message);
+void	error_free_all_exit(t_minishell *shell, int err, char *prefix, char *custom_message);
 void						free_and_reset_ptr(void **ptr);
 void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
-void						print_error(char *prefix, char *custom_error);
+void						print_error(char *prefix, char *custom_message);
 void	free_iteration(t_minishell *shell);
 void	free_child(t_minishell *shell);
 
@@ -254,7 +255,7 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *c
 char						ft_strcmp_btin(char *s1, char *s2);
 int							ft_echo(char **command_array);
 int ft_cd(t_minishell *shell, char **command_array, int *custom_errno);
-int ft_env(t_minishell *shell, char **command_array, int *custom_errno);
+int ft_env(t_minishell *shell, int *custom_errno);
 int ft_unset(t_minishell *shell, char *key, int *custom_errno);
 int							ft_exit(t_minishell *shell, char **command_array, int *custom_errno);
 int ft_pwd(t_minishell *shell);
@@ -280,7 +281,7 @@ size_t						ft_strlen(const char *s);
 int							ft_strncmp(const char *s1, const char *s2,
 								size_t n);
 int							ft_isalnum(int c);
-char						*ft_strdup(t_minishell *shell, const char *s);
+char	*ft_strdup(t_minishell *shell, const char	*s);
 
 // strings_3
 char						*ft_itoa(t_minishell *shell, int n);
@@ -302,4 +303,5 @@ int 						sizeof_array(void **array);
 // strings_6
 char 						*remove_metaquotes(t_minishell *shell, char *str);
 int	count_literal_chars(char *str, char metaquote);
+char    **fill_array_with_null(char **array, int size);
 #endif

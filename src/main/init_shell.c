@@ -37,6 +37,7 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	shell->command_array = NULL;
 	shell->path_array = NULL;
 	shell->last_exit_status = 0;
+	shell->env_subarray = NULL;
 }
 void	init_input_iteration(t_minishell *shell)
 {
