@@ -23,16 +23,10 @@ void	handle_input(t_minishell *shell)
 		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
+	shell->builtin = check_builtin(shell->list[0]->token);
 	parse_input(shell);
 	if (shell->pipes_total == 0
-	&& (ft_strncmp(shell->list[0]->token, "cd",	3) == 0
-	|| ft_strncmp(shell->list[0]->token, "cd ", 3) == 0
-	|| ft_strncmp(shell->usr_input, "exit", 5) == 0
-	|| ft_strncmp(shell->usr_input, "exit ", 5) == 0
-	|| ft_strncmp(shell->usr_input, "export", 7) == 0
-	|| ft_strncmp(shell->usr_input, "export ", 7) == 0
-	|| ft_strncmp(shell->list[0]->token, "unset", 6) == 0
-	|| ft_strncmp(shell->list[0]->token, "unset ", 6) == 0))
+	&& (check_builtin(shell->list[0]->token) == B_CD || check_builtin(shell->list[0]->token) == B_EXIT || check_builtin(shell->list[0]->token) == B_EXPORT || check_builtin(shell->list[0]->token) == B_UNSET))
 	{
 		shell->stay_in_parent = true;
 		handle_redirections(shell, shell->list[0], STDIN_FILENO, 0);

@@ -114,7 +114,10 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		custom_message = NULL;
 		set_exit_status_before_termination(shell, &custom_message, &exit_status, custom_errno);
 		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
+		{
 			exit_status = 1;
+		}
+
 		/* printf("errno in comamnd function: %d\n", errno); */
 		print_error(shell->command_array[0], custom_message);
 	}

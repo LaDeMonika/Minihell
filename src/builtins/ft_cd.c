@@ -39,22 +39,8 @@ char *get_new_pwd(t_minishell *shell, char **command_array)
     return (new_pwd);
 }
 
-int change_directory(t_minishell *shell, char *new_pwd, char *current_pwd)
-{
-    if (chdir(new_pwd) == -1)
-    {
-        free_and_reset_ptr((void **)&new_pwd);
-        free_and_reset_ptr((void **)&current_pwd);
-        return (1);
-    }
-    free_and_reset_ptr((void **)&new_pwd);
-    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, false);
-    free_and_reset_ptr((void **)&current_pwd);
-    current_pwd = getcwd(NULL, 0);
-    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, false);
-    free_and_reset_ptr((void **)&current_pwd);
-    return (0);
-}
+
+
 
 int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
 {
@@ -67,6 +53,21 @@ int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
     if (command_array[1] && command_array[2])
         return (handle_to_many_args(&current_pwd, custom_errno));
     new_pwd = get_new_pwd(shell, command_array);
-    return (change_directory(shell, new_pwd, current_pwd));
+    if (chdir(new_pwd) == -1)
+    {
+        printf("new_pwd: %s\n", new_pwd);
+        printf("errno: %d\n", errno);
+        free_and_reset_ptr((void **)&new_pwd);
+        free_and_reset_ptr((void **)&current_pwd);
+
+        /* *custom_errno = U_CD_ERROR; */
+        return (1);
+    }
+    free_and_reset_ptr((void **)&new_pwd);
+    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, false);
+    free_and_reset_ptr((void **)&current_pwd);
+    current_pwd = getcwd(NULL, 0);
+    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, false);
+    free_and_reset_ptr((void **)&current_pwd);
     return (0);
 }

@@ -50,40 +50,31 @@ typedef struct s_token_list
 
 typedef struct s_minishell
 {
-	char					*user;
 	char					*usr_input;
-	char					*prompt;
-	int						len_prompt;
-	int						*pid;
-	int						exit_status;
-	char					**path_array;
-	char					*home_dir;
-	char					*current_dir;
-	char					*command_path;
-	char					**envp;
 	char					**input_array;
-	char					**command_history;
-	int						history_index;
-	int						last_exit_status;
-	int						fd_hostname;
-	int						fd;
-	int						status;
-	struct sigaction		sa_sigint;
-	struct sigaction		sa_sigquit;
 	int						pipes_total;
-	int						pipe_fd[2];
+	int						*pid;
+	t_token_list			**list;
+	bool					stay_in_parent;
+	int						parsing_exit_status;
+	int						last_exit_status;
+	char					*prompt;
+	char					**envp;
 	int						line_count;
 	char					*input_file;
-	int						parsing_exit_status;
-	t_token_list			**list;
+	char					**command_array;
+	char					**path_array;
+	char					*unexpected_token;
+	char	**env_subarray;
+	struct sigaction		sa_sigint;
+	struct sigaction		sa_sigquit;
+	int						pipe_fd[2];
+	int						status;
 	int						pre_delimiter;
 	int						post_delimiter;
-	char					*unexpected_token;
-	char					**command_array;
-	bool					stay_in_parent;
-	char					*heredoc_input;
-	char	**env_subarray;
+	int						builtin;
 }							t_minishell;
+
 
 /****************************ENUM****************************/
 enum						e_error
@@ -94,7 +85,6 @@ enum						e_error
 	ERR_TOO_FEW_ARGS,
 	ERR_INVALID_ARG,
 	ERR_PATH_NOT_FOUND,
-	NOT_BUILTIN,
 	ERR_SIGEMPTYSET,
 	ERR_SIGACTION,
 	ERR_OPEN,
@@ -145,6 +135,19 @@ enum						e_open_mode
 	WRITE_TRUNCATE,
 	WRITE_APPEND,
 	READ
+};
+
+// builtins
+enum						e_builtin
+{
+	B_ECHO,
+	B_CD,
+	B_PWD,
+	B_EXPORT,
+	B_UNSET,
+	B_ENV,
+	B_EXIT,
+	NOT_BUILTIN
 };
 
 /*************************PROTOTYPES*************************/
@@ -250,6 +253,7 @@ void						try_pipe(t_minishell *shell, int fd[2]);
 int							try_fork(t_minishell *shell);
 
 //********************src/builtins
+int check_builtin(char *token);
 int							ft_strcmp(char *s1, char *s2);
 bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);

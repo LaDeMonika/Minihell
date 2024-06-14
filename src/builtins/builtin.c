@@ -101,3 +101,23 @@ bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *c
         return (false);
     return (true);
 }
+
+int check_builtin(char *token)
+{
+    if (ft_strncmp(token, "cd",	3) == 0	|| ft_strncmp(token, "cd ", 3) == 0)
+        return (B_CD);
+    else if (ft_strncmp(token, "echo", 5) == 0 || ft_strncmp(token, "echo ", 5) == 0)
+        return (B_ECHO);
+    else if (ft_strncmp(token, "env", 4) == 0 || ft_strncmp(token, "env ", 4) == 0)
+        return (B_ENV);
+	else if (ft_strncmp(token, "exit", 5) == 0 || ft_strncmp(token, "exit ", 5) == 0)
+        return (B_EXIT);
+    else if (ft_strncmp(token, "export", 7) == 0 || ft_strncmp(token, "export ", 7) == 0)
+        return (B_EXPORT);
+    else if (ft_strncmp(token, "pwd", 4) == 0 || ft_strncmp(token, "pwd ", 4) == 0)
+        return (B_PWD);
+	else if (ft_strncmp(token, "unset", 6) == 0	|| ft_strncmp(token, "unset ", 6) == 0)
+        return (B_UNSET);
+    else
+        return (NOT_BUILTIN);
+}
