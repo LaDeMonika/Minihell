@@ -3,6 +3,8 @@
 
 void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 {
+	int	pipes_current;
+
 	set_signals(shell, PARENT_WITH_CHILD);
 	try_close(shell, shell->pipe_fd[1]);
 	if (read_fd > 0)
@@ -12,12 +14,14 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 			shell->pipe_fd[0]);
 	else
 	{
-		while (shell->pipes_total >= 0)
+		pipes_current = shell->pipes_total;
+		while (pipes_current >= 0)
 		{
-			if (waitpid(shell->pid[shell->pipes_total], &shell->status, 0) == -1)
+
+			if (waitpid(shell->pid[pipes_current], &shell->status, 0) == -1)
 				error_free_all(shell, ERR_WAITPID, NULL, NULL);
-			set_exit_status_after_termination(shell, &shell->last_exit_status, shell->pipes_total);
-			shell->pipes_total--;
+			set_exit_status_after_termination(shell, &shell->last_exit_status, pipes_current);
+			pipes_current--;
 		}
 	}
 }

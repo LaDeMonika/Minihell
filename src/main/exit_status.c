@@ -4,15 +4,19 @@ void	set_exit_status_before_termination(t_minishell *shell, char **custom_messag
 {
 	(void)shell;
 	if (custom_errno == U_INVALID_IDENTIFIER)
-		*custom_message = ("not a valid identifier");
+		*custom_message = "not a valid identifier";
 	else if (custom_errno == U_INVALID_OPTION)
-		*custom_message = ("invalid option");
+		*custom_message = "invalid option";
 	else if (custom_errno == U_TOO_MANY_ARGUMENTS)
-		*custom_message = ("too many arguments");
+		*custom_message = "too many arguments";
+	else if (custom_errno == U_NO_FILE)
+		*custom_message = "No such file or directory";
+	else if (custom_errno == U_NO_PERMISSION)
+		*custom_message = "Permission denied";
 	else if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
 	{
 		if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
-			*custom_message = ("command not found");
+			*custom_message = "command not found";
 		*exit_status = 127;
 	}
 	else if (errno == EACCES)

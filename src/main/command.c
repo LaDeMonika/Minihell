@@ -14,6 +14,7 @@ char	*find_command(t_minishell *shell)
 
 
 	path = ft_getenv(shell, "PATH");
+	/* printf("path: %s\n", path); */
 	if (!path || !path[0])
 	{
 		if(stat(shell->command_array[0], &path_stat) == 0)
@@ -37,6 +38,7 @@ char	*find_command(t_minishell *shell)
 	{
 		command_path = ft_strjoin(shell, shell->path_array[i], "/");
 		command_path = append_suffix(shell, command_path, shell->command_array[0]);
+		/* printf("command path: %s\n", command_path); */
 		/*
 		command_path = ft_strjoin(shell, command_path, input_array[0]); */
 		if (access(command_path, F_OK & X_OK) == 0)
@@ -53,7 +55,6 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	int		exit_status;
 	char	*custom_message;
 	exit_status = 0;
-	int		is_builtin;
 	int	custom_errno;
 	struct stat path_stat;
 	char	cwd[1024];
@@ -61,10 +62,10 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	custom_errno = -1;
-	is_builtin = ft_is_builtin(shell, command_array, &exit_status, &custom_errno);
-	/* printf("is builtin? %d\n", is_builtin); */
-	/* printf("address of command array after builtin check: %p\n", (void *)command_array[0]); */
-	if (!is_builtin)
+	shell->builtin = check_builtin(command_array[0]);
+	if (shell->builtin != NOT_BUILTIN)
+		handle_builtin(shell, command_array, &exit_status, &custom_errno);
+	else
 	{
 		if (getcwd(cwd, sizeof(cwd)) && ft_strcmp(cwd, "/usr/bin") == 0)
 		{
@@ -116,10 +117,11 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
 		{
 			exit_status = 1;
+			print_error(shell->command_array[1], custom_message);
 		}
-
+		else
 		/* printf("errno in comamnd function: %d\n", errno); */
-		print_error(shell->command_array[0], custom_message);
+			print_error(shell->command_array[0], custom_message);
 	}
 	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->stay_in_parent)
@@ -143,15 +145,14 @@ void	execute_command(t_minishell *shell, char *command)
 		free_all(shell);
 		exit(EXIT_SUCCESS);
 	}
-
-	shell->command_array = split_while_skipping_quotes(shell, command, ' ');
-
+	if (shell->pipes_total > 0)
+		shell->command_array = split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	while (shell->command_array[i])
 	{
 		shell->command_array[i] = remove_metaquotes(shell,
 				shell->command_array[i]);
-		/* printf("after remove: %s\n", shell->command_array[i]); */
+		/* printf("after remove: [%s]\n", shell->command_array[i]); */
 		/* printf("address of command array: %p\n", (void *)shell->command_array[i]); */
 		i++;
 	}

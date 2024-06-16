@@ -105,7 +105,9 @@ enum e_custom_errno
 {
 	U_TOO_MANY_ARGUMENTS,
 	U_INVALID_IDENTIFIER,
-	U_INVALID_OPTION
+	U_INVALID_OPTION,
+	U_NO_FILE,
+	U_NO_PERMISSION
 };
 
 enum						e_token_delimiter
@@ -255,7 +257,7 @@ int							try_fork(t_minishell *shell);
 //********************src/builtins
 int check_builtin(char *token);
 int							ft_strcmp(char *s1, char *s2);
-bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
+void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);
 int							ft_echo(char **command_array);
 int ft_cd(t_minishell *shell, char **command_array, int *custom_errno);

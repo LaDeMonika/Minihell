@@ -55,8 +55,12 @@ int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
     new_pwd = get_new_pwd(shell, command_array);
     if (chdir(new_pwd) == -1)
     {
-        printf("new_pwd: %s\n", new_pwd);
-        printf("errno: %d\n", errno);
+        if (access(new_pwd, F_OK) == -1)
+            *custom_errno = U_NO_FILE;
+        else if (access(new_pwd, R_OK) == -1)
+            *custom_errno = U_NO_PERMISSION;
+        /* printf("new_pwd: %s\n", new_pwd);
+        printf("errno: %d\n", errno); */
         free_and_reset_ptr((void **)&new_pwd);
         free_and_reset_ptr((void **)&current_pwd);
 

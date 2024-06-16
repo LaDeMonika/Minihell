@@ -81,42 +81,43 @@ bool handle_export(t_minishell *shell, char **command_array, int *status, int *c
     return (true);
 }
 
-bool ft_is_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno)
+void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno)
 {
-    if (ft_strcmp_btin(command_array[0], "echo") == 0)
-        *status = ft_echo(command_array + 1);
-    else if (ft_strcmp_btin(command_array[0], "cd") == 0)
+    if (shell->builtin == B_CD)
         *status = ft_cd(shell, command_array, custom_errno);
-    else if (ft_strcmp_btin(command_array[0], "pwd") == 0)
-        *status = ft_pwd(shell);
-    else if (ft_strcmp_btin(shell->command_array[0], "env") == 0)
+    else if (shell->builtin == B_ECHO)
+        *status = ft_echo(command_array + 1);
+    else if (shell->builtin == B_ENV)
         *status = ft_env(shell, custom_errno);
-    else if (ft_strcmp_btin(shell->command_array[0], "unset") == 0)
-         return(handle_unset(shell, command_array, status, custom_errno));
-    else if (ft_strcmp_btin(shell->command_array[0], "export") == 0)
-        return (handle_export(shell, command_array, status, custom_errno));
-    else if (ft_strcmp_btin(shell->command_array[0], "exit") == 0)
+     else if (shell->builtin == B_EXIT)
         *status = ft_exit(shell, shell->command_array, custom_errno);
-    else
-        return (false);
-    return (true);
+    else if (shell->builtin == B_EXPORT)
+        handle_export(shell, command_array, status, custom_errno);
+    else if (shell->builtin == B_PWD)
+        *status = ft_pwd(shell);
+    else if (shell->builtin == B_UNSET)
+         handle_unset(shell, command_array, status, custom_errno);
 }
 
 int check_builtin(char *token)
 {
-    if (ft_strncmp(token, "cd",	3) == 0	|| ft_strncmp(token, "cd ", 3) == 0)
+    /* printf("token before split: [%s]\n", token); */
+
+
+   /*  printf("token after split: [%s]\n", token); */
+    if (ft_strncmp(token, "cd",	3) == 0)
         return (B_CD);
-    else if (ft_strncmp(token, "echo", 5) == 0 || ft_strncmp(token, "echo ", 5) == 0)
+    else if (ft_strncmp(token, "echo", 5) == 0)
         return (B_ECHO);
-    else if (ft_strncmp(token, "env", 4) == 0 || ft_strncmp(token, "env ", 4) == 0)
+    else if (ft_strncmp(token, "env", 4) == 0)
         return (B_ENV);
-	else if (ft_strncmp(token, "exit", 5) == 0 || ft_strncmp(token, "exit ", 5) == 0)
+	else if (ft_strncmp(token, "exit", 5) == 0)
         return (B_EXIT);
-    else if (ft_strncmp(token, "export", 7) == 0 || ft_strncmp(token, "export ", 7) == 0)
+    else if (ft_strncmp(token, "export", 7) == 0)
         return (B_EXPORT);
-    else if (ft_strncmp(token, "pwd", 4) == 0 || ft_strncmp(token, "pwd ", 4) == 0)
+    else if (ft_strncmp(token, "pwd", 4) == 0)
         return (B_PWD);
-	else if (ft_strncmp(token, "unset", 6) == 0	|| ft_strncmp(token, "unset ", 6) == 0)
+	else if (ft_strncmp(token, "unset", 6) == 0)
         return (B_UNSET);
     else
         return (NOT_BUILTIN);

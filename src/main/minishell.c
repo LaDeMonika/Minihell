@@ -23,10 +23,18 @@ void	handle_input(t_minishell *shell)
 		tokenize(shell, shell->input_array[i], i);
 		i++;
 	}
-	shell->builtin = check_builtin(shell->list[0]->token);
+
 	parse_input(shell);
-	if (shell->pipes_total == 0
-	&& (check_builtin(shell->list[0]->token) == B_CD || check_builtin(shell->list[0]->token) == B_EXIT || check_builtin(shell->list[0]->token) == B_EXPORT || check_builtin(shell->list[0]->token) == B_UNSET))
+	/* if (shell->pipes_total == 0
+	&& (check_builtin(shell->list[0]->token) == B_CD || check_builtin(shell->list[0]->token) == B_EXIT || check_builtin(shell->list[0]->token) == B_EXPORT || check_builtin(shell->list[0]->token) == B_UNSET)) */
+	/* printf("token: [%s]\n", shell->list[0]->token); */
+	if (shell->pipes_total == 0)
+	{
+		shell->command_array = split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
+		shell->builtin = check_builtin(shell->command_array[0]);
+	}
+
+	if (shell->pipes_total == 0 && (shell->builtin == B_CD || shell->builtin == B_EXIT || shell->builtin == B_EXPORT || shell->builtin == B_UNSET))
 	{
 		shell->stay_in_parent = true;
 		handle_redirections(shell, shell->list[0], STDIN_FILENO, 0);
