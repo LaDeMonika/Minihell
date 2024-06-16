@@ -73,6 +73,9 @@ typedef struct s_minishell
 	int						pre_delimiter;
 	int						post_delimiter;
 	int						builtin;
+	char	*key;
+	char						*value;
+	char	**new_envp;
 }							t_minishell;
 
 
@@ -255,7 +258,7 @@ void						try_pipe(t_minishell *shell, int fd[2]);
 int							try_fork(t_minishell *shell);
 
 //********************src/builtins
-int check_builtin(char *token);
+int is_builtin(char *token);
 int							ft_strcmp(char *s1, char *s2);
 void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);

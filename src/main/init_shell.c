@@ -12,6 +12,27 @@
 
 #include "../../inc/minishell.h"
 
+
+void	init_input_iteration(t_minishell *shell)
+{
+	shell->line_count++;
+	shell->pipes_total = 0;
+	shell->pid = NULL;
+	shell->input_file = NULL;
+	shell->unexpected_token = NULL;
+	shell->stay_in_parent = false;
+	shell->prompt = NULL;
+	shell->usr_input = NULL;
+	shell->input_array = NULL;
+	shell->list = NULL;
+	shell->command_array = NULL;
+	shell->path_array = NULL;
+	shell->env_subarray = NULL;
+	shell->new_envp = NULL;
+	shell->key = NULL;
+	shell->value = NULL;
+}
+
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
 	int	i;
@@ -21,31 +42,11 @@ void	init_shell_struct(t_minishell *shell, char **envp)
 	{
 		shell->envp[i] = ft_strdup(shell, envp[i]);
 		if (ft_strncmp(envp[i], "_=", 2) == 0)
-			update_value(shell, ft_strdup(shell, "_"), "nd", 0);
+			update_value(shell, "_", "nd", 0);
 		i++;
 	}
-
 	shell->envp[i] = NULL;
-	shell->prompt = NULL;
-	shell->usr_input = NULL;
-	shell->line_count = 0;
-	shell->input_array = NULL;
-	shell->pipes_total = 0;
-	shell->list = NULL;
-	shell->pid = NULL;
-	shell->input_file = NULL;
-	shell->command_array = NULL;
-	shell->path_array = NULL;
+	shell->line_count = -1;
 	shell->last_exit_status = 0;
-	shell->env_subarray = NULL;
+	init_input_iteration(shell);
 }
-void	init_input_iteration(t_minishell *shell)
-{
-	shell->line_count++;
-	shell->pipes_total = 0;
-	shell->pid = NULL;
-	shell->input_file = NULL;
-	shell->unexpected_token = NULL;
-	shell->stay_in_parent = false;
-}
-

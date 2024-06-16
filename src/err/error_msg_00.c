@@ -79,6 +79,9 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->command_array, false);
 	free_and_reset_ptr((void **)&shell->pid);
 	free_and_reset_array((void ***)&shell->env_subarray, false);
+	free_and_reset_ptr((void **)&shell->key);
+	free_and_reset_ptr((void **)&shell->value);
+	free_and_reset_array((void ***)&shell->new_envp, false);
 }
 
 int	free_all(t_minishell *shell)

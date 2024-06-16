@@ -62,7 +62,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	custom_errno = -1;
-	shell->builtin = check_builtin(command_array[0]);
+	shell->builtin = is_builtin(command_array[0]);
 	if (shell->builtin != NOT_BUILTIN)
 		handle_builtin(shell, command_array, &exit_status, &custom_errno);
 	else
@@ -114,7 +114,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
 		set_exit_status_before_termination(shell, &custom_message, &exit_status, custom_errno);
-		if (ft_strcmp_btin(shell->command_array[0], "cd") == 0)
+		if (shell->builtin == B_CD)
 		{
 			exit_status = 1;
 			print_error(shell->command_array[1], custom_message);
@@ -157,7 +157,7 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 
-	update_value(shell, ft_strdup(shell, "_"), shell->command_array[i - 1], false);
+	update_value(shell, "_", shell->command_array[i - 1], false);
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
 	{
 		print_error(".", "filename argument required");

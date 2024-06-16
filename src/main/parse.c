@@ -208,7 +208,7 @@ void	parse_input(t_minishell *shell)
 				if (list->token[0])
 				{
 					args = split_while_skipping_quotes(shell, list->token, ' ');
-					update_value(shell, ft_strdup(shell, "_"), args[sizeof_array((void **)args) - 1], false);
+					update_value(shell, "_", args[sizeof_array((void **)args) - 1], false);
 					free_and_reset_array((void ***)&args, false);
 					free_and_reset_ptr((void **)&args);
 				}

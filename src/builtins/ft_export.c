@@ -40,7 +40,7 @@ char *update_value(t_minishell *shell, char *key, char *value, bool append)
         key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
         if (ft_strcmp(key_in_array, key) == 0)
         {
-            new_entry = append_suffix(shell, key, "=");
+            new_entry = ft_strjoin(shell, key, "=");
             if (append)
             {
                 value_in_array = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
@@ -93,9 +93,6 @@ bool    valid_arg(char *str)
 
 int ft_export(t_minishell *shell, char *arg, int *custom_errno)
 {
-    char  *key;
-    char    *value;
-    char **new_envp;
     int old_size;
     int    append;
     char    *new_entry;
@@ -116,33 +113,37 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     append = 0;
     if (ft_strnstr(arg, "+=", ft_strlen(arg)))
         append = 1;
-    key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - append);
-    value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
-    if (update_value(shell, key, value, append))
+    shell->key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - append);
+    shell->value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
+    if (update_value(shell, shell->key, shell->value, append))
     {
-        free_and_reset_ptr((void **)&value);
+        free_and_reset_ptr((void **)&shell->key);
+        free_and_reset_ptr((void **)&shell->value);
         return (0);
     }
     old_size = sizeof_array((void **)shell->envp);
-    new_envp = try_malloc(shell, sizeof(char *) * (old_size + 2));
+    shell->new_envp = try_malloc(shell, sizeof(char *) * (old_size + 2));
+    shell->new_envp = fill_array_with_null(shell->new_envp, old_size + 2);
     i = 0;
     while (shell->envp[i])
     {
-        new_envp[i] = shell->envp[i];
+        shell->new_envp[i] = shell->envp[i];
         i++;
     }
     if (append)
     {
-        new_entry = append_suffix(shell, ft_strdup(shell, key), "=");
-        new_entry = append_suffix(shell, new_entry, value);
+        new_entry = ft_strjoin(shell, shell->key, "=");
+        new_entry = append_suffix(shell, new_entry, shell->value);
     }
     else
         new_entry = ft_strdup(shell, arg);
-    new_envp[old_size] = new_entry;
-    new_envp[old_size + 1] = NULL;
+    shell->new_envp[old_size] = new_entry;
+    shell->new_envp[old_size + 1] = NULL;
     free_and_reset_ptr((void **)&shell->envp);
-    shell->envp = new_envp;
-    free_and_reset_ptr((void **)&key);
-    free_and_reset_ptr((void **)&value);
+    shell->envp = shell->new_envp;
+    shell->new_envp = NULL;
+    free_and_reset_ptr((void **)&shell->key);
+    free_and_reset_ptr((void **)&shell->value);
+
     return (0);
 }

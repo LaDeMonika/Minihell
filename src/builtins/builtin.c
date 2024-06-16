@@ -16,21 +16,7 @@ int ft_strcmp(char *s1, char *s2)
     return (s1[i] - s2[i]);
 }
 
-char ft_strcmp_btin(char *s1, char *s2)
-{
-    int i;
 
-    i = 0;
-    while (s1[i] && s2[i])
-    {
-        if (s1[i] != s2[i])
-            return (1);
-        i++;
-    }
-    if (s1[i] != s2[i])
-        return (1);
-    return (0);
-}
 int export_no_args(t_minishell  *shell)
 {
     int i;
@@ -99,7 +85,7 @@ void handle_builtin(t_minishell *shell, char **command_array, int *status, int *
          handle_unset(shell, command_array, status, custom_errno);
 }
 
-int check_builtin(char *token)
+int is_builtin(char *token)
 {
     /* printf("token before split: [%s]\n", token); */
 
@@ -107,17 +93,17 @@ int check_builtin(char *token)
    /*  printf("token after split: [%s]\n", token); */
     if (ft_strncmp(token, "cd",	3) == 0)
         return (B_CD);
-    else if (ft_strncmp(token, "echo", 5) == 0)
+    else if (ft_strcmp(token, "echo") == 0)
         return (B_ECHO);
-    else if (ft_strncmp(token, "env", 4) == 0)
+    else if (ft_strcmp(token, "env") == 0)
         return (B_ENV);
-	else if (ft_strncmp(token, "exit", 5) == 0)
+	else if (ft_strcmp(token, "exit") == 0)
         return (B_EXIT);
-    else if (ft_strncmp(token, "export", 7) == 0)
+    else if (ft_strcmp(token, "export") == 0)
         return (B_EXPORT);
-    else if (ft_strncmp(token, "pwd", 4) == 0)
+    else if (ft_strcmp(token, "pwd") == 0)
         return (B_PWD);
-	else if (ft_strncmp(token, "unset", 6) == 0)
+	else if (ft_strcmp(token, "unset") == 0)
         return (B_UNSET);
     else
         return (NOT_BUILTIN);

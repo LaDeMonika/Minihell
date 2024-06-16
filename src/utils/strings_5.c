@@ -36,7 +36,6 @@ char	*append_suffix(t_minishell *shell, char *base, char *suffix)
 {
 	char	*new_str;
 
-	new_str = base;
 	new_str = ft_strjoin(shell, base, suffix);
 	free_and_reset_ptr((void **)&base);
 	return (new_str);
