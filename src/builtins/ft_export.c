@@ -90,25 +90,39 @@ bool    valid_arg(char *str)
     return (true);
 }
 
+bool    parse_check_export_args(char *arg, int *custom_errno, int *exit_code)
+{
+    if (arg[0] == '-')
+    {
+        *custom_errno = U_INVALID_OPTION;
+        *exit_code = 2;
+        return (false);
+    }
+    if (!valid_arg(arg))
+    {
+        *custom_errno = U_INVALID_IDENTIFIER;
+        *exit_code = 1;
+        return (false);
+    }
+    if (count_occurences_of_char(arg, '=') < 1)
+    {
+        *exit_code = 0;
+        return (false);
+    }
+    return (true);
+}
+
 int ft_export(t_minishell *shell, char *arg, int *custom_errno)
 {
     int old_size;
     int    to_append;
     char    *new_entry;
     int i;
+    int exit_code;
 
-    if (arg[0] == '-')
-    {
-        *custom_errno = U_INVALID_OPTION;
-        return (2);
-    }
-    if (!valid_arg(arg))
-    {
-        *custom_errno = U_INVALID_IDENTIFIER;
-        return(1);
-    }
-    if (count_occurences_of_char(arg, '=') < 1)
-        return (0);
+    if (!parse_check_export_args(arg, custom_errno, &exit_code))
+        return (exit_code);
+
     to_append = 0;
     if (ft_strnstr(arg, "+=", ft_strlen(arg)))
         to_append = 1;
