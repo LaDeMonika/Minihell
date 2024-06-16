@@ -4,9 +4,4 @@
 *.a
 minishell
 branch.txt
-<<<<<<< HEAD
 obj
-tester.sh
-=======
-obj
->>>>>>> main
