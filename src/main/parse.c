@@ -18,7 +18,7 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
 	int		file_fd;
-	char	*heredoc_input;
+	//char	*heredoc_input;
 	bool	expand_var;
 
 
@@ -26,12 +26,12 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 	set_signals(shell, HEREDOC_CHILD);
 	file_fd = try_open(shell, input_file, WRITE_TRUNCATE);
 	if (isatty(fileno(stdin)))
-		heredoc_input = readline("> ");
+		shell->heredoc_input = readline("> ");
 	else
 	{
 		char *line;
 		line = get_next_line(fileno(stdin));
-		heredoc_input = ft_strtrim(shell, line, "\n");
+		shell->heredoc_input = ft_strtrim(shell, line, "\n");
 	}
 	if (ft_strchr(*eof, '"') || ft_strchr(*eof, '\''))
 		expand_var = false;
@@ -39,29 +39,33 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 		expand_var = true;
 	if (has_even_metaquotes(*eof))
 		*eof = remove_metaquotes(shell, *eof);
-	while (heredoc_input && (ft_strncmp(heredoc_input, *eof, ft_strlen(*eof) + 1) != 0))
+	while (shell->heredoc_input && (ft_strncmp(shell->heredoc_input, *eof, ft_strlen(*eof) + 1) != 0))
 	{
 		if (expand_var)
-			heredoc_input = expand_env_variables(shell, heredoc_input);
+		{
+			shell->heredoc_input = expand_env_variables(shell, shell->heredoc_input);
+			shell->expanded_input = NULL;
+		}
+
 		try_write(shell, pipe_fd[1], "\n", 1);
-		try_write(shell, file_fd, heredoc_input, ft_strlen(heredoc_input));
+		try_write(shell, file_fd, shell->heredoc_input, ft_strlen(shell->heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
-		free_and_reset_ptr((void **)&heredoc_input);
+		free_and_reset_ptr((void **)&shell->heredoc_input);
 		if (isatty(fileno(stdin)))
-			heredoc_input = readline("> ");
+			shell->heredoc_input = readline("> ");
 		else
 		{
 			char *line;
 			line = get_next_line(fileno(stdin));
-			heredoc_input = ft_strtrim(shell, line, "\n");
+			shell->heredoc_input = ft_strtrim(shell, line, "\n");
 		}
 	}
-	if (heredoc_input)
+	if (shell->heredoc_input)
 		try_write(shell, pipe_fd[1], "\n", 1);
-	if (!heredoc_input)
+	if (!shell->heredoc_input)
 		heredoc_EOF(shell, *eof);
 	try_close(shell, pipe_fd[1]);
-	free_and_reset_ptr((void **)&heredoc_input);
+	//free_and_reset_ptr((void **)&heredoc_input);
 	free_all(shell);
 	exit(EXIT_SUCCESS);
 }

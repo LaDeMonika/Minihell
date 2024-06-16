@@ -116,7 +116,6 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
 {
     int old_size;
     int    to_append;
-    char    *new_entry;
     int i;
     int exit_code;
 
@@ -145,12 +144,13 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     }
     if (to_append)
     {
-        new_entry = ft_strjoin(shell, shell->new_key, "=");
-        new_entry = append(shell, new_entry, shell->new_value, FREE_BASE);
+        shell->new_entry = ft_strjoin(shell, shell->new_key, "=");
+        shell->new_entry = append(shell, shell->new_entry, shell->new_value, FREE_BASE);
     }
     else
-        new_entry = ft_strdup(shell, arg);
-    shell->new_envp[old_size] = new_entry;
+        shell->new_entry = ft_strdup(shell, arg);
+    shell->new_envp[old_size] = shell->new_entry;
+    shell->new_entry = NULL;
     shell->new_envp[old_size + 1] = NULL;
     free_and_reset_ptr((void **)&shell->envp);
     shell->envp = shell->new_envp;

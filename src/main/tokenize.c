@@ -77,7 +77,11 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 	temp = token;
 	token = ft_strtrim(shell, token, " ");
 	if (shell->pre_delimiter != HEREDOC)
+	{
 		token = expand_env_variables(shell, token);
+		shell->expanded_input = NULL;
+	}
+
 	if (shell->pre_delimiter != COMMAND)
 	{
 		temp = token + skip_first_metaquote_pair(token);

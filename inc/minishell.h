@@ -83,6 +83,10 @@ typedef struct s_minishell
 	char	*new_entry;
 	char	*base;
 	char	*suffix;
+	char	*path;
+	char	*command_path;
+	char	*expanded_input;
+	char	*heredoc_input;
 }							t_minishell;
 
 
@@ -248,8 +252,7 @@ void						parent_sigint_handler(int sig);
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess
-char						*extract_substr_and_append(t_minishell *shell,
-								char *base, int len, char *new_str);
+char	*extract_substr_and_append(t_minishell *shell, char *base, int len);
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);

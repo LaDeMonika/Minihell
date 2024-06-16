@@ -7,15 +7,13 @@
 
 char	*find_command(t_minishell *shell)
 {
-	char	*path;
 	int		i;
-	char	*command_path;
 	struct stat path_stat;
 
 
-	path = ft_getenv(shell, "PATH");
+	shell->path = ft_getenv(shell, "PATH");
 	/* printf("path: %s\n", path); */
-	if (!path || !path[0])
+	if (!shell->path || !shell->path[0])
 	{
 		if(stat(shell->command_array[0], &path_stat) == 0)
 		{
@@ -31,19 +29,19 @@ char	*find_command(t_minishell *shell)
 		}
 
 	}
-	split_while_skipping_quotes(shell, path, ':');
-	free_and_reset_ptr((void **)&path);
+	split_while_skipping_quotes(shell, shell->path, ':');
+	//free_and_reset_ptr((void **)&shell->path);
 	i = 0;
 	while (shell->path_array[i])
 	{
-		command_path = ft_strjoin(shell, shell->path_array[i], "/");
-		command_path = append(shell, command_path, shell->command_array[0], FREE_BASE);
+		shell->command_path = append(shell, shell->path_array[i], "/", FREE_NONE);
+		shell->command_path = append(shell, shell->command_path, shell->command_array[0], FREE_BASE);
 		/* printf("command path: %s\n", command_path); */
 		/*
 		command_path = ft_strjoin(shell, command_path, input_array[0]); */
-		if (access(command_path, F_OK & X_OK) == 0)
-			return (command_path);
-		free_and_reset_ptr((void **)&command_path);
+		if (access(shell->command_path, F_OK & X_OK) == 0)
+			return (shell->command_path);
+		free_and_reset_ptr((void **)&shell->command_path);
 		i++;
 	}
 	return (NULL);
@@ -51,7 +49,6 @@ char	*find_command(t_minishell *shell)
 
 void	execute_command_array(t_minishell *shell, char **command_array)
 {
-	char	*path;
 	int		exit_status;
 	char	*custom_message;
 	exit_status = 0;
@@ -59,7 +56,6 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	struct stat path_stat;
 	char	cwd[1024];
 
-	path = NULL;
 	/* printf("execute check envp: %s\n", shell->envp[0]); */
 	custom_errno = -1;
 	shell->builtin = is_builtin(command_array[0]);
@@ -69,7 +65,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	{
 		if (getcwd(cwd, sizeof(cwd)) && ft_strcmp(cwd, "/usr/bin") == 0)
 		{
-			path = ft_strjoin(shell, "./", shell->command_array[0]);
+			shell->command_path = ft_strjoin(shell, "./", shell->command_array[0]);
 		}
 
 		/* if (shell->command_array[0][0] == '/' || ft_strncmp(shell->command_array[0], "./", 2) == 0 || access(relative_path, F_OK) != -1) */
@@ -88,24 +84,24 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 				free_all(shell);
 				exit (126);
 			}
-			path = ft_strdup(shell, shell->command_array[0]);
+			shell->command_path = ft_strdup(shell, shell->command_array[0]);
 		}
 		else
 		{
 			//free_and_reset_ptr((void **)&relative_path);
-			path = find_command(shell);
+			shell->command_path = find_command(shell);
 		}
 
 
 		//
 		//free_child(shell);
-		if (path)
-			execve(path, shell->command_array, shell->envp);
+		if (shell->command_path)
+			execve(shell->command_path, shell->command_array, shell->envp);
 		/* print_error(shell->command_array[0], "command not found");
 		free_all(shell);
 		exit (127); */
 		// TODO: also set exit status and custom message for builtins
-		free_and_reset_ptr((void **)&path);
+		//free_and_reset_ptr((void **)&path);
 		exit_status = 1;
 	}
 	if ((exit_status != 0 /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
