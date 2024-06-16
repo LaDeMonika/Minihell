@@ -80,6 +80,9 @@ typedef struct s_minishell
 	char	*old_value;
 	char	*my_pid;
 	char	**split_array;
+	char	*new_entry;
+	char	*base;
+	char	*suffix;
 }							t_minishell;
 
 
@@ -159,6 +162,14 @@ enum						e_builtin
 	NOT_BUILTIN
 };
 
+//freeing in append function
+enum	e_free_afterwards
+{
+	FREE_NONE,
+	FREE_BASE,
+	FREE_SUFFIX,
+	FREE_BOTH
+};
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
@@ -300,8 +311,8 @@ char	*ft_strdup(t_minishell *shell, const char	*s);
 char						*ft_itoa(t_minishell *shell, int n);
 int							skip_first_metaquote_pair(char *str);
 bool						has_even_metaquotes(char *s);
-char						*append_suffix(t_minishell *shell, char *base,
-								char *suffix);
+char						*append(t_minishell *shell, char *base,
+								char *suffix, int free_afterwards);
 
 // strings_4
 void						ft_putstr_fd(char *s, int fd);

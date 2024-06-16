@@ -110,8 +110,7 @@ char	*extract_substr_and_append(t_minishell *shell, char *base, int len,
 	char	*suffix;
 
 	suffix = ft_substr(shell, base, 0, len);
-	new_str = append_suffix(shell, new_str, suffix);
-	free_and_reset_ptr((void **)&suffix);
+	new_str = append(shell, new_str, suffix, FREE_BOTH);
 	return (new_str);
 }
 
@@ -141,8 +140,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 		{
 			new_str = extract_substr_and_append(shell, s + start, i - start, new_str);
 			env_value = get_env_value(shell, s, &start, &i, &metaquote);
-			new_str = append_suffix(shell, new_str, env_value);
-			free_and_reset_ptr((void **)&env_value);
+			new_str = append(shell, new_str, env_value, FREE_BOTH);
 		}
 		if (s[i])
 			i++;
@@ -162,9 +160,9 @@ char	*append_heredoc(t_minishell *shell, char *base, char metaquote)
 	quote[0] = metaquote;
 	quote[1] = '\0';
 	new_str = NULL;
-	new_str = append_suffix(shell, base, quote);
-	new_str = append_suffix(shell, new_str, "<<");
-	new_str = append_suffix(shell, new_str, quote);
+	new_str = append(shell, base, quote, FREE_BASE);
+	new_str = append(shell, new_str, "<<", FREE_BASE);
+	new_str = append(shell, new_str, quote, FREE_BASE);
 	return (new_str);
 }
 

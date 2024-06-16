@@ -23,11 +23,11 @@ void    append_path(t_minishell *shell)
 	if (ft_strnstr(pwd, home, ft_strlen(home)))
 	{
 		ft_strlcpy(new_path, pwd + ft_strlen(home), ft_strlen(pwd) - ft_strlen(home) + 1);
-        shell->prompt = append_suffix(shell, shell->prompt, "~");
-		shell->prompt = append_suffix(shell, shell->prompt, new_path);
+        shell->prompt = append(shell, shell->prompt, "~", FREE_BASE);
+		shell->prompt = append(shell, shell->prompt, new_path, FREE_BASE);
 	}
 	else
-		shell->prompt = append_suffix(shell, shell->prompt, pwd);
+		shell->prompt = append(shell, shell->prompt, pwd, FREE_BASE);
 	free_and_reset_ptr((void **)&pwd);
 }
 
@@ -45,15 +45,15 @@ void    append_hostname(t_minishell *shell)
 	hostname_remainder = ft_strchr(hostname, '.');
 	if (hostname_remainder)
 		hostname[hostname_remainder - hostname] = '\0';
-	shell->prompt = append_suffix(shell, shell->prompt, hostname);
+	shell->prompt = append(shell, shell->prompt, hostname, FREE_BASE);
 }
 
 void	build_prompt(t_minishell *shell)
 {
-    shell->prompt = append_suffix(shell, shell->prompt, getenv("USER"));
-	shell->prompt = append_suffix(shell, shell->prompt, "@@");
+    shell->prompt = append(shell, shell->prompt, getenv("USER"), FREE_BASE);
+	shell->prompt = append(shell, shell->prompt, "@@", FREE_BASE);
     append_hostname(shell);
-	shell->prompt = append_suffix(shell, shell->prompt, ":");
+	shell->prompt = append(shell, shell->prompt, ":", FREE_BASE);
 	append_path(shell);
-    shell->prompt = append_suffix(shell, shell->prompt, "$ ");
+    shell->prompt = append(shell, shell->prompt, "$ ", FREE_BASE);
 }

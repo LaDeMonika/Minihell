@@ -26,11 +26,8 @@ static char	*parse_word(t_minishell *shell, char *word, char sep)
 	word = ft_strtrim(shell, word, " \f\n\r\t\v");
 	if (sep == '|' && (!word || !(*word)))
 	{
-
 		free_and_reset_ptr((void **)&word);
-		word = try_malloc(shell, sizeof(char) * 2);
-		word[0] = '|';
-		word[1] = '\0';
+		word = ft_strdup(shell, "|");
 	}
 	return (word);
 }

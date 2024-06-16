@@ -23,7 +23,7 @@ int	find_delimiter(char *command, int i)
 void	append_to_command(t_minishell *shell, t_token_list **head,
 		char *command_arg, char **token)
 {
-	t_token_list	*current;
+	//t_token_list	*current;
 	int				end_index;
 	char	*new_token;
 
@@ -32,14 +32,18 @@ void	append_to_command(t_minishell *shell, t_token_list **head,
 	new_token = ft_substr(shell, *token, 0, end_index);
 	free_and_reset_ptr((void **)token);
 	*token = new_token;
-	current = *head;
-	while (current)
+	/* current = *head; */
+	/* while (current)
 	{
 		if (current->delimiter == COMMAND)
 			current->token = append_suffix(shell, current->token, command_arg);
 		free_and_reset_ptr((void **)&command_arg);
 		current = current->next;
-	}
+	} */
+
+	(*head)->token = append(shell, (*head)->token, command_arg, FREE_BOTH);
+	//free_and_reset_ptr((void **)&command_arg);
+
 }
 
 void	list_add(t_minishell *shell, t_token_list **head, char *token)

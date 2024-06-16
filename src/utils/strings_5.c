@@ -32,12 +32,15 @@ int	skip_first_metaquote_pair(char *str)
 	return (0);
 }
 
-char	*append_suffix(t_minishell *shell, char *base, char *suffix)
+char	*append(t_minishell *shell, char *base, char *suffix, int free_afterwards)
 {
 	char	*new_str;
 
 	new_str = ft_strjoin(shell, base, suffix);
-	free_and_reset_ptr((void **)&base);
+	if (free_afterwards == FREE_BASE || free_afterwards == FREE_BOTH)
+		free_and_reset_ptr((void **)&base);
+	if (free_afterwards == FREE_SUFFIX || free_afterwards == FREE_BOTH)
+		free_and_reset_ptr((void **)&suffix);
 	return (new_str);
 }
 

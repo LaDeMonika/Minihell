@@ -37,7 +37,7 @@ char	*find_command(t_minishell *shell)
 	while (shell->path_array[i])
 	{
 		command_path = ft_strjoin(shell, shell->path_array[i], "/");
-		command_path = append_suffix(shell, command_path, shell->command_array[0]);
+		command_path = append(shell, command_path, shell->command_array[0], FREE_BASE);
 		/* printf("command path: %s\n", command_path); */
 		/*
 		command_path = ft_strjoin(shell, command_path, input_array[0]); */

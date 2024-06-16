@@ -234,7 +234,7 @@ void	parse_input(t_minishell *shell)
 
 				index = NULL;
 				index = ft_itoa(shell, j);
-				shell->input_file = append_suffix(shell, index, "_input.txt");
+				shell->input_file = append(shell, index, "_input.txt", FREE_BASE);
 				/* printf("parsing exit status before heredoc: %d\n", shell->parsing_exit_status); */
 				heredoc(shell, &list->token, shell->input_file);
 				if (shell->parsing_exit_status != 0)

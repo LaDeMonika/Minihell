@@ -84,6 +84,7 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->new_envp, false);
 	free_and_reset_ptr((void **)&shell->my_pid);
 	free_and_reset_array((void ***)&shell->split_array, false);
+	free_and_reset_ptr((void **)&shell->new_entry);
 }
 
 int	free_all(t_minishell *shell)
