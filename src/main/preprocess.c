@@ -4,10 +4,9 @@ char	*ft_getpid(t_minishell *shell)
 {
 	int		fd;
 	char	buffer[1];
-	char	*pid;
 	int		i;
 
-	pid = try_malloc(shell, sizeof(char) * 11);
+	shell->my_pid = try_malloc(shell, sizeof(char) * 11);
 	i = 0;
 	fd = try_open(shell, "/proc/self/stat", READ);
 	if (fd > 0)
@@ -16,21 +15,21 @@ char	*ft_getpid(t_minishell *shell)
 		{
 			if (buffer[0] != ' ')
 			{
-				pid[i] = buffer[0];
+				shell->my_pid[i] = buffer[0];
 				i++;
 			}
 			else
 			{
-				pid[i] = '\0';
+				shell->my_pid[i] = '\0';
 				close(fd);
-				return (pid);
+				return (shell->my_pid);
 			}
 		}
 	}
 	else
-		return (free_and_reset_ptr((void **)&pid), error_free_all(shell, ERR_OPEN, NULL, NULL), NULL);
+		return (free_and_reset_ptr((void **)&shell->my_pid), error_free_all(shell, ERR_OPEN, NULL, NULL), NULL);
 	close(fd);
-	return (free_and_reset_ptr((void **)&pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
+	return (free_and_reset_ptr((void **)&shell->my_pid), error_free_all(shell, ERR_GETPID, NULL, NULL), NULL);
 }
 
 char	*ft_getenv(t_minishell *shell, char *key)

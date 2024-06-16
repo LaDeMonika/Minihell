@@ -73,9 +73,13 @@ typedef struct s_minishell
 	int						pre_delimiter;
 	int						post_delimiter;
 	int						builtin;
-	char	*key;
-	char						*value;
+	char	*new_key;
+	char						*new_value;
 	char	**new_envp;
+	char	*old_key;
+	char	*old_value;
+	char	*my_pid;
+	char	**split_array;
 }							t_minishell;
 
 
@@ -241,7 +245,7 @@ char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_metaquotes(char *str, int i,
 								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
-char						**split_while_skipping_quotes(t_minishell *shell,
+void	split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
 char	*ft_getenv(t_minishell *shell, char *key);
 

@@ -29,14 +29,19 @@ void	init_input_iteration(t_minishell *shell)
 	shell->path_array = NULL;
 	shell->env_subarray = NULL;
 	shell->new_envp = NULL;
-	shell->key = NULL;
-	shell->value = NULL;
+	shell->new_key = NULL;
+	shell->new_value = NULL;
+	shell->old_key = NULL;
+	shell->old_key = NULL;
+	shell->my_pid = NULL;
+	shell->split_array = NULL;
 }
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
 	int	i;
 	shell->envp = try_malloc(shell, sizeof(char *) * (sizeof_array((void **)envp) + 1));
+	shell->envp = fill_array_with_null(shell->envp, sizeof_array((void **)envp) + 1);
 	i = 0;
 	while (envp[i])
 	{

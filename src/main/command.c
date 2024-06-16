@@ -31,7 +31,7 @@ char	*find_command(t_minishell *shell)
 		}
 
 	}
-	shell->path_array = split_while_skipping_quotes(shell, path, ':');
+	split_while_skipping_quotes(shell, path, ':');
 	free_and_reset_ptr((void **)&path);
 	i = 0;
 	while (shell->path_array[i])
@@ -146,7 +146,7 @@ void	execute_command(t_minishell *shell, char *command)
 		exit(EXIT_SUCCESS);
 	}
 	if (shell->pipes_total > 0)
-		shell->command_array = split_while_skipping_quotes(shell, command, ' ');
+		split_while_skipping_quotes(shell, command, ' ');
 	i = 0;
 	while (shell->command_array[i])
 	{

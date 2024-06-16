@@ -68,10 +68,10 @@ int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
         return (1);
     }
     free_and_reset_ptr((void **)&new_pwd);
-    update_value(shell, ft_strdup(shell, "OLDPWD"), current_pwd, false);
+    update_value(shell, "OLDPWD", current_pwd, false);
     free_and_reset_ptr((void **)&current_pwd);
     current_pwd = getcwd(NULL, 0);
-    update_value(shell, ft_strdup(shell, "PWD"), current_pwd, false);
+    update_value(shell, "PWD", current_pwd, false);
     free_and_reset_ptr((void **)&current_pwd);
     return (0);
 }

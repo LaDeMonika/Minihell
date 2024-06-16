@@ -113,12 +113,12 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     append = 0;
     if (ft_strnstr(arg, "+=", ft_strlen(arg)))
         append = 1;
-    shell->key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - append);
-    shell->value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
-    if (update_value(shell, shell->key, shell->value, append))
+    shell->new_key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - append);
+    shell->new_value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
+    if (update_value(shell, shell->new_key, shell->new_value, append))
     {
-        free_and_reset_ptr((void **)&shell->key);
-        free_and_reset_ptr((void **)&shell->value);
+        free_and_reset_ptr((void **)&shell->new_key);
+        free_and_reset_ptr((void **)&shell->new_value);
         return (0);
     }
     old_size = sizeof_array((void **)shell->envp);
@@ -132,8 +132,8 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     }
     if (append)
     {
-        new_entry = ft_strjoin(shell, shell->key, "=");
-        new_entry = append_suffix(shell, new_entry, shell->value);
+        new_entry = ft_strjoin(shell, shell->new_key, "=");
+        new_entry = append_suffix(shell, new_entry, shell->new_value);
     }
     else
         new_entry = ft_strdup(shell, arg);
@@ -142,8 +142,8 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     free_and_reset_ptr((void **)&shell->envp);
     shell->envp = shell->new_envp;
     shell->new_envp = NULL;
-    free_and_reset_ptr((void **)&shell->key);
-    free_and_reset_ptr((void **)&shell->value);
+    free_and_reset_ptr((void **)&shell->new_key);
+    free_and_reset_ptr((void **)&shell->new_value);
 
     return (0);
 }

@@ -5,7 +5,7 @@ void	handle_input(t_minishell *shell)
 	int	i;
 
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
-	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input, '|');
+	split_while_skipping_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 	{
 		shell->pipes_total++;
@@ -27,7 +27,7 @@ void	handle_input(t_minishell *shell)
 	parse_input(shell);
 	if (shell->pipes_total == 0)
 	{
-		shell->command_array = split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
+		split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
 		shell->builtin = is_builtin(shell->command_array[0]);
 	}
 	if (shell->pipes_total == 0 && (shell->builtin == B_CD || shell->builtin == B_EXIT || shell->builtin == B_EXPORT || shell->builtin == B_UNSET))

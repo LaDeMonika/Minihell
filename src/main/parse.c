@@ -111,7 +111,8 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 {
 	int		pid;
 	int		pipe_fd[2];
-	char	*read_buffer;
+	char	buffer[8];
+	char	*buffer_ptr;
 
 	try_pipe(shell, pipe_fd);
 	pid = try_fork(shell);
@@ -127,15 +128,15 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 		set_signals(shell, PARENT_WITH_CHILD);
 		if (waitpid(pid, &shell->status, 0) == -1)
 			error_free_all(shell, ERR_WAITPID, NULL, NULL);
-		read_buffer = try_malloc(shell, sizeof(char));
-		while (try_read(shell, pipe_fd[0], &read_buffer, NULL) > 0)
+		buffer_ptr = buffer;
+		while (try_read(shell, pipe_fd[0], &buffer_ptr, NULL) > 0)
 			shell->line_count++;
 		/* printf("parsing exit status before setting: %d\n", shell->parsing_exit_status); */
 		set_exit_status_after_termination(shell, &shell->parsing_exit_status, 0);
 		/* printf("parsing exit status after setting: %d\n", shell->parsing_exit_status); */
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		try_close(shell, pipe_fd[0]);
-		free_and_reset_ptr((void **)&read_buffer);
+
 	}
 }
 
@@ -175,7 +176,8 @@ void	parse_input(t_minishell *shell)
 	char			*index;
 	t_token_list	*list;
 	int				exit_status_after_parsing;
-	char 	**args;
+	char	*space_index;
+	char 	*last_command;
 
 	shell->parsing_exit_status = 0;
 	exit_status_after_parsing = 0;
@@ -207,13 +209,22 @@ void	parse_input(t_minishell *shell)
 			{
 				if (list->token[0])
 				{
-					args = split_while_skipping_quotes(shell, list->token, ' ');
-					update_value(shell, "_", args[sizeof_array((void **)args) - 1], false);
-					free_and_reset_array((void ***)&args, false);
-					free_and_reset_ptr((void **)&args);
+					/* args = split_while_skipping_quotes(shell, list->token, ' '); */
+					space_index = strchr(list->token, ' ');
+					if (space_index)
+					{
+						while (space_index)
+						{
+							last_command = space_index + 1;
+							space_index = strchr(last_command, ' ');
+						}
+					}
+					update_value(shell, "_", last_command, false);
+					/* free_and_reset_array((void ***)&args, false);
+					free_and_reset_ptr((void **)&args); */
 				}
 				else
-					update_value(shell, ft_strdup(shell, "_"), "", false);
+					update_value(shell, "_", "", false);
 
 			}
 
