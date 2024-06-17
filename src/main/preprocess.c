@@ -41,10 +41,10 @@ char	*ft_getenv(t_minishell *shell, char *key)
 	i = 0;
 	while (shell->envp[i])
 	{
-		key_in_array = ft_substr(shell, shell->envp[i], 0,  first_occurence_of_char(shell->envp[i], '='));
+		key_in_array = ft_substr(shell, shell->envp[i], 0,  index_of_char(shell->envp[i], '='));
 		if (ft_strcmp(key_in_array, key) == 0)
 		{
-			value = ft_substr(shell, shell->envp[i], first_occurence_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+			value = ft_substr(shell, shell->envp[i], index_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
 			free_and_reset_ptr((void **)&key_in_array);
 			return (value);
 		}

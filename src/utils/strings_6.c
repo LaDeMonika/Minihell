@@ -87,7 +87,7 @@ char    **fill_array_with_null(char **array, int size)
     return (array);
 }
 
-int first_occurence_of_char(char *str, char c)
+int index_of_char(char *str, char c)
 {
     int i;
 

@@ -9,8 +9,13 @@ int	handle_builtin_for_each_arg(t_minishell *shell, int *custom_errno)
 	while (shell->command_array[i])
 	{
 		if (shell->builtin == B_EXPORT)
-			exit_status = ft_export(shell, shell->command_array[i],
+        {
+            exit_status = ft_export(shell, shell->command_array[i],
 					custom_errno);
+            free_and_reset_ptr((void **)&shell->new_key);
+            free_and_reset_ptr((void **)&shell->new_value);
+        }
+
 		else if (shell->builtin == B_UNSET)
 			exit_status = ft_unset(shell, shell->command_array[i],
 					custom_errno);

@@ -35,7 +35,6 @@ void	init_input_iteration(t_minishell *shell)
 	shell->old_key = NULL;
 	shell->my_pid = NULL;
 	shell->split_array = NULL;
-	shell->new_entry = NULL;
 	shell->base = NULL;
 	shell->suffix = NULL;
 	shell->path = NULL;

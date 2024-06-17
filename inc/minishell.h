@@ -80,7 +80,6 @@ typedef struct s_minishell
 	char	*old_value;
 	char	*my_pid;
 	char	**split_array;
-	char	*new_entry;
 	char	*base;
 	char	*suffix;
 	char	*path;
@@ -99,7 +98,7 @@ enum						e_error
 	ERR_MALLOC,
 	ERR_TOO_MANY_ARGS,
 	ERR_TOO_FEW_ARGS,
-	ERR_INVALID_ARG,
+	ERR_INvalid_key,
 	ERR_PATH_NOT_FOUND,
 	ERR_SIGEMPTYSET,
 	ERR_SIGACTION,
@@ -290,7 +289,7 @@ int							ft_exit(t_minishell *shell, int *custom_errno);
 int ft_pwd(t_minishell *shell);
 int ft_export(t_minishell *shell, char *arg, int *custom_errno);
 int export_no_args(t_minishell  *shell);
-int first_occurence_of_char(char *str, char c);
+int index_of_char(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
 
 //********************src/utils
