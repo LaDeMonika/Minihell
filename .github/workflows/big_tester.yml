@@ -12,4 +12,4 @@ jobs:
     - name: Run big tester.sh
       run: |
         make
-        bash ./tester.sh vm
+        bash ./42_minishell_tester/tester.sh vm
