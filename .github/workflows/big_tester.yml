@@ -9,19 +9,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Debug before make
-      run: |
-        pwd
-        ls -la
-
-    - name: Run make
-      run: make
-    
-    - name: Debug after make
-      run: |
-        pwd
-        ls -la
-
     - name: Run bis tester.sh
       run: |
-        bash 42_minishell_tester/tester.sh vm
+        make
+        bash tester.sh vm
