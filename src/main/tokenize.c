@@ -81,7 +81,6 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 		token = expand_env_variables(shell, token);
 		shell->expanded_input = NULL;
 	}
-
 	if (shell->pre_delimiter != COMMAND)
 	{
 		temp = token + skip_first_metaquote_pair(token);
