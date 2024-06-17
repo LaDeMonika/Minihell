@@ -87,6 +87,8 @@ typedef struct s_minishell
 	char	*command_path;
 	char	*expanded_input;
 	char	*heredoc_input;
+	char	*current_pwd;
+	char *new_pwd;
 }							t_minishell;
 
 
@@ -287,7 +289,8 @@ int ft_unset(t_minishell *shell, char *key, int *custom_errno);
 int							ft_exit(t_minishell *shell, int *custom_errno);
 int ft_pwd(t_minishell *shell);
 int ft_export(t_minishell *shell, char *arg, int *custom_errno);
-int index_of_first_occurence(char *str, char c);
+int export_no_args(t_minishell  *shell);
+int first_occurence_of_char(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
 
 //********************src/utils
@@ -331,4 +334,5 @@ int 						sizeof_array(void **array);
 char 						*remove_metaquotes(t_minishell *shell, char *str);
 int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
+int count_occurences_of_char(char *str, char c);
 #endif

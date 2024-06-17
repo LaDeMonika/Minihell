@@ -27,7 +27,7 @@ int ft_unset(t_minishell *shell, char *key, int *custom_errno)
     }
     while (shell->envp[i])
     {
-        shell->old_key = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
+        shell->old_key = ft_substr(shell, shell->envp[i], 0,  first_occurence_of_char(shell->envp[i], '='));
         if (ft_strcmp(shell->old_key, key) == 0)
         {
             free_and_reset_ptr((void **)&shell->old_key);

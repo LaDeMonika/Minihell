@@ -12,19 +12,6 @@
 
 #include "../../inc/minishell.h"
 
-int index_of_first_occurence(char *str, char c)
-{
-    int i;
-
-    i = 0;
-    while (str[i])
-    {
-        if (str[i] == c)
-            return (i);
-        i++;
-    }
-    return (-1);
-}
 
 char *update_value(t_minishell *shell, char *key, char *value, bool to_append)
 {
@@ -35,13 +22,13 @@ char *update_value(t_minishell *shell, char *key, char *value, bool to_append)
 
     while (shell->envp[i])
     {
-        shell->old_key = ft_substr(shell, shell->envp[i], 0,  index_of_first_occurence(shell->envp[i], '='));
+        shell->old_key = ft_substr(shell, shell->envp[i], 0,  first_occurence_of_char(shell->envp[i], '='));
         if (ft_strcmp(shell->old_key, key) == 0)
         {
             shell->new_entry = append(shell, key, "=", FREE_NONE);
             if (to_append)
             {
-                shell->old_value = ft_substr(shell, shell->envp[i], index_of_first_occurence(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+                shell->old_value = ft_substr(shell, shell->envp[i], first_occurence_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
                 shell->new_entry = append(shell, shell->new_entry, shell->old_value, FREE_BOTH);
             }
             shell->new_entry = append(shell, shell->new_entry, value, FREE_BASE);
@@ -56,21 +43,7 @@ char *update_value(t_minishell *shell, char *key, char *value, bool to_append)
     }
     return (NULL);
 }
-int count_occurences_of_char(char *str, char c)
-{
-    int i;
-    int count;
 
-    i = 0;
-    count = 0;
-    while (str[i])
-    {
-        if (str[i] == c)
-            count++;
-        i++;
-    }
-    return (count);
-}
 
 bool    valid_arg(char *str)
 {
@@ -125,8 +98,8 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     to_append = 0;
     if (ft_strnstr(arg, "+=", ft_strlen(arg)))
         to_append = 1;
-    shell->new_key = ft_substr(shell, arg, 0,  index_of_first_occurence(arg, '=') - to_append);
-    shell->new_value = ft_substr(shell, arg, index_of_first_occurence(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
+    shell->new_key = ft_substr(shell, arg, 0,  first_occurence_of_char(arg, '=') - to_append);
+    shell->new_value = ft_substr(shell, arg, first_occurence_of_char(arg, '=') + 1, ft_strlen(strchr(arg, '=') - 1));
     if (update_value(shell, shell->new_key, shell->new_value, to_append))
     {
         free_and_reset_ptr((void **)&shell->new_key);
@@ -158,5 +131,22 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno)
     free_and_reset_ptr((void **)&shell->new_key);
     free_and_reset_ptr((void **)&shell->new_value);
 
+    return (0);
+}
+
+int export_no_args(t_minishell  *shell)
+{
+    int i;
+
+    i = 0;
+    while (shell->envp[i])
+    {
+        shell->old_key = ft_substr(shell, shell->envp[i], 0,  first_occurence_of_char(shell->envp[i], '='));
+        shell->old_value = ft_substr(shell, shell->envp[i], first_occurence_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+        printf("declare -x %s=\"%s\"\n", shell->old_key, shell->old_value);
+        free_and_reset_ptr((void **)&shell->old_key);
+        free_and_reset_ptr((void **)&shell->old_value);
+        i++;
+    }
     return (0);
 }
