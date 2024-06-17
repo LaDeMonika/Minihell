@@ -103,6 +103,12 @@ int	free_all(t_minishell *shell)
 	return (last_exit_status);
 }
 
+void	free_all_exit(t_minishell *shell, int exit_status)
+{
+	free_all(shell);
+	exit(exit_status);
+}
+
 void	error_free_all_second(int err, char *prefix)
 {
 	if (err == ERR_READ)

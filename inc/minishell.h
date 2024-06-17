@@ -124,7 +124,6 @@ enum e_custom_errno
 	U_INVALID_OPTION,
 	U_NO_FILE,
 	U_NO_PERMISSION,
-	U_NUMERIC_ARGUMENT_REQUIRED
 };
 
 enum						e_token_delimiter
@@ -206,7 +205,7 @@ void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_message);
 void	free_iteration(t_minishell *shell);
-void	free_child(t_minishell *shell);
+void	free_all_exit(t_minishell *shell, int exit_status);
 
 
 // prompt
@@ -324,7 +323,7 @@ char						*append(t_minishell *shell, char *base,
 // strings_4
 
 bool						is_space(char c);
-int							ft_atoi(const char	*nptr, bool *valid_number);
+int							ft_atoi(const char	*nptr, bool *is_valid_number);
 
 
 //strings_5

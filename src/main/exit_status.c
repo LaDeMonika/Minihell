@@ -9,8 +9,6 @@ void	set_exit_status_before_termination(t_minishell *shell, char **custom_messag
 		*custom_message = "invalid option";
 	else if (custom_errno == U_TOO_MANY_ARGUMENTS)
 		*custom_message = "too many arguments";
-	else if (custom_errno == U_NUMERIC_ARGUMENT_REQUIRED)
-		*custom_message = "numeric argument required";
 	else if (custom_errno == U_NO_FILE)
 		*custom_message = "No such file or directory";
 	else if (custom_errno == U_NO_PERMISSION)

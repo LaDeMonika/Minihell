@@ -40,6 +40,9 @@ int	ft_cd(t_minishell *shell, int *custom_errno)
 		*custom_errno = U_TOO_MANY_ARGUMENTS;
 		return (1);
 	}
+    shell->current_pwd = getcwd(NULL, 0);
+	if (shell->current_pwd == NULL)
+		error_free_all(shell, ERR_GETCWD, NULL, NULL);
 	shell->new_pwd = get_new_pwd(shell);
 	if (chdir(shell->new_pwd) == -1)
 	{
@@ -49,9 +52,6 @@ int	ft_cd(t_minishell *shell, int *custom_errno)
 			*custom_errno = U_NO_PERMISSION;
 		return (1);
 	}
-    shell->current_pwd = getcwd(NULL, 0);
-	if (shell->current_pwd == NULL)
-		error_free_all(shell, ERR_GETCWD, NULL, NULL);
 	update_value(shell, "OLDPWD", shell->current_pwd, false);
 	free_and_reset_ptr((void **)&shell->current_pwd);
 	shell->current_pwd = getcwd(NULL, 0);

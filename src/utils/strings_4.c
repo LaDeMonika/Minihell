@@ -20,7 +20,7 @@ bool	is_space(char c)
 	return (false);
 }
 
-int	ft_atoi(const char	*nptr, bool *valid_number)
+int	ft_atoi(const char	*nptr, bool *is_valid_number)
 {
 	int	i;
 	int	sign;
@@ -39,7 +39,7 @@ int	ft_atoi(const char	*nptr, bool *valid_number)
 		i++;
 	}
 	if (nptr[i] < '0' || nptr[i] > '9')
-		*valid_number = false;
+		*is_valid_number = false;
 	while (nptr[i] >= '0' && nptr[i] <= '9')
 	{
 		digit = nptr[i] - '0';
