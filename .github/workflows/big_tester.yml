@@ -9,7 +9,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Run bis tester.sh
+    - name: Run big tester.sh
       run: |
         make
         bash ./tester.sh vm
