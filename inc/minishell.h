@@ -278,13 +278,13 @@ int							try_fork(t_minishell *shell);
 //********************src/builtins
 int is_builtin(char *token);
 int							ft_strcmp(char *s1, char *s2);
-void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
+int handle_builtin(t_minishell *shell, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);
-int							ft_echo(char **command_array);
-int ft_cd(t_minishell *shell, char **command_array, int *custom_errno);
+int							ft_echo(t_minishell *shell);
+int ft_cd(t_minishell *shell, int *custom_errno);
 int ft_env(t_minishell *shell, int *custom_errno);
 int ft_unset(t_minishell *shell, char *key, int *custom_errno);
-int							ft_exit(t_minishell *shell, char **command_array, int *custom_errno);
+int							ft_exit(t_minishell *shell, int *custom_errno);
 int ft_pwd(t_minishell *shell);
 int ft_export(t_minishell *shell, char *arg, int *custom_errno);
 int index_of_first_occurence(char *str, char c);

@@ -60,7 +60,7 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 	custom_errno = -1;
 	shell->builtin = is_builtin(command_array[0]);
 	if (shell->builtin != NOT_BUILTIN)
-		handle_builtin(shell, command_array, &exit_status, &custom_errno);
+		exit_status = handle_builtin(shell, &custom_errno);
 	else
 	{
 		if (getcwd(cwd, sizeof(cwd)) && ft_strcmp(cwd, "/usr/bin") == 0)

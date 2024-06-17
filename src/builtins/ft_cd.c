@@ -42,7 +42,7 @@ char *get_new_pwd(t_minishell *shell, char **command_array)
 
 
 
-int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
+int ft_cd(t_minishell *shell, int *custom_errno)
 {
     char    *new_pwd;
     char *current_pwd;
@@ -50,9 +50,9 @@ int ft_cd(t_minishell *shell, char **command_array, int *custom_errno)
     current_pwd = getcwd(NULL, 0);
     if (current_pwd == NULL)
         error_free_all(shell, ERR_GETCWD, NULL, NULL);
-    if (command_array[1] && command_array[2])
+    if (shell->command_array[1] && shell->command_array[2])
         return (handle_to_many_args(&current_pwd, custom_errno));
-    new_pwd = get_new_pwd(shell, command_array);
+    new_pwd = get_new_pwd(shell, shell->command_array);
     if (chdir(new_pwd) == -1)
     {
         if (access(new_pwd, F_OK) == -1)

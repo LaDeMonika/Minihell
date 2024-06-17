@@ -1,18 +1,18 @@
 #include "../../inc/minishell.h"
 
-int	ft_exit(t_minishell *shell, char **command_array, int *custom_errno)
+int	ft_exit(t_minishell *shell, int *custom_errno)
 {
 	bool valid_number;
 	int	exit_code;
 
 	printf("exit\n");
 	valid_number = true;
-	if (command_array[1])
+	if (shell->command_array[1])
 	{
-		exit_code = ft_atoi(command_array[1], &valid_number);
+		exit_code = ft_atoi(shell->command_array[1], &valid_number);
 		if (valid_number)
 		{
-			if (command_array[2])
+			if (shell->command_array[2])
 			{
 				*custom_errno = U_TOO_MANY_ARGUMENTS;
 				return (1);
@@ -23,7 +23,7 @@ int	ft_exit(t_minishell *shell, char **command_array, int *custom_errno)
 		}
 		else
 		{
-			print_error(command_array[1], "numeric argument required");
+			print_error(shell->command_array[1], "numeric argument required");
 			free_all(shell);
 			exit (2);
 		}

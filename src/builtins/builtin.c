@@ -36,57 +36,78 @@ int export_no_args(t_minishell  *shell)
     return (0);
 }
 
-bool handle_unset(t_minishell *shell, char **command_array, int *status, int *custom_errno)
+/* bool handle_unset(t_minishell *shell, int *custom_errno)
 {
     int i;
+    int exit_status;
 
     i = 1;
-    while (command_array[i])
+    while (shell->command_array[i])
     {
-        *status = ft_unset(shell, command_array[i], custom_errno);
+        exit_status = ft_unset(shell, shell->command_array[i], custom_errno);
         i++;
     }
-    return (true);
-}
+    return (exit_status);
+} */
 
-bool handle_export(t_minishell *shell, char **command_array, int *status, int *custom_errno)
+/* int handle_export(t_minishell *shell, int *custom_errno)
 {
     int i;
+    int exit_status;
 
-    if (!command_array[1])
-    {
-        *status = export_no_args(shell);
-        return (true);
-    }
+    if (!shell->command_array[1])
+        return (export_no_args(shell));
     i = 1;
-    while (command_array[i])
+    while (shell->command_array[i])
     {
-        *status = ft_export(shell, command_array[i], custom_errno);
+        exit_status = ft_export(shell, shell->command_array[i], custom_errno);
         i++;
     }
-    return (true);
+    return (exit_status);
+} */
+int handle_builtin_for_each_arg(t_minishell *shell, int *custom_errno)
+{
+    int i;
+    int exit_status;
+
+    i = 1;
+    while (shell->command_array[i])
+    {
+        if (shell->builtin == B_EXPORT)
+            exit_status = ft_export(shell, shell->command_array[i], custom_errno);
+        else if (shell->builtin == B_UNSET)
+            exit_status = ft_unset(shell, shell->command_array[i], custom_errno);
+        i++;
+    }
+    return (exit_status);
 }
 
-void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno)
+int handle_builtin(t_minishell *shell, int *custom_errno)
 {
     if (shell->builtin == B_CD)
-        *status = ft_cd(shell, command_array, custom_errno);
+        return (ft_cd(shell, custom_errno));
     else if (shell->builtin == B_ECHO)
-        *status = ft_echo(command_array + 1);
+        return (ft_echo(shell));
     else if (shell->builtin == B_ENV)
-        *status = ft_env(shell, custom_errno);
+        return (ft_env(shell, custom_errno));
      else if (shell->builtin == B_EXIT)
-        *status = ft_exit(shell, shell->command_array, custom_errno);
+        return (ft_exit(shell, custom_errno));
     else if (shell->builtin == B_EXPORT)
-        handle_export(shell, command_array, status, custom_errno);
+    {
+        if (!shell->command_array[1])
+            return (export_no_args(shell));
+        return (handle_builtin_for_each_arg(shell, custom_errno));
+    }
     else if (shell->builtin == B_PWD)
-        *status = ft_pwd(shell);
+        return (ft_pwd(shell));
     else if (shell->builtin == B_UNSET)
-         handle_unset(shell, command_array, status, custom_errno);
+         return (handle_builtin_for_each_arg(shell, custom_errno));
+    return (0);
 }
 
 int is_builtin(char *token)
 {
+
     if (ft_strncmp(token, "cd",	3) == 0)
         return (B_CD);
     else if (ft_strcmp(token, "echo") == 0)

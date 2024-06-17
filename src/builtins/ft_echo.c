@@ -49,22 +49,22 @@ bool    contains_only_option_n(char *str)
     return (true);
 }
 
-int ft_echo(char **command_array)
+int ft_echo(t_minishell *shell)
 {
-    int i = 0;
+    int i = 1;
     int new_line_flag;
 
-    new_line_flag = contains_only_option_n(command_array[i]);
-    while (new_line_flag && contains_only_option_n(command_array[i]))
+    new_line_flag = contains_only_option_n(shell->command_array[i]);
+    while (new_line_flag && contains_only_option_n(shell->command_array[i]))
         i++;
-    while (command_array[i])
+    while (shell->command_array[i])
     {
-        ft_putstr_no_newline(command_array[i]);
-        if (command_array[i + 1])
+        ft_putstr_no_newline(shell->command_array[i]);
+        if (shell->command_array[i + 1])
             write(1, " ", 1);
         i++;
     }
     if (!new_line_flag)
         write(1, "\n", 1);
-    return 0;
+    return (0);
 }
