@@ -80,13 +80,14 @@ typedef struct s_minishell
 	char	*old_value;
 	char	*my_pid;
 	char	**split_array;
-	char	*new_entry;
 	char	*base;
 	char	*suffix;
 	char	*path;
 	char	*command_path;
 	char	*expanded_input;
 	char	*heredoc_input;
+	char	*current_pwd;
+	char *new_pwd;
 }							t_minishell;
 
 
@@ -97,7 +98,7 @@ enum						e_error
 	ERR_MALLOC,
 	ERR_TOO_MANY_ARGS,
 	ERR_TOO_FEW_ARGS,
-	ERR_INVALID_ARG,
+	ERR_INvalid_key,
 	ERR_PATH_NOT_FOUND,
 	ERR_SIGEMPTYSET,
 	ERR_SIGACTION,
@@ -121,7 +122,7 @@ enum e_custom_errno
 	U_INVALID_IDENTIFIER,
 	U_INVALID_OPTION,
 	U_NO_FILE,
-	U_NO_PERMISSION
+	U_NO_PERMISSION,
 };
 
 enum						e_token_delimiter
@@ -203,7 +204,7 @@ void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_message);
 void	free_iteration(t_minishell *shell);
-void	free_child(t_minishell *shell);
+void	free_all_exit(t_minishell *shell, int exit_status);
 
 
 // prompt
@@ -278,16 +279,17 @@ int							try_fork(t_minishell *shell);
 //********************src/builtins
 int is_builtin(char *token);
 int							ft_strcmp(char *s1, char *s2);
-void handle_builtin(t_minishell *shell, char **command_array, int *status, int *custom_errno);
+int handle_builtin(t_minishell *shell, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);
-int							ft_echo(char **command_array);
-int ft_cd(t_minishell *shell, char **command_array, int *custom_errno);
+int							ft_echo(t_minishell *shell);
+int ft_cd(t_minishell *shell, int *custom_errno);
 int ft_env(t_minishell *shell, int *custom_errno);
 int ft_unset(t_minishell *shell, char *key, int *custom_errno);
-int							ft_exit(t_minishell *shell, char **command_array, int *custom_errno);
+int							ft_exit(t_minishell *shell, int *custom_errno);
 int ft_pwd(t_minishell *shell);
 int ft_export(t_minishell *shell, char *arg, int *custom_errno);
-int index_of_first_occurence(char *str, char c);
+int export_no_args(t_minishell  *shell);
+int index_of_char(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
 
 //********************src/utils
@@ -318,9 +320,9 @@ char						*append(t_minishell *shell, char *base,
 								char *suffix, int free_afterwards);
 
 // strings_4
-void						ft_putstr_fd(char *s, int fd);
+
 bool						is_space(char c);
-int							ft_atoi(const char	*nptr, bool *valid_number);
+int							ft_atoi(const char	*nptr, bool *is_valid_number);
 
 
 //strings_5
@@ -329,6 +331,7 @@ int 						sizeof_array(void **array);
 
 // strings_6
 char 						*remove_metaquotes(t_minishell *shell, char *str);
-int	count_literal_chars(char *str, char metaquote);
+int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
+int count_occurences_of_char(char *str, char c);
 #endif

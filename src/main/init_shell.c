@@ -35,12 +35,13 @@ void	init_input_iteration(t_minishell *shell)
 	shell->old_key = NULL;
 	shell->my_pid = NULL;
 	shell->split_array = NULL;
-	shell->new_entry = NULL;
 	shell->base = NULL;
 	shell->suffix = NULL;
 	shell->path = NULL;
 	shell->command_path = NULL;
 	shell->expanded_input = NULL;
+	shell->current_pwd = NULL;
+	shell->new_pwd = NULL;
 }
 
 void	init_shell_struct(t_minishell *shell, char **envp)
