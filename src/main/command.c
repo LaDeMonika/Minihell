@@ -104,8 +104,8 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		//free_and_reset_ptr((void **)&path);
 		exit_status = 1;
 	}
-	if ((exit_status != 0 /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
-	|| (exit_status != 1 && ft_strcmp_btin(shell->command_array[0], "exit") == 0 */))
+	if ((exit_status != 0 && shell->builtin != B_EXIT) || custom_errno == U_TOO_MANY_ARGUMENTS) /* && ft_strcmp_btin(shell->command_array[0], "exit") != 0)
+	|| (exit_status != 1 && ft_strcmp_btin(shell->command_array[0], "exit") == 0 */
 	{
 		/* printf("child exit status %d not successful\n", exit_status); */
 		custom_message = NULL;
@@ -113,11 +113,13 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		if (shell->builtin == B_CD)
 		{
 			exit_status = 1;
-			print_error(shell->command_array[1], custom_message);
+			/* print_error(shell->command_array[1], custom_message); */
 		}
-		else
 		/* printf("errno in comamnd function: %d\n", errno); */
+		if (shell->builtin == B_EXIT)
 			print_error(shell->command_array[0], custom_message);
+		else
+			print_error(shell->command_array[1], custom_message);
 	}
 	/* printf("child exit status: %d\n", exit_status); */
 	if (!shell->stay_in_parent)

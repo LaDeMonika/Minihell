@@ -13,15 +13,6 @@
 
 #include "../../inc/minishell.h"
 
-static void ft_putstr_no_newline(char *str)
-{
-    while (*str)
-    {
-        write(1, str, 1);
-        str++;
-    }
-}
-
 bool    contains_only_option_n(char *str)
 {
     int i;
@@ -51,20 +42,21 @@ bool    contains_only_option_n(char *str)
 
 int ft_echo(t_minishell *shell)
 {
-    int i = 1;
     int new_line_flag;
+    int i;
 
-    new_line_flag = contains_only_option_n(shell->command_array[i]);
+    new_line_flag = contains_only_option_n(shell->command_array[1]);
+    i = 1;
     while (new_line_flag && contains_only_option_n(shell->command_array[i]))
         i++;
     while (shell->command_array[i])
     {
-        ft_putstr_no_newline(shell->command_array[i]);
+        printf("%s", shell->command_array[i]);
         if (shell->command_array[i + 1])
-            write(1, " ", 1);
+            printf(" ");
         i++;
     }
     if (!new_line_flag)
-        write(1, "\n", 1);
+        printf("\n");
     return (0);
 }

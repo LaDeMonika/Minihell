@@ -14,12 +14,13 @@
 
 void	extract_command_and_execute(t_minishell *shell, int start)
 {
-	int		end;
-	int		i;
+	int	end;
+	int	i;
 
 	end = sizeof_array((void **)shell->command_array);
 	shell->env_subarray = try_malloc(shell, sizeof(char *) * (end - start + 1));
-	shell->env_subarray = fill_array_with_null(shell->env_subarray, end - start + 1);
+	shell->env_subarray = fill_array_with_null(shell->env_subarray, end - start
+			+ 1);
 	i = 0;
 	while (start < end)
 	{
@@ -29,7 +30,7 @@ void	extract_command_and_execute(t_minishell *shell, int start)
 	}
 	free_and_reset_array((void ***)&shell->command_array, false);
 	shell->command_array = shell->env_subarray;
-    shell->env_subarray = NULL;
+	shell->env_subarray = NULL;
 	execute_command_array(shell, shell->command_array);
 }
 

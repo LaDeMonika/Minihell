@@ -123,7 +123,8 @@ enum e_custom_errno
 	U_INVALID_IDENTIFIER,
 	U_INVALID_OPTION,
 	U_NO_FILE,
-	U_NO_PERMISSION
+	U_NO_PERMISSION,
+	U_NUMERIC_ARGUMENT_REQUIRED
 };
 
 enum						e_token_delimiter
@@ -321,7 +322,7 @@ char						*append(t_minishell *shell, char *base,
 								char *suffix, int free_afterwards);
 
 // strings_4
-void						ft_putstr_fd(char *s, int fd);
+
 bool						is_space(char c);
 int							ft_atoi(const char	*nptr, bool *valid_number);
 
