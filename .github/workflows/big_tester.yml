@@ -12,4 +12,4 @@ jobs:
     - name: Run bis tester.sh
       run: |
         make
-        bash tester.sh vm
+        bash ./tester.sh vm
