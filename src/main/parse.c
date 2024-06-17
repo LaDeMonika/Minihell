@@ -46,7 +46,6 @@ void	write_to_file(t_minishell *shell, char **eof, char *input_file,
 			shell->heredoc_input = expand_env_variables(shell, shell->heredoc_input);
 			shell->expanded_input = NULL;
 		}
-
 		try_write(shell, pipe_fd[1], "\n", 1);
 		try_write(shell, file_fd, shell->heredoc_input, ft_strlen(shell->heredoc_input));
 		try_write(shell, file_fd, "\n", 1);
