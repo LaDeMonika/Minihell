@@ -10,6 +10,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run bis tester.sh
-      run:
+      run: |
         make
         bash 42_minishell_tester/tester.sh vm
