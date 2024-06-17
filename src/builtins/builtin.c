@@ -87,10 +87,6 @@ void handle_builtin(t_minishell *shell, char **command_array, int *status, int *
 
 int is_builtin(char *token)
 {
-    /* printf("token before split: [%s]\n", token); */
-
-
-   /*  printf("token after split: [%s]\n", token); */
     if (ft_strncmp(token, "cd",	3) == 0)
         return (B_CD);
     else if (ft_strcmp(token, "echo") == 0)

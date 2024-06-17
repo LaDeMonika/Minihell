@@ -329,6 +329,6 @@ int 						sizeof_array(void **array);
 
 // strings_6
 char 						*remove_metaquotes(t_minishell *shell, char *str);
-int	count_literal_chars(char *str, char metaquote);
+int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
 #endif
