@@ -1,0 +1,13 @@
+name: Run big tester
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run bis tester.sh
+      run: bash 42_minishell_tester/tester.sh m
