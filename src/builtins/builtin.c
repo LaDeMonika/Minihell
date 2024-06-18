@@ -5,20 +5,22 @@ int	handle_builtin_for_each_arg(t_minishell *shell, int *custom_errno)
 	int	i;
 	int	exit_status;
 
+	exit_status = 0;
 	i = 1;
 	while (shell->command_array[i])
 	{
 		if (shell->builtin == B_EXPORT)
-        {
-            exit_status = ft_export(shell, shell->command_array[i],
+		{
+			exit_status = ft_export(shell, shell->command_array[i],
 					custom_errno);
-            free_and_reset_ptr((void **)&shell->new_key);
-            free_and_reset_ptr((void **)&shell->new_value);
-        }
-
+			free_and_reset_ptr((void **)&shell->new_key);
+			free_and_reset_ptr((void **)&shell->new_value);
+		}
 		else if (shell->builtin == B_UNSET)
+		{
 			exit_status = ft_unset(shell, shell->command_array[i],
 					custom_errno);
+		}
 		i++;
 	}
 	return (exit_status);
@@ -47,22 +49,29 @@ int	handle_builtin(t_minishell *shell, int *custom_errno)
 	return (0);
 }
 
-int	is_builtin(char *token)
+bool	is_builtin(t_minishell *shell, char *token)
 {
+	bool	is_builtin;
+
+	is_builtin = true;
 	if (ft_strncmp(token, "cd", 3) == 0)
-		return (B_CD);
+		shell->builtin = B_CD;
 	else if (ft_strcmp(token, "echo") == 0)
-		return (B_ECHO);
+		shell->builtin = B_ECHO;
 	else if (ft_strcmp(token, "env") == 0)
-		return (B_ENV);
+		shell->builtin = B_ENV;
 	else if (ft_strcmp(token, "exit") == 0)
-		return (B_EXIT);
+		shell->builtin = B_EXIT;
 	else if (ft_strcmp(token, "export") == 0)
-		return (B_EXPORT);
+		shell->builtin = B_EXPORT;
 	else if (ft_strcmp(token, "pwd") == 0)
-		return (B_PWD);
+		shell->builtin = B_PWD;
 	else if (ft_strcmp(token, "unset") == 0)
-		return (B_UNSET);
+		shell->builtin = B_UNSET;
 	else
-		return (NOT_BUILTIN);
+	{
+		shell->builtin = NOT_BUILTIN;
+		is_builtin = false;
+	}
+	return (is_builtin);
 }

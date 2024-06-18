@@ -1,5 +1,7 @@
 #include "../../inc/minishell.h"
 
+
+
 void	handle_input(t_minishell *shell)
 {
 	int	i;
@@ -28,7 +30,7 @@ void	handle_input(t_minishell *shell)
 	if (shell->pipes_total == 0)
 	{
 		split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
-		shell->builtin = is_builtin(shell->command_array[0]);
+		is_builtin(shell, shell->command_array[0]);
 	}
 	if (shell->pipes_total == 0 && (shell->builtin == B_CD || shell->builtin == B_EXIT || shell->builtin == B_EXPORT || shell->builtin == B_UNSET))
 	{

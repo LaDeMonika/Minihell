@@ -14,11 +14,12 @@
 
 void    append_path(t_minishell *shell)
 {
-	char	*pwd;
+	char	pwd[PATH_MAX];
 	char	new_path[PATH_MAX];
 	char	*home;
 
-	pwd = getcwd(NULL, 0);
+	if (!getcwd(pwd, PATH_MAX))
+		error_free_all(shell, ERR_GETCWD, NULL, NULL);
 	home = getenv("HOME");
 	if (ft_strnstr(pwd, home, ft_strlen(home)))
 	{
@@ -28,7 +29,6 @@ void    append_path(t_minishell *shell)
 	}
 	else
 		shell->prompt = append(shell, shell->prompt, pwd, FREE_BASE);
-	free_and_reset_ptr((void **)&pwd);
 }
 
 void    append_hostname(t_minishell *shell)

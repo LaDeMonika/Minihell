@@ -40,8 +40,9 @@ void	init_input_iteration(t_minishell *shell)
 	shell->path = NULL;
 	shell->command_path = NULL;
 	shell->expanded_input = NULL;
-	shell->current_pwd = NULL;
 	shell->new_pwd = NULL;
+	shell->my_exit_status = 0;
+	shell->custom_errno = -1;
 }
 
 void	init_shell_struct(t_minishell *shell, char **envp)
