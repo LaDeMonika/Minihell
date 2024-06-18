@@ -14,13 +14,13 @@
 
 int ft_pwd(t_minishell *shell)
 {
-    char *current;
+    char *current_pwd;
 
-    current = getcwd(NULL, 0);
-    if (current == NULL)
+    current_pwd = getcwd(NULL, 0);
+    if (current_pwd == NULL)
         error_free_all(shell, ERR_GETCWD, NULL, NULL);
     else
-        printf("%s\n", current);
-    free_and_reset_ptr((void **)&current);
+        printf("%s\n", current_pwd);
+    free_and_reset_ptr((void **)&current_pwd);
     return (0);
 }

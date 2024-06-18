@@ -17,8 +17,12 @@ int	handle_builtin_for_each_arg(t_minishell *shell, int *custom_errno)
         }
 
 		else if (shell->builtin == B_UNSET)
+		{
 			exit_status = ft_unset(shell, shell->command_array[i],
 					custom_errno);
+			
+		}
+
 		i++;
 	}
 	return (exit_status);
