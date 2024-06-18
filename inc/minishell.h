@@ -86,8 +86,9 @@ typedef struct s_minishell
 	char	*command_path;
 	char	*expanded_input;
 	char	*heredoc_input;
-	char	*current_pwd;
 	char *new_pwd;
+	int	my_exit_status;
+	int	custom_errno;
 }							t_minishell;
 
 
@@ -123,6 +124,10 @@ enum e_custom_errno
 	U_INVALID_OPTION,
 	U_NO_FILE,
 	U_NO_PERMISSION,
+	U_NO_FILENAME_ARGUMENT,
+	U_IS_DIR,
+	U_IS_DIRECTORY
+
 };
 
 enum						e_token_delimiter
@@ -180,7 +185,7 @@ enum	e_free_afterwards
 // command
 char	*find_command(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
-void	execute_command_array(t_minishell *shell, char **command_array);
+int	execute_command_array(t_minishell *shell);
 
 // main
 void						handle_input(t_minishell *shell);
@@ -277,7 +282,7 @@ void						try_pipe(t_minishell *shell, int fd[2]);
 int							try_fork(t_minishell *shell);
 
 //********************src/builtins
-int is_builtin(char *token);
+bool	is_builtin(t_minishell *shell, char *token);
 int							ft_strcmp(char *s1, char *s2);
 int handle_builtin(t_minishell *shell, int *custom_errno);
 char						ft_strcmp_btin(char *s1, char *s2);

@@ -67,7 +67,7 @@ int	ft_unset(t_minishell *shell, char *key, int *custom_errno)
 		*custom_errno = U_INVALID_OPTION;
 		return (2);
 	}
-	if (!find_key(shell, key, &index_of_key))
+	if (!key || !find_key(shell, key, &index_of_key))
 		return (0);
 	return (remove_pair(shell, index_of_key));
 }

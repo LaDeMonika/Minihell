@@ -87,7 +87,6 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell->path);
 	free_and_reset_ptr((void **)&shell->command_path);
 	free_and_reset_ptr((void **)&shell->expanded_input);
-	free_and_reset_ptr((void **)&shell->current_pwd);
 	free_and_reset_ptr((void **)&shell->new_pwd);
 }
 
