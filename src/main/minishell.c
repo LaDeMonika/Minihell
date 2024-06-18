@@ -1,9 +1,29 @@
 #include "../../inc/minishell.h"
 
+bool	precheck_input(t_minishell *shell)
+{
+	if (ft_strcmp(shell->usr_input, ".") == 0)
+	{
+		print_error(".", "filename argument required");
+		print_error(".", "usage: . filename [arguments]");
+		shell->last_exit_status = 2;
+		return (false);
+	}
+	if (ft_strcmp(shell->usr_input, "..") == 0)
+	{
+		print_error("..", "command not found");
+		shell->last_exit_status = 127;
+		return (false);
+	}
+	return (true);
+}
+
 void	handle_input(t_minishell *shell)
 {
 	int	i;
 
+	if (!precheck_input(shell))
+		return ;
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	split_while_skipping_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])

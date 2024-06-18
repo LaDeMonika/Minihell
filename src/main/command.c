@@ -89,7 +89,10 @@ void	execute_command_array(t_minishell *shell, char **command_array)
 		custom_message = NULL;
 		set_exit_status_before_termination(shell, &custom_message, &exit_status,
 			custom_errno);
-		print_error(shell->command_array[1], custom_message);
+		if (exit_status == 127)
+			print_error(shell->command_array[0], custom_message);
+		else
+			print_error(shell->command_array[1], custom_message);
 	}
 	if (!shell->stay_in_parent)
 	{
@@ -119,18 +122,5 @@ void	execute_command(t_minishell *shell, char *command)
 		i++;
 	}
 	update_value(shell, "_", shell->command_array[i - 1], false);
-	if (ft_strcmp(shell->command_array[0], ".") == 0)
-	{
-		print_error(".", "filename argument required");
-		print_error(".", "usage: . filename [arguments]");
-		free_all(shell);
-		exit(2);
-	}
-	if (ft_strcmp(shell->command_array[0], "..") == 0)
-	{
-		print_error("..", "command not found");
-		free_all(shell);
-		exit(127);
-	}
 	execute_command_array(shell, shell->command_array);
 }
