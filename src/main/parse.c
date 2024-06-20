@@ -121,11 +121,7 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 	try_pipe(shell, pipe_fd);
 	pid = try_fork(shell);
 	if (pid == 0)
-	{
 		write_to_file(shell, eof, input_file, pipe_fd);
-
-	}
-
 	else
 	{
 		try_close(shell, pipe_fd[1]);
@@ -173,18 +169,13 @@ void	error_parsing_input(t_minishell *shell, t_token_list *this, t_token_list *n
 	shell->parsing_exit_status = 2;
 }
 
-void	parse_input(t_minishell *shell)
+int	parse_token(t_minishell *shell, t_token_list *list, int *exit_status)
 {
 	int				i;
-	int	j;
-	char			*index;
-	t_token_list	*list;
-	int				exit_status_after_parsing;
-	/* char	*space_index;
-	char 	*last_command; */
+
 
 	shell->parsing_exit_status = 0;
-	exit_status_after_parsing = 0;
+	*exit_status= 0;
 	i = 0;
 	while (shell->input_array[i])
 	{
@@ -194,61 +185,40 @@ void	parse_input(t_minishell *shell)
 			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
-				exit_status_after_parsing = 2;
-				break ;
+				*exit_status = 2;
+				return (i) ;
 			}
 			list = list->next;
 		}
-		if (shell->parsing_exit_status != 0)
-			break ;
 		i++;
 	}
+	return (i);
+}
+
+void	handle_heredoc(t_minishell *shell, t_token_list *list, int error_at_index)
+{
+	int	j;
+	char			*index;
+
 	j = 0;
 	while (shell->input_array[j])
 	{
 		list = shell->list[j];
 		while (list)
 		{
-			/* if (shell->pipes_total == 0 && shell->parsing_exit_status == 0 && list->delimiter == COMMAND && list->token)
+			if (list->delimiter == HEREDOC && j < error_at_index)
 			{
-				if (list->token[0])
-				{
-					space_index = strchr(list->token, ' ');
-					if (space_index)
-					{
-						while (space_index)
-						{
-							last_command = space_index + 1;
-							space_index = strchr(last_command, ' ');
-						}
-					}
-					else
-						last_command = list->token;
-					update_value(shell, "_", last_command, false);
-
-				}
-				else
-					update_value(shell, "_", "", false);
-
-			}
- */
-			if (list->delimiter == HEREDOC && j < i)
-			{
-				/* printf("j: %d\n", j); */
-
 				index = NULL;
 				index = ft_itoa(shell, j);
 				shell->input_file = append(shell, index, "_input.txt", FREE_BASE);
-				/* printf("parsing exit status before heredoc: %d\n", shell->parsing_exit_status); */
 				heredoc(shell, &list->token, shell->input_file);
 				if (shell->parsing_exit_status != 0)
 				{
 					if (unlink(shell->input_file) == -1)
 					{
-						free_and_reset_ptr((void **)&shell->input_file);
+						//free_and_reset_ptr((void **)&shell->input_file);
 						error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);
 					}
-
 				}
 				free_and_reset_ptr((void **)&shell->input_file);
 
@@ -257,7 +227,33 @@ void	parse_input(t_minishell *shell)
 		}
 		j++;
 	}
+}
+
+void	parse_input(t_minishell *shell)
+{
+	int	i;
+	int				error_at_index;
+	int				exit_status_after_parsing;
+	t_token_list	*list;
+
+	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
+	split_while_skipping_quotes(shell, shell->usr_input, '|');
+	while (shell->input_array[shell->pipes_total + 1])
+		shell->pipes_total++;
+	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));
+	shell->list = try_malloc(shell, sizeof(t_token_list *) * (shell->pipes_total
+				+ 2));
+	shell->list[shell->pipes_total + 1] = NULL;
+	i = 0;
+	while (shell->input_array[i])
+	{
+		shell->list[i] = NULL;
+		tokenize(shell, shell->input_array[i], i);
+		i++;
+	}
+	list = NULL;
+	error_at_index = parse_token(shell, list, &exit_status_after_parsing);
+	handle_heredoc(shell, list, error_at_index);
 	if (exit_status_after_parsing == 2 && (shell->parsing_exit_status == 0 || shell->parsing_exit_status == 2))
 		shell->parsing_exit_status = 2;
-	//printf("parsing exit status: %d\n", shell->parsing_exit_status);
 }

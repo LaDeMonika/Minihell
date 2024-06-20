@@ -10,7 +10,7 @@ void	parent(t_minishell *shell, char **input_array, int pipes_left, int read_fd)
 	if (read_fd > 0)
 		try_close(shell, read_fd);
 	if (pipes_left >= 1)
-		handle_pipes_recursive(shell, input_array + 1, pipes_left - 1,
+		handle_pipes(shell, input_array + 1, pipes_left - 1,
 			shell->pipe_fd[0]);
 	else
 	{
@@ -42,7 +42,7 @@ void	child(t_minishell *shell, int pipes_left,
 	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left], read_fd, shell->pipes_total - pipes_left);
 }
 
-void	handle_pipes_recursive(t_minishell *shell, char **input_array,
+void	handle_pipes(t_minishell *shell, char **input_array,
 		int pipes_left, int read_fd)
 {
 	if (pipe(shell->pipe_fd) == -1)
