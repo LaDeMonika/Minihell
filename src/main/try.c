@@ -72,3 +72,9 @@ int	try_fork(t_minishell *shell)
 		return (error_free_all(shell, ERR_FORK, NULL, NULL), 1);
 	return (pid);
 }
+
+void	try_getcwd(t_minishell *shell)
+{
+	if (!getcwd(shell->cwd, PATH_MAX))
+		error_free_all(shell, ERR_GETCWD, NULL, NULL);
+}

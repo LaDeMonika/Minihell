@@ -31,7 +31,7 @@ int	extract_command_and_execute(t_minishell *shell, int start)
 	free_and_reset_array((void ***)&shell->command_array, false);
 	shell->command_array = shell->env_subarray;
 	shell->env_subarray = NULL;
-	return (execute_command_array(shell));
+	return (execute_command_array(shell, false));
 }
 
 int	ft_env(t_minishell *shell, int *custom_errno)

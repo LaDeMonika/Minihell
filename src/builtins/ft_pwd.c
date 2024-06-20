@@ -14,10 +14,7 @@
 
 int ft_pwd(t_minishell *shell)
 {
-    char		cwd[PATH_MAX];
-
-    if (!getcwd(cwd, PATH_MAX))
-        error_free_all(shell, ERR_GETCWD, NULL, NULL);
-    printf("%s\n", cwd);
+    try_getcwd(shell);
+    printf("%s\n", shell->cwd);
     return (0);
 }

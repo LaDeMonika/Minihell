@@ -89,6 +89,7 @@ typedef struct s_minishell
 	char *new_pwd;
 	int	my_exit_status;
 	int	custom_errno;
+	char		cwd[PATH_MAX];
 }							t_minishell;
 
 
@@ -183,14 +184,14 @@ enum	e_free_afterwards
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
-char	*find_command(t_minishell *shell);
+char	*find_command_in_path_env(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
-int	execute_command_array(t_minishell *shell);
+int	execute_command_array(t_minishell *shell, bool print_message);
 
 // main
 void						handle_input(t_minishell *shell);
 //exit status
-void	set_exit_status_before_termination(t_minishell *shell, char **custom_message, int *exit_status, int custom_errno);
+void	set_exit_status_before_termination(t_minishell *shell, int *exit_status, int custom_errno);
 void						set_exit_status_after_termination(
 								t_minishell *shell, int *child_status,
 								int remaining_children);
@@ -280,6 +281,7 @@ void						*try_malloc(t_minishell *shell, int size);
 void						try_dup2(t_minishell *shell, int fd, int fd2);
 void						try_pipe(t_minishell *shell, int fd[2]);
 int							try_fork(t_minishell *shell);
+void	try_getcwd(t_minishell *shell);
 
 //********************src/builtins
 bool	is_builtin(t_minishell *shell, char *token);

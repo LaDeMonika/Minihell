@@ -35,14 +35,12 @@ char	*get_new_pwd(t_minishell *shell)
 
 int	ft_cd(t_minishell *shell, int *custom_errno)
 {
-	char		cwd[PATH_MAX];
 	if (shell->command_array[1] && shell->command_array[2])
 	{
 		*custom_errno = U_TOO_MANY_ARGUMENTS;
 		return (1);
 	}
-	if (!getcwd(cwd, PATH_MAX))
-		error_free_all(shell, ERR_GETCWD, NULL, NULL);
+	try_getcwd(shell);
 	shell->new_pwd = get_new_pwd(shell);
 	if (chdir(shell->new_pwd) == -1)
 	{
@@ -52,9 +50,8 @@ int	ft_cd(t_minishell *shell, int *custom_errno)
 			*custom_errno = U_NO_PERMISSION;
 		return (1);
 	}
-	update_value(shell, "OLDPWD", cwd, false);
-	if (!getcwd(cwd, PATH_MAX))
-		error_free_all(shell, ERR_GETCWD, NULL, NULL);
-	update_value(shell, "PWD", cwd, false);
+	update_value(shell, "OLDPWD", shell->cwd, false);
+	try_getcwd(shell);
+	update_value(shell, "PWD", shell->cwd, false);
 	return (0);
 }
