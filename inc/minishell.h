@@ -199,7 +199,7 @@ void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status);
 
 // init_shell_struct
 void						init_shell_struct(t_minishell *shell,
-								char **envp);
+								int argc, char **envp);
 void						init_input_iteration(t_minishell *shell);
 
 // err
