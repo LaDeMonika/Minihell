@@ -51,9 +51,6 @@ int	handle_builtin(t_minishell *shell, int *custom_errno)
 
 bool	is_builtin(t_minishell *shell, char *token)
 {
-	bool	is_builtin;
-
-	is_builtin = true;
 	if (ft_strncmp(token, "cd", 3) == 0)
 		shell->builtin = B_CD;
 	else if (ft_strcmp(token, "echo") == 0)
@@ -71,7 +68,7 @@ bool	is_builtin(t_minishell *shell, char *token)
 	else
 	{
 		shell->builtin = NOT_BUILTIN;
-		is_builtin = false;
+		return (false);
 	}
-	return (is_builtin);
+	return (true);
 }

@@ -89,6 +89,7 @@ typedef struct s_minishell
 	char *new_pwd;
 	int	my_exit_status;
 	int	custom_errno;
+	char		cwd[PATH_MAX];
 }							t_minishell;
 
 
@@ -183,21 +184,22 @@ enum	e_free_afterwards
 /*************************PROTOTYPES*************************/
 //********************src/main
 // command
-char	*find_command(t_minishell *shell);
+char	*find_command_in_path_env(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
-int	execute_command_array(t_minishell *shell);
+int	execute_command_array(t_minishell *shell, bool print_message);
 
 // main
 void						handle_input(t_minishell *shell);
 //exit status
-void	set_exit_status_before_termination(t_minishell *shell, char **custom_message, int *exit_status, int custom_errno);
+void	set_exit_status_before_termination(t_minishell *shell, int *exit_status, int custom_errno);
 void						set_exit_status_after_termination(
 								t_minishell *shell, int *child_status,
 								int remaining_children);
+void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status);
 
 // init_shell_struct
 void						init_shell_struct(t_minishell *shell,
-								char **envp);
+								int argc, char **envp);
 void						init_input_iteration(t_minishell *shell);
 
 // err
@@ -229,7 +231,7 @@ void						tokenize(t_minishell *shell, char *command,
 								int index);
 
 // pipes
-void						handle_pipes_recursive(t_minishell *shell,
+void						handle_pipes(t_minishell *shell,
 								char **input_array, int pipes_left,
 								int read_fd);
 void						parent(t_minishell *shell, char **input_array,
@@ -241,6 +243,7 @@ void						parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char **eof,
 								char *input_buffer);
 char	*extract_line(t_minishell *shell, char *input, char **heredoc_input);
+int	parse_token(t_minishell *shell, t_token_list *list, int *exit_status);
 
 // redirections
 int							find_redirect(char *command, int i);
@@ -257,7 +260,7 @@ void						parent_sigint_handler(int sig);
 
 void						set_signals(t_minishell *shell, int mode);
 
-// preprocess
+// preprocess/expand
 char	*extract_substr_and_append(t_minishell *shell, char *base, int len);
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
@@ -268,6 +271,8 @@ char						*check_env_variables(t_minishell *shell, char *s);
 void	split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
 char	*ft_getenv(t_minishell *shell, char *key);
+void	update_last_arg(t_minishell *shell);
+void	handle_heredoc(t_minishell *shell, t_token_list *list, int error_at_index);
 
 //try
 int							try_read(t_minishell *shell, int fd, char **buffer,
@@ -280,6 +285,7 @@ void						*try_malloc(t_minishell *shell, int size);
 void						try_dup2(t_minishell *shell, int fd, int fd2);
 void						try_pipe(t_minishell *shell, int fd[2]);
 int							try_fork(t_minishell *shell);
+void	try_getcwd(t_minishell *shell);
 
 //********************src/builtins
 bool	is_builtin(t_minishell *shell, char *token);

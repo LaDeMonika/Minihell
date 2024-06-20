@@ -32,7 +32,6 @@ void	init_input_iteration(t_minishell *shell)
 	shell->new_key = NULL;
 	shell->new_value = NULL;
 	shell->old_key = NULL;
-	shell->old_key = NULL;
 	shell->my_pid = NULL;
 	shell->split_array = NULL;
 	shell->base = NULL;
@@ -45,9 +44,12 @@ void	init_input_iteration(t_minishell *shell)
 	shell->custom_errno = -1;
 }
 
-void	init_shell_struct(t_minishell *shell, char **envp)
+void	init_shell_struct(t_minishell *shell, int argc, char **envp)
 {
 	int	i;
+
+	if (argc > 1)
+		error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL);
 	shell->envp = try_malloc(shell, sizeof(char *) * (sizeof_array((void **)envp) + 1));
 	shell->envp = fill_array_with_null(shell->envp, sizeof_array((void **)envp) + 1);
 	i = 0;

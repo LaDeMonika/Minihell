@@ -1,5 +1,45 @@
 #include "../../inc/minishell.h"
 
+void	update_last_arg(t_minishell *shell)
+{
+	int				i;
+	t_token_list	*list;
+	char	*space_index;
+	char 	*last_command;
+
+	i = 0;
+	while (shell->input_array[i])
+	{
+		list = shell->list[i];
+		while (list)
+		{
+			if (shell->pipes_total == 0 && list->delimiter == COMMAND && list->token)
+			{
+				if (list->token[0])
+				{
+					space_index = strchr(list->token, ' ');
+					if (space_index)
+					{
+						while (space_index)
+						{
+							last_command = space_index + 1;
+							space_index = strchr(last_command, ' ');
+						}
+					}
+					else
+						last_command = list->token;
+					update_value(shell, "_", last_command, false);
+				}
+				else
+					update_value(shell, "_", "", false);
+
+			}
+			list = list->next;
+		}
+		i++;
+	}
+}
+
 char	*ft_getpid(t_minishell *shell)
 {
 	int		fd;

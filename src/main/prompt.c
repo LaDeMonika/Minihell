@@ -14,21 +14,19 @@
 
 void    append_path(t_minishell *shell)
 {
-	char	pwd[PATH_MAX];
 	char	new_path[PATH_MAX];
 	char	*home;
 
-	if (!getcwd(pwd, PATH_MAX))
-		error_free_all(shell, ERR_GETCWD, NULL, NULL);
+	try_getcwd(shell);
 	home = getenv("HOME");
-	if (ft_strnstr(pwd, home, ft_strlen(home)))
+	if (ft_strnstr(shell->cwd, home, ft_strlen(home)))
 	{
-		ft_strlcpy(new_path, pwd + ft_strlen(home), ft_strlen(pwd) - ft_strlen(home) + 1);
+		ft_strlcpy(new_path, shell->cwd + ft_strlen(home), ft_strlen(shell->cwd) - ft_strlen(home) + 1);
         shell->prompt = append(shell, shell->prompt, "~", FREE_BASE);
 		shell->prompt = append(shell, shell->prompt, new_path, FREE_BASE);
 	}
 	else
-		shell->prompt = append(shell, shell->prompt, pwd, FREE_BASE);
+		shell->prompt = append(shell, shell->prompt, shell->cwd, FREE_BASE);
 }
 
 void    append_hostname(t_minishell *shell)
