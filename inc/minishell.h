@@ -195,6 +195,7 @@ void	set_exit_status_before_termination(t_minishell *shell, int *exit_status, in
 void						set_exit_status_after_termination(
 								t_minishell *shell, int *child_status,
 								int remaining_children);
+void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status);
 
 // init_shell_struct
 void						init_shell_struct(t_minishell *shell,

@@ -14,6 +14,15 @@ void	check_errno(t_minishell *shell, char **custom_message, int *exit_status)
 		*exit_status = 126;
 }
 
+void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status)
+{
+	if (custom_errno == EFAULT)
+		errno = EFAULT;
+	else
+		shell->custom_errno = custom_errno;
+	shell->my_exit_status = exit_status;
+}
+
 void	set_exit_status_before_termination(t_minishell *shell, int *exit_status, int custom_errno)
 {
 	char	*custom_message;

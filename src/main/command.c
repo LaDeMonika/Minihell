@@ -5,31 +5,22 @@
 
 char	*find_command_in_path_env(t_minishell *shell)
 {
-	int			i;
 	struct stat	path_stat;
+	int			i;
 
 	shell->path = ft_getenv(shell, "PATH");
 	if (!shell->path || !shell->path[0])
 	{
 		if (stat(shell->command_array[0], &path_stat) == 0)
-		{
-			print_error(shell->command_array[0], "Permission denied");
-			free_all(shell);
-			exit(126);
-		}
+			return (set_custom_errno(shell, U_NO_PERMISSION, 126), NULL);
 		else
-		{
-			print_error(shell->command_array[0], "No such file or directory");
-			free_all(shell);
-			exit(127);
-		}
+			return (set_custom_errno(shell, U_NO_FILE, 127), NULL);
 	}
 	split_while_skipping_quotes(shell, shell->path, ':');
 	i = 0;
 	while (shell->path_array[i])
 	{
-		shell->command_path = append(shell, shell->path_array[i], "/",
-				FREE_NONE);
+		shell->command_path = ft_strjoin(shell, shell->path_array[i], "/");
 		shell->command_path = append(shell, shell->command_path,
 				shell->command_array[0], FREE_BASE);
 		if (access(shell->command_path, F_OK & X_OK) == 0)
@@ -54,17 +45,9 @@ bool	parse_command(t_minishell *shell, char *command)
 	}
 	update_value(shell, "_", shell->command_array[i - 1], false);
 	if (ft_strcmp(shell->command_array[0], ".") == 0)
-	{
-		shell->custom_errno = U_NO_FILENAME_ARGUMENT;
-		shell->my_exit_status = 2;
-		return (false);
-	}
+		return (set_custom_errno(shell, U_NO_FILENAME_ARGUMENT, 2), false);
 	if (ft_strcmp(shell->command_array[0], "..") == 0)
-	{
-		errno = EFAULT;
-		shell->my_exit_status = 127;
-		return (false);
-	}
+		return (set_custom_errno(shell, EFAULT, 127), false);
 	return (true);
 }
 
@@ -79,17 +62,9 @@ char	*get_command_path(t_minishell *shell)
 		|| ft_strncmp(shell->command_array[0], "./", 2) == 0)
 	{
 		if (stat(shell->command_array[0], &path_stat) == -1)
-		{
-			shell->custom_errno = U_NO_FILE;
-			shell->my_exit_status = 127;
-			return (NULL);
-		}
+			return (set_custom_errno(shell, U_NO_FILE, 127), NULL);
 		else if (S_ISDIR(path_stat.st_mode))
-		{
-			shell->custom_errno = U_IS_DIRECTORY;
-			shell->my_exit_status = 126;
-			return (NULL);
-		}
+			return (set_custom_errno(shell, U_IS_DIRECTORY, 126), NULL);
 		shell->command_path = ft_strdup(shell, shell->command_array[0]);
 	}
 	else
@@ -99,7 +74,6 @@ char	*get_command_path(t_minishell *shell)
 
 int	execute_command_array(t_minishell *shell, bool print_message)
 {
-
 	if (is_builtin(shell, shell->command_array[0]))
 		shell->my_exit_status = handle_builtin(shell, &shell->custom_errno);
 	else
@@ -113,8 +87,8 @@ int	execute_command_array(t_minishell *shell, bool print_message)
 	}
 	if ((errno > 0 || shell->custom_errno > -1 || shell->my_exit_status != 0)
 		&& print_message)
-			set_exit_status_before_termination(shell,
-				&shell->my_exit_status, shell->custom_errno);
+		set_exit_status_before_termination(shell, &shell->my_exit_status,
+			shell->custom_errno);
 	return (shell->my_exit_status);
 }
 
