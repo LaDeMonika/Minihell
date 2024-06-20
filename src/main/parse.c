@@ -180,8 +180,8 @@ void	parse_input(t_minishell *shell)
 	char			*index;
 	t_token_list	*list;
 	int				exit_status_after_parsing;
-	char	*space_index;
-	char 	*last_command;
+	/* char	*space_index;
+	char 	*last_command; */
 
 	shell->parsing_exit_status = 0;
 	exit_status_after_parsing = 0;
@@ -209,11 +209,10 @@ void	parse_input(t_minishell *shell)
 		list = shell->list[j];
 		while (list)
 		{
-			if (shell->pipes_total == 0 && shell->parsing_exit_status == 0 && list->delimiter == COMMAND && list->token)
+			/* if (shell->pipes_total == 0 && shell->parsing_exit_status == 0 && list->delimiter == COMMAND && list->token)
 			{
 				if (list->token[0])
 				{
-					/* args = split_while_skipping_quotes(shell, list->token, ' '); */
 					space_index = strchr(list->token, ' ');
 					if (space_index)
 					{
@@ -223,15 +222,16 @@ void	parse_input(t_minishell *shell)
 							space_index = strchr(last_command, ' ');
 						}
 					}
+					else
+						last_command = list->token;
 					update_value(shell, "_", last_command, false);
-					/* free_and_reset_array((void ***)&args, false);
-					free_and_reset_ptr((void **)&args); */
+
 				}
 				else
 					update_value(shell, "_", "", false);
 
 			}
-
+ */
 			if (list->delimiter == HEREDOC && j < i)
 			{
 				/* printf("j: %d\n", j); */

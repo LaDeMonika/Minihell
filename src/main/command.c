@@ -56,7 +56,7 @@ bool	parse_command(t_minishell *shell)
 	return (true);
 }
 
-char *get_command_path(t_minishell *shell)
+char	*get_command_path(t_minishell *shell)
 {
 	struct stat	path_stat;
 	char		cwd[PATH_MAX];
@@ -65,13 +65,11 @@ char *get_command_path(t_minishell *shell)
 		error_free_all(shell, ERR_GETCWD, NULL, NULL);
 	if (ft_strcmp(cwd, "/usr/bin") == 0)
 	{
-		shell->command_path = ft_strjoin(shell, "./",
-				shell->command_array[0]);
+		shell->command_path = ft_strjoin(shell, "./", shell->command_array[0]);
 	}
 	else if (shell->command_array[0][0] == '/'
 		|| ft_strncmp(shell->command_array[0], "./", 2) == 0)
 	{
-
 		if (stat(shell->command_array[0], &path_stat) == -1)
 		{
 			shell->custom_errno = U_NO_FILE;
@@ -93,13 +91,16 @@ char *get_command_path(t_minishell *shell)
 
 int	execute_command_array(t_minishell *shell)
 {
-	char		*custom_message;
+	char	*custom_message;
 	bool	print_message;
+	bool	builtin;
 
 	print_message = true;
-	if (shell->builtin == B_ENV && ft_strcmp(shell->command_array[0], "env") != 0)
+	builtin = is_builtin(shell, shell->command_array[0]);
+	if (shell->builtin == B_ENV && ft_strcmp(shell->command_array[0],
+			"env") != 0)
 		print_message = false;
-	if (is_builtin(shell, shell->command_array[0]))
+	if (shell->builtin != NOT_BUILTIN)
 		shell->my_exit_status = handle_builtin(shell, &shell->custom_errno);
 	else
 	{
@@ -109,12 +110,13 @@ int	execute_command_array(t_minishell *shell)
 			execve(shell->command_path, shell->command_array, shell->envp);
 			shell->my_exit_status = 1;
 		}
-
 	}
-	if ((errno > 0 || shell->custom_errno > 0 || shell->my_exit_status != 0) && print_message)
+	if ((errno > 0 || shell->custom_errno > 0 || shell->my_exit_status != 0)
+		&& print_message)
 	{
 		custom_message = NULL;
-		set_exit_status_before_termination(shell, &custom_message, &shell->my_exit_status, shell->custom_errno);
+		set_exit_status_before_termination(shell, &custom_message,
+			&shell->my_exit_status, shell->custom_errno);
 		if (shell->my_exit_status == 127)
 			print_error(shell->command_array[0], custom_message);
 		else
@@ -125,7 +127,6 @@ int	execute_command_array(t_minishell *shell)
 bool	prepare_command_array(t_minishell *shell, char *command)
 {
 	int	i;
-
 
 	if (!command || !command[0])
 		return (false);
@@ -144,7 +145,7 @@ bool	prepare_command_array(t_minishell *shell, char *command)
 
 void	execute_command(t_minishell *shell, char *command)
 {
-
+	int	my_exit_status;
 
 	if (prepare_command_array(shell, command))
 	{
@@ -153,8 +154,9 @@ void	execute_command(t_minishell *shell, char *command)
 	}
 	if (!shell->stay_in_parent)
 	{
+		my_exit_status = shell->my_exit_status;
 		free_all(shell);
-		exit(shell->my_exit_status);
+		exit(my_exit_status);
 	}
 	else
 		shell->last_exit_status = shell->my_exit_status;
