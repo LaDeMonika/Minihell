@@ -42,6 +42,7 @@ void	init_input_iteration(t_minishell *shell)
 	shell->new_pwd = NULL;
 	shell->my_exit_status = 0;
 	shell->custom_errno = -1;
+	shell->temp_str = NULL;
 }
 
 void	init_shell_struct(t_minishell *shell, int argc, char **envp)

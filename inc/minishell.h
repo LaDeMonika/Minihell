@@ -89,6 +89,7 @@ typedef struct s_minishell
 	char *new_pwd;
 	int	my_exit_status;
 	int	custom_errno;
+	char	*temp_str;
 	char		cwd[PATH_MAX];
 }							t_minishell;
 

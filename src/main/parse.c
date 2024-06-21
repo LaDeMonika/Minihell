@@ -88,6 +88,7 @@ void	parse_input(t_minishell *shell)
 	t_token_list	*list;
 
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
+	shell->temp_str = NULL;
 	split_while_skipping_quotes(shell, shell->usr_input, '|');
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
