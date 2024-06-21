@@ -183,6 +183,8 @@ enum	e_free_afterwards
 };
 /*************************PROTOTYPES*************************/
 //********************src/main
+char	*tester_readline(t_minishell *shell, char *prompt);
+
 // command
 char	*find_command_in_path_env(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
@@ -243,7 +245,7 @@ void						parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char **eof,
 								char *input_buffer);
 char	*extract_line(t_minishell *shell, char *input, char **heredoc_input);
-int	parse_token(t_minishell *shell, t_token_list *list, int *exit_status);
+int	parse_token(t_minishell *shell, t_token_list *list);
 
 // redirections
 int							find_redirect(char *command, int i);

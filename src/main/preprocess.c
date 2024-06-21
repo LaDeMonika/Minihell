@@ -160,7 +160,7 @@ char	*expand_env_variables(t_minishell *shell, char *s)
 
 	i = 0;
 	start = 0;
-	shell->expanded_input = NULL;
+	//shell->expanded_input = NULL;
 	metaquote = '\0';
 	if (!s[i])
 		shell->expanded_input = ft_strdup(shell, s);
