@@ -205,6 +205,9 @@ void						init_shell_struct(t_minishell *shell,
 								int argc, char **envp);
 void						init_input_iteration(t_minishell *shell);
 
+//environment
+char	*get_env_value(t_minishell *shell, char *base, int *start, int *i);
+
 // err
 void						error_free_all(t_minishell *shell, int err,
 								char *prefix, char *custom_message);
@@ -348,4 +351,6 @@ char 						*remove_metaquotes(t_minishell *shell, char *str);
 int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
 int count_occurences_of_char(char *str, char c);
+char	*last_word(char *str);
+
 #endif

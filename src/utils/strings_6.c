@@ -132,3 +132,22 @@ int ft_strcmp(char *s1, char *s2)
         return (1);
     return (s1[i] - s2[i]);
 }
+
+char	*last_word(char *str)
+{
+	char			*space_index;
+	char			*last_word;
+
+	space_index = strchr(str, ' ');
+	if (space_index)
+	{
+		while (space_index)
+		{
+			last_word = space_index + 1;
+			space_index = strchr(last_word, ' ');
+		}
+	}
+	else
+		last_word = str;
+	return (last_word);
+}
