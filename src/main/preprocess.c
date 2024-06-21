@@ -99,18 +99,32 @@ char	*ft_getenv(t_minishell *shell, char *key)
 	return (NULL);
 }
 
-char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
-		char *metaquote)
+char	*get_env_for_special_symbol(t_minishell *shell, char *base, int *start,
+		int *i)
 {
-	char	*env_key;
-	char	*env_value;
+	if (!base[*i] || base[*i] == ' ' || base[*i] == shell->metaquote)
+	{
+		shell->old_value = ft_strdup(shell, "$");
+		(*i)--;
+	}
+	else if (base[*i] == '$')
+		shell->old_value = ft_getpid(shell);
+	else if (base[*i] == '?')
+		shell->old_value = ft_itoa(shell, shell->last_exit_status);
+	else if (base[*i] == '_')
+		shell->old_value = ft_getenv(shell, "_");
+	else if (base[*i] == '"' || base[*i] == '\'')
+		(*i)--;
+	*start = *i + 1;
+	return (shell->old_value);
+}
 
-	env_key = NULL;
-	env_value = NULL;
+char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
+{
 	(*i)++;
 	if (base[*i - 1] == '~')
 	{
-		env_value = ft_strdup(shell, getenv("HOME"));
+		shell->old_value = ft_getenv(shell, "HOME");
 		if (base[*i])
 			*start = *i + 1;
 		else
@@ -122,83 +136,72 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i,
 		*start = *i;
 		while (ft_isalnum(base[*i]) || base[*i] == '_')
 			(*i)++;
-		env_key = ft_substr(shell, base, *start, *i - *start);
-		env_value = ft_getenv(shell, env_key);
-		free_and_reset_ptr((void **)&env_key);
+		shell->old_key = ft_substr(shell, base, *start, *i - *start);
+		shell->old_value = ft_getenv(shell, shell->old_key);
+		free_and_reset_ptr((void **)&shell->old_key);
 		*start = *i;
 		(*i)--;
 	}
 	else
-	{
-		if (!base[*i] || base[*i] == ' ' || base[*i] == *metaquote)
-		{
-			env_value = ft_strdup(shell, "$");
-			(*i)--;
-		}
-		else if (base[*i] == '$')
-			env_value = ft_getpid(shell);
-		else if (base[*i] == '?')
-			env_value = ft_itoa(shell, shell->last_exit_status);
-		else if (base[*i] == '_')
-			env_value = ft_getenv(shell, "_");
-		else if (base[*i] == '"' || base[*i] == '\'')
-			(*i)--;
-		*start = *i + 1;
-	}
-	return (env_value);
+		shell->old_value = get_env_for_special_symbol(shell, base, start, i);
+	return (shell->old_value);
 }
 
 char	*extract_substr_and_append(t_minishell *shell, char *base, int len)
 {
 	shell->suffix = ft_substr(shell, base, 0, len);
-	shell->expanded_input = append(shell, shell->expanded_input, shell->suffix,
+	shell->temp_str = append(shell, shell->temp_str, shell->suffix,
 			FREE_BOTH);
-	return (shell->expanded_input);
+	return (shell->temp_str);
+}
+
+bool	found_quote(t_minishell *shell, char *s, int *i)
+{
+	if (s[*i] == '"' && !(shell->metaquote))
+			shell->metaquote = s[*i];
+	else if (s[*i] == shell->metaquote)
+			shell->metaquote = '\0';
+	else if (s[*i] == '\'' && !(shell->metaquote))
+			*i = skip_between_metaquotes(s, *i, '\'');
+	else
+		return (false);
+	return (true);
 }
 
 char	*expand_env_variables(t_minishell *shell, char *s)
 {
 	int		i;
 	int		start;
-	char	*env_value;
-	char	metaquote;
 
 	i = 0;
 	start = 0;
-	metaquote = '\0';
+	shell->metaquote = '\0';
 	if (!s[i])
-		shell->expanded_input = ft_strdup(shell, s);
+		shell->temp_str = ft_strdup(shell, s);
 	while (s[i])
 	{
-		if (s[i] == '"' && !metaquote)
-			metaquote = s[i];
-		else if (s[i] == metaquote)
-			metaquote = '\0';
-		else if (s[i] == '\'' && !metaquote)
-			i = skip_between_metaquotes(s, i, '\'');
-		else if (s[i] == '$' || (s[i] == '~' && !metaquote && (is_space(s[i
-						+ 1]) || !s[i + 1])))
+		if (!found_quote(shell, s, &i) && (s[i] == '$' || (s[i] == '~' && !shell->metaquote && (is_space(s[i + 1]) || !s[i + 1]))))
 		{
-			shell->expanded_input = extract_substr_and_append(shell, s + start,
+			shell->temp_str = extract_substr_and_append(shell, s + start,
 					i - start);
-			env_value = get_env_value(shell, s, &start, &i, &metaquote);
-			shell->expanded_input = append(shell, shell->expanded_input,
-					env_value, FREE_BOTH);
+			shell->old_value = get_env_value(shell, s, &start, &i);
+			shell->temp_str = append(shell, shell->temp_str,
+					shell->old_value, FREE_BOTH);
+			shell->old_value = NULL;
 		}
 		if (s[i])
 			i++;
 	}
 	if (i != start)
-		shell->expanded_input = extract_substr_and_append(shell, s + start, i
+		shell->temp_str = extract_substr_and_append(shell, s + start, i
 				- start);
 	free_and_reset_ptr((void **)&s);
-	return (shell->expanded_input);
+	return (shell->temp_str);
 }
 
 char	*append_heredoc_on_missing_quote(t_minishell *shell, char *base)
 {
 	int		i;
-	char	metaquote;
 	char	quote[2];
 
 	i = 0;
@@ -206,11 +209,11 @@ char	*append_heredoc_on_missing_quote(t_minishell *shell, char *base)
 	{
 		if (base[i] == '"' || base[i] == '\'')
 		{
-			metaquote = base[i];
-			i = skip_between_metaquotes(base, i, metaquote);
+			shell->metaquote = base[i];
+			i = skip_between_metaquotes(base, i, shell->metaquote);
 			if (!base[i])
 			{
-				quote[0] = metaquote;
+				quote[0] = shell->metaquote;
 				quote[1] = '\0';
 				shell->temp_str = append(shell, base, quote, FREE_BASE);
 				shell->temp_str = append(shell, shell->temp_str, "<<",
