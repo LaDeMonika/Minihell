@@ -76,8 +76,8 @@ typedef struct s_minishell
 	char	*new_key;
 	char						*new_value;
 	char	**new_envp;
-	char	*old_key;
-	char	*old_value;
+	char	*env_key;
+	char	*env_value;
 	char	*my_pid;
 	char	**split_array;
 	char	*base;
@@ -91,6 +91,8 @@ typedef struct s_minishell
 	char	*temp_str;
 	char		cwd[PATH_MAX];
 	char	metaquote;
+	char	*token;
+	char	*last_arg;
 }							t_minishell;
 
 
@@ -177,10 +179,9 @@ enum						e_builtin
 //freeing in append function
 enum	e_free_afterwards
 {
-	FREE_NONE,
-	FREE_BASE,
-	FREE_SUFFIX,
-	FREE_BOTH
+	BASE,
+	SUFFIX,
+	BOTH
 };
 /*************************PROTOTYPES*************************/
 //********************src/main
@@ -235,6 +236,7 @@ void	append_to_command(t_minishell *shell, t_token_list **head,
 		char *command_arg, char **token);
 void						tokenize(t_minishell *shell, char *command,
 								int index);
+								char	*prepare_last_arg(t_minishell *shell, char *str);
 
 // pipes
 void						handle_pipes(t_minishell *shell,
@@ -267,7 +269,7 @@ void						parent_sigint_handler(int sig);
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess/expand
-char	*extract_substr_and_append(t_minishell *shell, char *base, int len);
+char	*extract_and_append(t_minishell *shell, char *base, int len);
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);

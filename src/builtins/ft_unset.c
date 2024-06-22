@@ -17,14 +17,14 @@ bool	find_key(t_minishell *shell, char *key, int *i)
 	*i = 0;
 	while (shell->envp[*i])
 	{
-		shell->old_key = ft_substr(shell, shell->envp[*i], 0,
+		shell->env_key = ft_substr(shell, shell->envp[*i], 0,
 				index_of_char(shell->envp[*i], '='));
-		if (ft_strcmp(shell->old_key, key) == 0)
+		if (ft_strcmp(shell->env_key, key) == 0)
 		{
-			free_and_reset_ptr((void **)&shell->old_key);
+			free_and_reset_ptr((void **)&shell->env_key);
 			return (true);
 		}
-		free_and_reset_ptr((void **)&shell->old_key);
+		free_and_reset_ptr((void **)&shell->env_key);
 		(*i)++;
 	}
 	return (false);

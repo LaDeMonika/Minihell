@@ -79,8 +79,8 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->command_array, false);
 	free_and_reset_ptr((void **)&shell->pid);
 	free_and_reset_array((void ***)&shell->env_subarray, false);
-	free_and_reset_ptr((void **)&shell->old_key);
-	free_and_reset_ptr((void **)&shell->old_value);
+	free_and_reset_ptr((void **)&shell->env_key);
+	free_and_reset_ptr((void **)&shell->env_value);
 	free_and_reset_ptr((void **)&shell->new_key);
 	free_and_reset_ptr((void **)&shell->new_value);
 	free_and_reset_array((void ***)&shell->new_envp, false);
@@ -91,6 +91,9 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell->new_pwd);
 	free_and_reset_ptr((void **)&shell->temp_str);
 	free_and_reset_ptr((void **)&shell->my_pid);
+	free_and_reset_ptr((void **)&shell->heredoc_input);
+	free_and_reset_ptr((void **)&shell->token);
+	free_and_reset_ptr((void **)&shell->last_arg);
 }
 
 int	free_all(t_minishell *shell)

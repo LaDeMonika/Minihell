@@ -22,7 +22,7 @@ char	*find_command_in_path_env(t_minishell *shell)
 	{
 		shell->command_path = ft_strjoin(shell, shell->path_array[i], "/");
 		shell->command_path = append(shell, shell->command_path,
-				shell->command_array[0], FREE_BASE);
+				shell->command_array[0], BASE);
 		if (access(shell->command_path, F_OK & X_OK) == 0)
 			return (shell->command_path);
 		free_and_reset_ptr((void **)&shell->command_path);

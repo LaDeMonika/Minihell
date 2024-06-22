@@ -68,7 +68,7 @@ void	handle_heredoc(t_minishell *shell, t_token_list *list,
 			{
 				index = ft_itoa(shell, j);
 				shell->input_file = append(shell, index, "_input.txt",
-						FREE_BASE);
+						BASE);
 				heredoc(shell, &list->token, shell->input_file);
 				if (shell->parsing_exit_status != 0
 					&& unlink(shell->input_file) == -1)

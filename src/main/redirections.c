@@ -32,7 +32,7 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd, in
 			//printf("trying to redirect from %s\n", shell->input_file);
 			index_as_str = NULL;
 			index_as_str = ft_itoa(shell, index);
-			shell->input_file = append(shell, index_as_str, "_input.txt", FREE_BASE);
+			shell->input_file = append(shell, index_as_str, "_input.txt", BASE);
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
 			if (unlink(shell->input_file) == -1)
 				error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);

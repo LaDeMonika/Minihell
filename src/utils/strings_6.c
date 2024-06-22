@@ -135,9 +135,17 @@ int ft_strcmp(char *s1, char *s2)
 
 char	*last_word(char *str)
 {
+    int i;
 	char			*space_index;
 	char			*last_word;
 
+    i = 0;
+    while(str[i])
+    {
+        if (str[i] == '"' || str[i] == '\'')
+            i = skip_between_metaquotes(str, i, str[i]);
+        i++;
+    }
 	space_index = strchr(str, ' ');
 	if (space_index)
 	{

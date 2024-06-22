@@ -37,9 +37,9 @@ char	*append(t_minishell *shell, char *base, char *suffix, int free_afterwards)
 	char	*new_str;
 
 	new_str = ft_strjoin(shell, base, suffix);
-	if (free_afterwards == FREE_BASE || free_afterwards == FREE_BOTH)
+	if (free_afterwards == BASE || free_afterwards == BOTH)
 		free_and_reset_ptr((void **)&base);
-	if (free_afterwards == FREE_SUFFIX || free_afterwards == FREE_BOTH)
+	if (free_afterwards == SUFFIX || free_afterwards == BOTH)
 		free_and_reset_ptr((void **)&suffix);
 	return (new_str);
 }

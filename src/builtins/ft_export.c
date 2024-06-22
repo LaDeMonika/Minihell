@@ -20,21 +20,21 @@ char *update_value(t_minishell *shell, char *key, char *value, bool to_append)
     i = 0;
     while (shell->envp[i])
     {
-        shell->old_key = ft_substr(shell, shell->envp[i], 0,  index_of_char(shell->envp[i], '='));
-        if (ft_strcmp(shell->old_key, key) == 0)
+        shell->env_key = ft_substr(shell, shell->envp[i], 0,  index_of_char(shell->envp[i], '='));
+        if (ft_strcmp(shell->env_key, key) == 0)
         {
             free_and_reset_ptr((void **)&shell->envp[i]);
             shell->envp[i] = ft_strjoin(shell, key, "=");
             if (to_append)
             {
-                shell->old_value = ft_substr(shell, shell->envp[i], index_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
-                shell->envp[i] = append(shell, shell->envp[i], shell->old_value, FREE_BOTH);
+                shell->env_value = ft_substr(shell, shell->envp[i], index_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+                shell->envp[i] = append(shell, shell->envp[i], shell->env_value, BOTH);
             }
-            shell->envp[i] = append(shell, shell->envp[i], value, FREE_BASE);
-            free_and_reset_ptr((void **)&shell->old_key);
+            shell->envp[i] = append(shell, shell->envp[i], value, BASE);
+            free_and_reset_ptr((void **)&shell->env_key);
             return (shell->envp[i]);
         }
-        free_and_reset_ptr((void **)&shell->old_key);
+        free_and_reset_ptr((void **)&shell->env_key);
         i++;
     }
     return (NULL);
@@ -101,7 +101,7 @@ void    add_new_entry(t_minishell *shell, char *arg, int to_append)
     if (to_append)
     {
         shell->new_envp[old_size] = ft_strjoin(shell, shell->new_key, "=");
-        shell->new_envp[old_size] = append(shell, shell->new_envp[old_size], shell->new_value, FREE_BASE);
+        shell->new_envp[old_size] = append(shell, shell->new_envp[old_size], shell->new_value, BASE);
     }
     else
         shell->new_envp[old_size] = ft_strdup(shell, arg);
@@ -135,11 +135,11 @@ int export_no_args(t_minishell  *shell)
     i = 0;
     while (shell->envp[i])
     {
-        shell->old_key = ft_substr(shell, shell->envp[i], 0,  index_of_char(shell->envp[i], '='));
-        shell->old_value = ft_substr(shell, shell->envp[i], index_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
-        printf("declare -x %s=\"%s\"\n", shell->old_key, shell->old_value);
-        free_and_reset_ptr((void **)&shell->old_key);
-        free_and_reset_ptr((void **)&shell->old_value);
+        shell->env_key = ft_substr(shell, shell->envp[i], 0,  index_of_char(shell->envp[i], '='));
+        shell->env_value = ft_substr(shell, shell->envp[i], index_of_char(shell->envp[i], '=') + 1, ft_strlen(strchr(shell->envp[i], '=') - 1));
+        printf("declare -x %s=\"%s\"\n", shell->env_key, shell->env_value);
+        free_and_reset_ptr((void **)&shell->env_key);
+        free_and_reset_ptr((void **)&shell->env_value);
         i++;
     }
     return (0);

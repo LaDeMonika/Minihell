@@ -31,8 +31,8 @@ void	init_input_iteration(t_minishell *shell)
 	shell->new_envp = NULL;
 	shell->new_key = NULL;
 	shell->new_value = NULL;
-	shell->old_key = NULL;
-	shell->old_value = NULL;
+	shell->env_key = NULL;
+	shell->env_value = NULL;
 	shell->my_pid = NULL;
 	shell->split_array = NULL;
 	shell->base = NULL;
@@ -45,6 +45,9 @@ void	init_input_iteration(t_minishell *shell)
 	shell->custom_errno = -1;
 	shell->temp_str = NULL;
 	shell->metaquote = '\0';
+	shell->token = NULL;
+	shell->last_arg = NULL;
+	shell->heredoc_input = NULL;
 }
 
 void	init_shell_struct(t_minishell *shell, int argc, char **envp)
