@@ -79,7 +79,7 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 	if (shell->pre_delimiter != HEREDOC)
 	{
 		token = expand_env_variables(shell, token);
-		shell->expanded_input = NULL;
+		shell->temp_str = NULL;
 	}
 	if (shell->pre_delimiter != COMMAND)
 	{

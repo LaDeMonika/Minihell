@@ -37,13 +37,10 @@ void	set_signals(t_minishell *shell, int mode)
 	if (mode == PARENT_WITHOUT_CHILD || mode == PARENT_WITH_CHILD
 		|| mode == HEREDOC_CHILD)
 		shell->sa_sigquit.sa_handler = SIG_IGN;
-	if (mode == HEREDOC_CHILD)
+	if (mode == HEREDOC_CHILD || mode == CHILD)
 		shell->sa_sigint.sa_handler = child_sigint_handler;
 	if (mode == CHILD)
-	{
-		shell->sa_sigint.sa_handler = child_sigint_handler;
 		shell->sa_sigquit.sa_handler = child_sigquit_handler;
-	}
 	if (sigaction(SIGINT, &shell->sa_sigint, NULL) == -1 || sigaction(SIGQUIT, &shell->sa_sigquit, NULL) == -1)
 		error_free_all(shell, ERR_SIGACTION, NULL, NULL);
 }

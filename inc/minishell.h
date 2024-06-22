@@ -84,12 +84,13 @@ typedef struct s_minishell
 	char	*suffix;
 	char	*path;
 	char	*command_path;
-	char	*expanded_input;
 	char	*heredoc_input;
 	char *new_pwd;
 	int	my_exit_status;
 	int	custom_errno;
+	char	*temp_str;
 	char		cwd[PATH_MAX];
+	char	metaquote;
 }							t_minishell;
 
 
@@ -183,6 +184,8 @@ enum	e_free_afterwards
 };
 /*************************PROTOTYPES*************************/
 //********************src/main
+char	*tester_readline(t_minishell *shell, char *prompt);
+
 // command
 char	*find_command_in_path_env(t_minishell *shell);
 void						execute_command(t_minishell *shell, char *command);
@@ -201,6 +204,9 @@ void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status);
 void						init_shell_struct(t_minishell *shell,
 								int argc, char **envp);
 void						init_input_iteration(t_minishell *shell);
+
+//environment
+char	*get_env_value(t_minishell *shell, char *base, int *start, int *i);
 
 // err
 void						error_free_all(t_minishell *shell, int err,
@@ -243,7 +249,7 @@ void						parse_input(t_minishell *shell);
 void						heredoc(t_minishell *shell, char **eof,
 								char *input_buffer);
 char	*extract_line(t_minishell *shell, char *input, char **heredoc_input);
-int	parse_token(t_minishell *shell, t_token_list *list, int *exit_status);
+int	parse_token(t_minishell *shell, t_token_list *list);
 
 // redirections
 int							find_redirect(char *command, int i);
@@ -345,4 +351,6 @@ char 						*remove_metaquotes(t_minishell *shell, char *str);
 int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
 int count_occurences_of_char(char *str, char c);
+char	*last_word(char *str);
+
 #endif

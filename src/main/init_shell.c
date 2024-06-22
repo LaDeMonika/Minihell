@@ -32,16 +32,19 @@ void	init_input_iteration(t_minishell *shell)
 	shell->new_key = NULL;
 	shell->new_value = NULL;
 	shell->old_key = NULL;
+	shell->old_value = NULL;
 	shell->my_pid = NULL;
 	shell->split_array = NULL;
 	shell->base = NULL;
 	shell->suffix = NULL;
 	shell->path = NULL;
 	shell->command_path = NULL;
-	shell->expanded_input = NULL;
+	shell->temp_str = NULL;
 	shell->new_pwd = NULL;
 	shell->my_exit_status = 0;
 	shell->custom_errno = -1;
+	shell->temp_str = NULL;
+	shell->metaquote = '\0';
 }
 
 void	init_shell_struct(t_minishell *shell, int argc, char **envp)

@@ -6,9 +6,10 @@ EXT_LIBS = -lreadline
 
 SRCS = main/minishell.c main/init_shell.c \
 		main/redirections.c main/signals.c \
-		main/prompt.c main/command.c main/pipes.c \
+		main/prompt.c main/execute.c main/pipes.c \
 		main/parse.c main/tokenize.c main/preprocess.c \
-		main/split.c main/try.c main/exit_status.c
+		main/split.c main/try.c main/exit_status.c\
+		main/heredoc.c main/environment.c \
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c \
 			builtins/ft_cd.c builtins/ft_pwd.c \
