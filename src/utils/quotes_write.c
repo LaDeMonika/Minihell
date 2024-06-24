@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quotes_write.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:27:18 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:28:14 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
-/*first determine new string length and then create new string without any metaquotes*/
-
-
+/*first determine new string length and then create new string without any
+metaquotes*/
 char	*write_literal_chars(char *str, char *new_str)
 {
 	char	metaquote;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fill_string.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:28:31 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:28:32 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 void	write_number(int n, char *str, int len)
@@ -41,6 +53,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 		srclen++;
 	return (srclen);
 }
+
 void	copy_char_and_increment_new_str(char *new_str, char c, int *j)
 {
 	new_str[*j] = c;

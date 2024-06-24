@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   split.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:32:23 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:22 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 static int	count_words(char *s, char sep)
@@ -46,10 +58,12 @@ void	put_words(t_minishell *shell, char *s, char sep)
 		if (!ON_FORCEWRITE && (!s[i] || ON_PIPE || ON_SPACE || ON_COLON))
 		{
 			if (s[i] && (sep == ' ' || (sep == '|' && (!s[i + 1] || i == 0))))
-				shell->split_array[word] = ft_substr(shell, s, start, i - start + 1);
+				shell->split_arr[word] = ft_substr(shell, s, start, i - start
+						+ 1);
 			else
-				shell->split_array[word] = ft_substr(shell, s, start, i - start);
-			shell->split_array[word] = parse_word(shell, shell->split_array[word], sep);
+				shell->split_arr[word] = ft_substr(shell, s, start, i - start);
+			shell->split_arr[word] = parse_word(shell, shell->split_arr[word],
+					sep);
 			word++;
 			start = i + 1;
 		}
@@ -58,14 +72,14 @@ void	put_words(t_minishell *shell, char *s, char sep)
 	}
 }
 
-char **split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
+char	**split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 {
-	int		words;
+	int	words;
 
 	words = count_words(s, sep);
-	shell->split_array = NULL;
-	shell->split_array = try_malloc(shell, (words + 1) * sizeof(char *));
-	shell->split_array = fill_array_with_null(shell->split_array, words + 1);
+	shell->split_arr = NULL;
+	shell->split_arr = try_malloc(shell, (words + 1) * sizeof(char *));
+	shell->split_arr = fill_array_with_null(shell->split_arr, words + 1);
 	put_words(shell, s, sep);
-	return (shell->split_array);
+	return (shell->split_arr);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:32:40 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:32:41 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 int	find_sep(char *command, int i)
@@ -20,6 +32,7 @@ int	find_sep(char *command, int i)
 	}
 	return (-1);
 }
+
 void	append_to_command(t_minishell *shell, t_token_list **head,
 		char *command_arg, char **token)
 {

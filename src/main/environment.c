@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   environment.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:36:45 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:36:46 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 char	*prepare_last_arg(t_minishell *shell, char *str)
 {
-	int	i;
-	int	end;
+	int		i;
+	int		end;
 	char	quote;
 
 	if (shell->last_arg)

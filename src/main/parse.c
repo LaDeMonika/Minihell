@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:32:57 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 void	error_parsing_input(t_minishell *shell, t_token_list *this,
@@ -67,8 +79,7 @@ void	handle_heredoc(t_minishell *shell, t_token_list *list,
 			if (list->sep == HEREDOC && j < error_at_index)
 			{
 				index = ft_itoa(shell, j);
-				shell->input_file = append(shell, index, "_input.txt",
-						BASE);
+				shell->input_file = append(shell, index, "_input.txt", BASE);
 				heredoc(shell, &list->token, shell->input_file);
 				if (shell->parsing_exit_status != 0
 					&& unlink(shell->input_file) == -1)
@@ -89,8 +100,9 @@ void	parse_input(t_minishell *shell)
 
 	shell->usr_input = append_heredoc_on_missing_quote(shell, shell->usr_input);
 	shell->temp_str = NULL;
-	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input, '|');
-	shell->split_array = NULL;
+	shell->input_array = split_while_skipping_quotes(shell, shell->usr_input,
+			'|');
+	shell->split_arr = NULL;
 	while (shell->input_array[shell->pipes_total + 1])
 		shell->pipes_total++;
 	shell->pid = try_malloc(shell, sizeof(int) * (shell->pipes_total + 1));

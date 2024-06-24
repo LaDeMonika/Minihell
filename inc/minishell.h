@@ -15,6 +15,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 #include <sys/stat.h>
+#include "../testing/get_next_line.h"
 
 /**************************DEFINES***************************/
 #define	ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
@@ -79,7 +80,7 @@ typedef struct s_minishell
 	char	*env_key;
 	char	*env_value;
 	char	*my_pid;
-	char	**split_array;
+	char	**split_arr;
 	char	*base;
 	char	*suffix;
 	char	*path;
@@ -307,6 +308,9 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno);
 int export_no_args(t_minishell  *shell);
 int index_of_char(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
+
+//testing:
+
 
 //********************src/utils
 // strings_1

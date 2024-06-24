@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:37:46 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:37:52 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 int	ft_exit(t_minishell *shell, int *custom_errno)
 {
-	bool is_valid_number;
-	int	exit_status;
+	bool	is_valid_number;
+	int		exit_status;
 
 	printf("exit\n");
 	is_valid_number = true;

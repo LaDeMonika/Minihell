@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strings_4.c                                        :+:      :+:    :+:   */
+/*   convert_string.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 14:20:45 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 14:26:57 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/24 18:30:17 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	ft_atoi(const char *nptr, bool *is_valid_number)
 	}
 	return (result * sign);
 }
+
 char	*ft_itoa(t_minishell *shell, int n)
 {
 	int		len;

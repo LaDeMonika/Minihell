@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_shell.c                                       :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:26:33 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/31 17:00:19 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
 
 void	init_input_iteration(t_minishell *shell)
 {
@@ -34,7 +33,7 @@ void	init_input_iteration(t_minishell *shell)
 	shell->env_key = NULL;
 	shell->env_value = NULL;
 	shell->my_pid = NULL;
-	shell->split_array = NULL;
+	shell->split_arr = NULL;
 	shell->base = NULL;
 	shell->suffix = NULL;
 	shell->path = NULL;
@@ -56,8 +55,10 @@ void	init_shell_struct(t_minishell *shell, int argc, char **envp)
 
 	if (argc > 1)
 		error_free_all(shell, ERR_TOO_MANY_ARGS, NULL, NULL);
-	shell->envp = try_malloc(shell, sizeof(char *) * (sizeof_array((void **)envp) + 1));
-	shell->envp = fill_array_with_null(shell->envp, sizeof_array((void **)envp) + 1);
+	shell->envp = try_malloc(shell, sizeof(char *)
+			* (sizeof_array((void **)envp) + 1));
+	shell->envp = fill_array_with_null(shell->envp, sizeof_array((void **)envp)
+			+ 1);
 	i = 0;
 	while (envp[i])
 	{

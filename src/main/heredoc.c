@@ -1,5 +1,16 @@
-#include "../../inc/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:35:52 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:35:58 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "../../inc/minishell.h"
 
 void	heredoc_EOF(t_minishell *shell, char *eof)
 {
@@ -14,7 +25,8 @@ void	heredoc_EOF(t_minishell *shell, char *eof)
 	free_and_reset_ptr((void **)&str_line_count);
 }
 
-void	heredoc_to_file(t_minishell *shell, char **eof, int file_fd, int pipe_fd_write)
+void	heredoc_to_file(t_minishell *shell, char **eof, int file_fd,
+		int pipe_fd_write)
 {
 	bool	expand_env;
 
@@ -44,12 +56,10 @@ void	heredoc_to_file(t_minishell *shell, char **eof, int file_fd, int pipe_fd_wr
 	}
 }
 
-#include "../get_next_line/get_next_line.h"
 void	heredoc_child(t_minishell *shell, char **eof, char *input_file,
 		int pipe_fd[2])
 {
-	int		file_fd;
-
+	int	file_fd;
 
 	try_close(shell, pipe_fd[0]);
 	set_signals(shell, HEREDOC_CHILD);
@@ -64,15 +74,15 @@ void	heredoc_child(t_minishell *shell, char **eof, char *input_file,
 	exit(EXIT_SUCCESS);
 }
 
-
-/*heredoc will read input in a child. local line count will increase by 1 for each line and added to global line count in the parent*/
+/*heredoc will read input in a child. local line count will increase by 1
+for each line and added to global line count in the parent*/
 void	heredoc(t_minishell *shell, char **eof, char *input_file)
 {
 	int		pid;
 	int		pipe_fd[2];
 	char	buffer[8];
 	char	*buffer_ptr;
-	int	heredoc_exit_status;
+	int		heredoc_exit_status;
 
 	try_pipe(shell, pipe_fd);
 	pid = try_fork(shell);
@@ -87,8 +97,7 @@ void	heredoc(t_minishell *shell, char **eof, char *input_file)
 		buffer_ptr = buffer;
 		while (try_read(shell, pipe_fd[0], &buffer_ptr, NULL) > 0)
 			shell->line_count++;
-		set_exit_status_after_termination(shell, &heredoc_exit_status,
-			0);
+		set_exit_status_after_termination(shell, &heredoc_exit_status, 0);
 		set_signals(shell, PARENT_WITHOUT_CHILD);
 		try_close(shell, pipe_fd[0]);
 	}

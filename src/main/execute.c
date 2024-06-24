@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:31:37 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -17,7 +29,7 @@ char	*find_command_in_path_env(t_minishell *shell)
 			return (set_custom_errno(shell, U_NO_FILE, 127), NULL);
 	}
 	shell->path_array = split_while_skipping_quotes(shell, shell->path, ':');
-	shell->split_array = NULL;
+	shell->split_arr = NULL;
 	i = 0;
 	while (shell->path_array[i])
 	{
@@ -31,6 +43,7 @@ char	*find_command_in_path_env(t_minishell *shell)
 	}
 	return (NULL);
 }
+
 bool	parse_command(t_minishell *shell, char *command)
 {
 	int	i;
@@ -38,9 +51,8 @@ bool	parse_command(t_minishell *shell, char *command)
 	if (shell->pipes_total > 0)
 	{
 		shell->command_array = split_while_skipping_quotes(shell, command, ' ');
-		shell->split_array = NULL;
+		shell->split_arr = NULL;
 	}
-
 	i = 0;
 	while (shell->command_array[i])
 	{

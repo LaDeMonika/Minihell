@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:32:01 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 void	free_and_reset_ptr(void **ptr)
@@ -8,6 +20,7 @@ void	free_and_reset_ptr(void **ptr)
 		*ptr = NULL;
 	}
 }
+
 void	free_and_reset_list_contents(t_token_list *list)
 {
 	t_token_list	*current;
@@ -57,7 +70,7 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell->new_value);
 	free_and_reset_array((void ***)&shell->new_envp, false);
 	free_and_reset_ptr((void **)&shell->my_pid);
-	free_and_reset_array((void ***)&shell->split_array, false);
+	free_and_reset_array((void ***)&shell->split_arr, false);
 	free_and_reset_ptr((void **)&shell->path);
 	free_and_reset_ptr((void **)&shell->command_path);
 	free_and_reset_ptr((void **)&shell->new_pwd);

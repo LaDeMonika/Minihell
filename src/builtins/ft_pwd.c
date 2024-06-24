@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:22:55 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/31 16:55:13 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/24 18:39:12 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-int ft_pwd(t_minishell *shell)
+int	ft_pwd(t_minishell *shell)
 {
-    try_getcwd(shell);
-    printf("%s\n", shell->cwd);
-    return (0);
+	try_getcwd(shell);
+	printf("%s\n", shell->cwd);
+	return (0);
 }

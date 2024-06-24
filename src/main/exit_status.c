@@ -1,10 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_status.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:36:25 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:38:21 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 void	check_errno(t_minishell *shell, char **custom_message, int *exit_status)
 {
-	if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
+	if (errno == EFAULT || errno == ENOENT || (errno == EACCES
+			&& !shell->command_array[0][0]))
 	{
-		if (errno == EFAULT || errno == ENOENT || (errno == EACCES && !shell->command_array[0][0]))
+		if (errno == EFAULT || errno == ENOENT || (errno == EACCES
+				&& !shell->command_array[0][0]))
 			*custom_message = "command not found";
 		if (shell->builtin != B_ENV)
 			*custom_message = "No such file or directory";
@@ -23,7 +37,8 @@ void	set_custom_errno(t_minishell *shell, int custom_errno, int exit_status)
 	shell->my_exit_status = exit_status;
 }
 
-void	set_exit_status_before_termination(t_minishell *shell, int *exit_status, int custom_errno)
+void	set_exit_status_before_termination(t_minishell *shell, int *exit_status,
+		int custom_errno)
 {
 	char	*custom_message;
 
