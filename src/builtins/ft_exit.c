@@ -17,13 +17,13 @@ int	ft_exit(t_minishell *shell, int *custom_errno)
 				*custom_errno = U_TOO_MANY_ARGUMENTS;
 				return (1);
 			}
-			free_all_exit(shell, exit_status % 256);
+			error_free_all_exit(shell, exit_status % 256);
 		}
 		else
 		{
 			print_error(shell->command_array[1], "numeric argument required");
-			free_all_exit(shell, 2);
+			error_free_all_exit(shell, 2);
 		}
 	}
-	return (free_all_exit(shell, 0), 0);
+	return (error_free_all_exit(shell, 0), 0);
 }

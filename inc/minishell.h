@@ -20,14 +20,14 @@
 #define	ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
 #define	ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
 #define	ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
-#define	ON_FORCE_WRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
+#define	ON_FORCEWRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
 /* REPLACE WITH */
 /*
 static inline int ON_PIPE(char sep, char *s, int i) {
     return (sep == '|' && (s[i] == sep || !s[i + 1]));
 }
 
-static inline int FORCE_WRITE(char sep, char *s, int i) {
+static inline int FORCEWRITE(char sep, char *s, int i) {
     return (sep == '|' && s[i] == '>' && s[i + 1] == '|');
 }
 
@@ -44,7 +44,7 @@ static inline int ON_COLON(char sep, char *s, int i) {
 typedef struct s_token_list
 {
 	char					*token;
-	int						delimiter;
+	int						sep;
 	struct s_token_list		*next;
 }							t_token_list;
 
@@ -70,8 +70,8 @@ typedef struct s_minishell
 	struct sigaction		sa_sigquit;
 	int						pipe_fd[2];
 	int						status;
-	int						pre_delimiter;
-	int						post_delimiter;
+	int						pre_sep;
+	int						post_sep;
 	int						builtin;
 	char	*new_key;
 	char						*new_value;
@@ -134,7 +134,7 @@ enum e_custom_errno
 
 };
 
-enum						e_token_delimiter
+enum						e_token_sep
 {
 	INPUT,
 	OUTPUT,
@@ -142,7 +142,7 @@ enum						e_token_delimiter
 	APPEND,
 	COMMAND,
 	INVALID_PIPE,
-	FORCE_WRITE
+	FORCEWRITE
 };
 
 // signal handling modes
@@ -212,13 +212,12 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i);
 // err
 void						error_free_all(t_minishell *shell, int err,
 								char *prefix, char *custom_message);
-void	error_free_all_exit(t_minishell *shell, int err, char *prefix, char *custom_message);
 void						free_and_reset_ptr(void **ptr);
 void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_message);
 void	free_iteration(t_minishell *shell);
-void	free_all_exit(t_minishell *shell, int exit_status);
+void	error_free_all_exit(t_minishell *shell, int exit_status);
 
 
 // prompt
@@ -352,5 +351,9 @@ int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
 int count_occurences_of_char(char *str, char c);
 char	*last_word(char *str);
+int	calculate_len(int n);
+void	write_number(int n, char *str, int len);
+
+void	copy_char_and_increment_new_str(char *new_str, char c, int *j);
 
 #endif

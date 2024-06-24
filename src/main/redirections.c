@@ -14,18 +14,18 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int index)
 {
 	char	*command;
 
-	shell->post_delimiter = COMMAND;
+	shell->post_sep = COMMAND;
 	while (list)
 	{
-		if (list->delimiter == COMMAND)
+		if (list->sep == COMMAND)
 			command = list->token;
-		else if (list->delimiter == INPUT)
+		else if (list->sep == INPUT)
 			redirect_stream(shell, list->token, READ, STDIN_FILENO);
-		else if (list->delimiter == OUTPUT || list->delimiter == FORCE_WRITE)
+		else if (list->sep == OUTPUT || list->sep == FORCEWRITE)
 			redirect_stream(shell, list->token, WRITE_TRUNCATE, STDOUT_FILENO);
-		else if (list->delimiter == APPEND)
+		else if (list->sep == APPEND)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
-		else if (list->delimiter == HEREDOC)
+		else if (list->sep == HEREDOC)
 		{
 			shell->input_file = append(shell, ft_itoa(shell, index), "_input.txt", BASE);
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);

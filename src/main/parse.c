@@ -3,19 +3,19 @@
 void	error_parsing_input(t_minishell *shell, t_token_list *this,
 		t_token_list *next)
 {
-	if (this->delimiter == INVALID_PIPE)
+	if (this->sep == INVALID_PIPE)
 		shell->unexpected_token = "`|'";
 	else if (this->next)
 	{
-		if (this->next->delimiter == INPUT)
+		if (this->next->sep == INPUT)
 			shell->unexpected_token = "`<'";
-		else if (this->next->delimiter == HEREDOC)
+		else if (this->next->sep == HEREDOC)
 			shell->unexpected_token = "`<<'";
-		else if (this->next->delimiter == OUTPUT)
+		else if (this->next->sep == OUTPUT)
 			shell->unexpected_token = "`>'";
-		else if (this->next->delimiter == APPEND)
+		else if (this->next->sep == APPEND)
 			shell->unexpected_token = "`>>'";
-		else if (this->next->delimiter == INVALID_PIPE)
+		else if (this->next->sep == INVALID_PIPE)
 			shell->unexpected_token = "`|'";
 	}
 	else if (next)
@@ -39,7 +39,7 @@ int	parse_token(t_minishell *shell, t_token_list *list)
 		list = shell->list[i];
 		while (list)
 		{
-			if ((!list->token || !(*list->token)) && list->delimiter != COMMAND)
+			if ((!list->token || !(*list->token)) && list->sep != COMMAND)
 			{
 				error_parsing_input(shell, list, shell->list[i + 1]);
 				shell->parsing_exit_status = 2;
@@ -64,7 +64,7 @@ void	handle_heredoc(t_minishell *shell, t_token_list *list,
 		list = shell->list[j];
 		while (list)
 		{
-			if (list->delimiter == HEREDOC && j < error_at_index)
+			if (list->sep == HEREDOC && j < error_at_index)
 			{
 				index = ft_itoa(shell, j);
 				shell->input_file = append(shell, index, "_input.txt",
