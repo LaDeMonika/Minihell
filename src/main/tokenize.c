@@ -23,7 +23,6 @@ int	find_delimiter(char *command, int i)
 void	append_to_command(t_minishell *shell, t_token_list **head,
 		char *command_arg, char **token)
 {
-	//t_token_list	*current;
 	int				end_index;
 	char	*new_token;
 
@@ -34,6 +33,7 @@ void	append_to_command(t_minishell *shell, t_token_list **head,
 	*token = new_token;
 	(*head)->token = append(shell, (*head)->token, command_arg, BOTH);
 	shell->last_arg = prepare_last_arg(shell, command_arg);
+
 }
 
 void	list_add(t_minishell *shell, t_token_list **head, char *token)
@@ -69,14 +69,14 @@ void	extract_and_add_tokens(t_minishell *shell, int index, int start,
 		shell->token = expand_env_variables(shell, shell->token);
 		shell->temp_str = NULL;
 	}
+	if (shell->pre_delimiter == COMMAND)
+		shell->last_arg = prepare_last_arg(shell, shell->token);
 	if (shell->pre_delimiter != COMMAND)
 	{
 		command_arg = shell->token + skip_first_metaquote_pair(shell->token);
 		command_arg = strchr(command_arg, ' ');
 		if (command_arg)
 			append_to_command(shell, &shell->list[index], command_arg, &shell->token);
-		/* printf("checking command arg token: %s delimiter %d address of token: %p\n", token, shell->pre_delimiter,(void *)token); */
-		/* char *old_token = token;*/
 		if (shell->pre_delimiter != HEREDOC && has_even_metaquotes(shell->token))
 			shell->token = remove_metaquotes(shell, shell->token);
 	}

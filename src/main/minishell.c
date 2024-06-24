@@ -12,14 +12,14 @@ void	handle_input(t_minishell *shell)
 	}
 	if (shell->stay_in_parent)
 	{
-		handle_redirections(shell, shell->list[0], STDIN_FILENO, 0);
-		update_last_arg(shell);
+		handle_redirections(shell, shell->list[0], 0);
+		update_value(shell, "_", shell->last_arg, false);
 	}
 	else if (shell->parsing_exit_status == 0)
 	{
 		handle_pipes(shell, shell->input_array, shell->pipes_total,
 			STDIN_FILENO);
-		update_last_arg(shell);
+		update_value(shell, "_", shell->last_arg, false);
 	}
 	else
 		shell->last_exit_status = shell->parsing_exit_status;

@@ -1,30 +1,5 @@
 #include "../../inc/minishell.h"
 
-void	update_last_arg(t_minishell *shell)
-{
-	int				i;
-	t_token_list	*list;
-
-	i = 0;
-	while (shell->input_array[i])
-	{
-		list = shell->list[i];
-		while (list)
-		{
-			if (shell->pipes_total == 0 && list->delimiter == COMMAND
-				&& list->token)
-			{
-				if (list->token[0])
-					update_value(shell, "_", shell->last_arg, false);
-				else
-					update_value(shell, "_", "", false);
-			}
-			list = list->next;
-		}
-		i++;
-	}
-}
-
 char	*prepare_last_arg(t_minishell *shell, char *str)
 {
 	int	i;
@@ -41,15 +16,15 @@ char	*prepare_last_arg(t_minishell *shell, char *str)
 		i--;
 		while (i >= 0 && str[i] != quote)
 			i--;
-		return (ft_substr(shell, str, i, end - i));
+		shell->last_arg = ft_substr(shell, str, i + 1, end - i);
 	}
 	else
 	{
 		while (i >= 0 && !is_space(str[i]))
 			i--;
-		return (ft_substr(shell, str, i + 1, ft_strlen(str) - i));
+		shell->last_arg = ft_substr(shell, str, i + 1, ft_strlen(str) - i);
 	}
-	return (NULL);
+	return (ft_strtrim(shell, shell->last_arg, " "));
 }
 
 char	*ft_getpid(t_minishell *shell)

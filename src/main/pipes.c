@@ -39,7 +39,7 @@ void	child(t_minishell *shell, int pipes_left,
 	if (pipes_left >= 1)
 		try_dup2(shell, shell->pipe_fd[1], STDOUT_FILENO);
 	try_close(shell, shell->pipe_fd[1]);
-	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left], read_fd, shell->pipes_total - pipes_left);
+	handle_redirections(shell, shell->list[shell->pipes_total - pipes_left], shell->pipes_total - pipes_left);
 }
 
 void	handle_pipes(t_minishell *shell, char **input_array,

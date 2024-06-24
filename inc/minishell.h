@@ -257,8 +257,7 @@ int	parse_token(t_minishell *shell, t_token_list *list);
 int							find_redirect(char *command, int i);
 void						redirect_stream(t_minishell *shell, char *file,
 								int mode, int fd2);
-void						handle_redirections(t_minishell *shell,
-								t_token_list *list, int read_fd, int index);
+void	handle_redirections(t_minishell *shell, t_token_list *list, int index);
 char						*remove_metaquotes(t_minishell *shell,
 								char *command);
 // signals
@@ -279,7 +278,6 @@ char						*check_env_variables(t_minishell *shell, char *s);
 void	split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
 char	*ft_getenv(t_minishell *shell, char *key);
-void	update_last_arg(t_minishell *shell);
 void	handle_heredoc(t_minishell *shell, t_token_list *list, int error_at_index);
 
 //try
