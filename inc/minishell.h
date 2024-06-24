@@ -17,25 +17,25 @@
 #include <sys/stat.h>
 
 /**************************DEFINES***************************/
-#define	NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
-#define	SKIP_FORCE_WRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
-#define	NEW_WORD_ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
-#define	NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
+#define	ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
+#define	ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
+#define	ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
+#define	ON_FORCE_WRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
 /* REPLACE WITH */
 /*
-static inline int new_word_on_pipe(char sep, char *s, int i) {
+static inline int ON_PIPE(char sep, char *s, int i) {
     return (sep == '|' && (s[i] == sep || !s[i + 1]));
 }
 
-static inline int skip_force_write(char sep, char *s, int i) {
+static inline int FORCE_WRITE(char sep, char *s, int i) {
     return (sep == '|' && s[i] == '>' && s[i + 1] == '|');
 }
 
-static inline int new_word_on_space(char sep, char *s, int i) {
+static inline int ON_SPACE(char sep, char *s, int i) {
     return (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]));
 }
 
-static inline int new_word_on_colon(char sep, char *s, int i) {
+static inline int ON_COLON(char sep, char *s, int i) {
     return (sep == ':' && (s[i] == sep || !s[i + 1]));
 }
 */
@@ -275,7 +275,7 @@ char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_metaquotes(char *str, int i,
 								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
-void	split_while_skipping_quotes(t_minishell *shell,
+char	**split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
 char	*ft_getenv(t_minishell *shell, char *key);
 void	handle_heredoc(t_minishell *shell, t_token_list *list, int error_at_index);

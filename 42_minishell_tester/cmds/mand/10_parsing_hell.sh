@@ -325,6 +325,7 @@ echo "$"$'$'$"$"$"$"$'$'
 
 <| echo ok
 
->| echo sure
+# DONT HAVE TO HANDLE FORCE WRITE:
+# >| echo sure
 
 cd --

@@ -5,7 +5,8 @@ void	handle_input(t_minishell *shell)
 	parse_input(shell);
 	if (shell->pipes_total == 0)
 	{
-		split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
+		shell->command_array = split_while_skipping_quotes(shell, shell->list[0]->token, ' ');
+		shell->split_array = NULL;
 		is_builtin(shell, shell->command_array[0]);
 		if (shell->builtin == B_CD || shell->builtin == B_EXIT || shell->builtin == B_EXPORT || shell->builtin == B_UNSET)
 			shell->stay_in_parent = true;

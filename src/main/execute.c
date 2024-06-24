@@ -16,7 +16,8 @@ char	*find_command_in_path_env(t_minishell *shell)
 		else
 			return (set_custom_errno(shell, U_NO_FILE, 127), NULL);
 	}
-	split_while_skipping_quotes(shell, shell->path, ':');
+	shell->path_array = split_while_skipping_quotes(shell, shell->path, ':');
+	shell->split_array = NULL;
 	i = 0;
 	while (shell->path_array[i])
 	{
@@ -35,7 +36,11 @@ bool	parse_command(t_minishell *shell, char *command)
 	int	i;
 
 	if (shell->pipes_total > 0)
-		split_while_skipping_quotes(shell, command, ' ');
+	{
+		shell->command_array = split_while_skipping_quotes(shell, command, ' ');
+		shell->split_array = NULL;
+	}
+
 	i = 0;
 	while (shell->command_array[i])
 	{

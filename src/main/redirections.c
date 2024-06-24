@@ -14,6 +14,7 @@ void	handle_redirections(t_minishell *shell, t_token_list *list, int index)
 {
 	char	*command;
 
+	shell->post_delimiter = COMMAND;
 	while (list)
 	{
 		if (list->delimiter == COMMAND)

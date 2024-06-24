@@ -11,9 +11,7 @@ static int	count_words(char *s, char sep)
 	{
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_metaquotes(s, i, s[i]);
-		if (SKIP_FORCE_WRITE)
-			i++;
-		else if (!s[i] || NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
+		if (!ON_FORCE_WRITE && (!s[i] || ON_PIPE || ON_SPACE || ON_COLON))
 			words++;
 		if (s[i])
 			i++;
@@ -45,9 +43,7 @@ void	put_words(t_minishell *shell, char *s, char sep)
 	{
 		if (s[i] == '"' || s[i] == '\'')
 			i = skip_between_metaquotes(s, i, s[i]);
-		if (SKIP_FORCE_WRITE)
-			i++;
-		else if (!s[i] || NEW_WORD_ON_PIPE || NEW_WORD_ON_SPACE || NEW_WORD_ON_COLON)
+		if (!ON_FORCE_WRITE && (!s[i] || ON_PIPE || ON_SPACE || ON_COLON))
 		{
 			if (s[i] && (sep == ' ' || (sep == '|' && (!s[i + 1] || i == 0))))
 				shell->split_array[word] = ft_substr(shell, s, start, i - start + 1);
@@ -62,7 +58,7 @@ void	put_words(t_minishell *shell, char *s, char sep)
 	}
 }
 
-void split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
+char **split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 {
 	int		words;
 
@@ -71,11 +67,5 @@ void split_while_skipping_quotes(t_minishell *shell, char *s, char sep)
 	shell->split_array = try_malloc(shell, (words + 1) * sizeof(char *));
 	shell->split_array = fill_array_with_null(shell->split_array, words + 1);
 	put_words(shell, s, sep);
-	if (sep == '|')
-		shell->input_array = shell->split_array;
-	else if (sep == ' ')
-		shell->command_array = shell->split_array;
-	else if (sep == ':')
-		shell->path_array = shell->split_array;
-	shell->split_array = NULL;
+	return (shell->split_array);
 }
