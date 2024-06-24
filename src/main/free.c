@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_msg_00.c                                     :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 14:13:25 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/31 17:18:13 by msimic           ###   ########.fr       */
+/*   Created: 2024/06/24 18:32:01 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ void	free_and_reset_ptr(void **ptr)
 		*ptr = NULL;
 	}
 }
+
 void	free_and_reset_list_contents(t_token_list *list)
 {
-	t_token_list *current;
+	t_token_list	*current;
 
 	while (list)
 	{
@@ -35,26 +36,13 @@ void	free_and_reset_list_contents(t_token_list *list)
 	}
 }
 
-
 void	free_and_reset_array(void ***array, bool is_list)
 {
 	int	i;
 
 	i = 0;
-	/* if (array)
-	{
-		printf("array address: %p content: %s\n", array, (char *)array);
-		if (*array)
-		{
-			printf("*array address: %p content: %s\n", *array, (char *)*array);
-			if ((*array)[0])
-				printf("*array[0] address: %p content: %s\n", (*array)[0], (char *)(*array)[0]);
-		}
-
-	} */
 	while (array && *array && (*array)[i])
 	{
-		/* printf("*array[i] address: %p content: %s\n", (*array)[i], (char *)(*array)[i]); */
 		if (is_list)
 			free_and_reset_list_contents((t_token_list *)(*array)[i]);
 		else
@@ -63,10 +51,7 @@ void	free_and_reset_array(void ***array, bool is_list)
 		i++;
 	}
 	free_and_reset_ptr((void **)array);
-	/* printf("i: %d\n", i); */
 }
-
-
 
 void	free_iteration(t_minishell *shell)
 {
@@ -79,18 +64,21 @@ void	free_iteration(t_minishell *shell)
 	free_and_reset_array((void ***)&shell->command_array, false);
 	free_and_reset_ptr((void **)&shell->pid);
 	free_and_reset_array((void ***)&shell->env_subarray, false);
-	free_and_reset_ptr((void **)&shell->old_key);
-	free_and_reset_ptr((void **)&shell->old_value);
+	free_and_reset_ptr((void **)&shell->env_key);
+	free_and_reset_ptr((void **)&shell->env_value);
 	free_and_reset_ptr((void **)&shell->new_key);
 	free_and_reset_ptr((void **)&shell->new_value);
 	free_and_reset_array((void ***)&shell->new_envp, false);
 	free_and_reset_ptr((void **)&shell->my_pid);
-	free_and_reset_array((void ***)&shell->split_array, false);
+	free_and_reset_array((void ***)&shell->split_arr, false);
 	free_and_reset_ptr((void **)&shell->path);
 	free_and_reset_ptr((void **)&shell->command_path);
 	free_and_reset_ptr((void **)&shell->new_pwd);
 	free_and_reset_ptr((void **)&shell->temp_str);
 	free_and_reset_ptr((void **)&shell->my_pid);
+	free_and_reset_ptr((void **)&shell->heredoc_input);
+	free_and_reset_ptr((void **)&shell->token);
+	free_and_reset_ptr((void **)&shell->last_arg);
 }
 
 int	free_all(t_minishell *shell)
@@ -103,65 +91,3 @@ int	free_all(t_minishell *shell)
 	free_and_reset_ptr((void **)&shell);
 	return (last_exit_status);
 }
-
-void	free_all_exit(t_minishell *shell, int exit_status)
-{
-	free_all(shell);
-	exit(exit_status);
-}
-
-void	error_free_all_second(int err, char *prefix)
-{
-	if (err == ERR_READ)
-		perror("read");
-	else if (err == ERR_WRITE)
-		print_error(prefix, NULL);
-	else if (err == ERR_CLOSE)
-		perror("close");
-	else if (err == ERR_UNLINK)
-		perror("unlink");
-	else if (err == ERR_PIPE)
-		perror("pipe");
-	else if (err == ERR_FORK)
-		perror("fork");
-	else if (err == ERR_WAITPID)
-		perror("waitpid");
-	else if (err == ERR_GETPID)
-		write(STDERR_FILENO, "Error getting pid\n", 18);
-	else if (err == ERR_GETCWD)
-		perror("getcwd");
-	else if (err == ERR_STAT)
-		perror("stat");
-}
-
-void	error_free_all(t_minishell *shell, int err,
-			char *prefix, char *custom_message)
-{
-
-	(void)custom_message;
-	if (err == ERR_TOO_MANY_ARGS)
-		write(STDERR_FILENO, "Too many arguments\nPlease try again\n", 36);
-	else if (err == ERR_MALLOC)
-		perror("malloc");
-	else if (err == ERR_SIGEMPTYSET)
-		perror("sigemptyset");
-	else if (err == ERR_SIGACTION)
-		perror("sigaction");
-	else if (err == ERR_PATH_NOT_FOUND)
-		perror("getenv");
-	else if (err == ERR_OPEN)
-		print_error(prefix, NULL);
-	else if (err == ERR_DUP2)
-		print_error(prefix, NULL);
-	else
-		error_free_all_second(err, prefix);
-	free_all(shell);
-	exit(EXIT_FAILURE);
-}
-
-
-/* void	error_free_all_exit(t_minishell *shell, int err, char *prefix, char *custom_message)
-{
-	error_free_all(shell, err, prefix, custom_message);
-	exit(EXIT_FAILURE);
-} */

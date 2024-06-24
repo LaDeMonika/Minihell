@@ -4,23 +4,31 @@ CFLAGS = -Wall -Werror -Wextra -g
 INCLDS = inc/minishell.h
 EXT_LIBS = -lreadline
 
-SRCS = main/minishell.c main/init_shell.c \
+SRCS = main/minishell.c main/init.c \
 		main/redirections.c main/signals.c \
 		main/prompt.c main/execute.c main/pipes.c \
 		main/parse.c main/tokenize.c main/preprocess.c \
-		main/split.c main/try.c main/exit_status.c\
+		main/split.c main/exit_status.c\
 		main/heredoc.c main/environment.c \
+		main/free.c
 
 BUILTIN = builtins/builtin.c builtins/ft_echo.c \
 			builtins/ft_cd.c builtins/ft_pwd.c \
 			builtins/ft_env.c builtins/ft_unset.c \
 			builtins/ft_exit.c builtins/ft_export.c
 
-UTILS = utils/strings_1.c utils/strings_2.c \
-			utils/strings_3.c utils/strings_4.c \
-			utils/strings_5.c utils/strings_6.c
+UTILS = utils/array.c \
+		utils/check_string.c \
+		utils/check_string_2.c \
+		utils/check_string_3.c \
+		utils/convert_string.c \
+		utils/create_string.c \
+		utils/fill_string.c \
+		utils/quotes_read.c \
+		utils/quotes_write.c \
+		utils/try_io.c utils/try_utils.c \
 
-ERR = err/error_msg_00.c err/error_msg_01.c
+ERR = err/error.c
 
 TEST = get_next_line/get_next_line.c
 

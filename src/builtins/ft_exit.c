@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:37:46 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:37:52 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 int	ft_exit(t_minishell *shell, int *custom_errno)
 {
-	bool is_valid_number;
-	int	exit_status;
+	bool	is_valid_number;
+	int		exit_status;
 
 	printf("exit\n");
 	is_valid_number = true;
@@ -17,13 +29,13 @@ int	ft_exit(t_minishell *shell, int *custom_errno)
 				*custom_errno = U_TOO_MANY_ARGUMENTS;
 				return (1);
 			}
-			free_all_exit(shell, exit_status % 256);
+			error_free_all_exit(shell, exit_status % 256);
 		}
 		else
 		{
 			print_error(shell->command_array[1], "numeric argument required");
-			free_all_exit(shell, 2);
+			error_free_all_exit(shell, 2);
 		}
 	}
-	return (free_all_exit(shell, 0), 0);
+	return (error_free_all_exit(shell, 0), 0);
 }

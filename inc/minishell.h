@@ -15,27 +15,28 @@
 # include <sys/wait.h>
 # include <unistd.h>
 #include <sys/stat.h>
+#include "../testing/get_next_line.h"
 
 /**************************DEFINES***************************/
-#define	NEW_WORD_ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
-#define	SKIP_FORCE_WRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
-#define	NEW_WORD_ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
-#define	NEW_WORD_ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
+#define	ON_PIPE (sep == '|' && (s[i] == sep || !s[i + 1]))
+#define	ON_SPACE (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]))
+#define	ON_COLON (sep == ':' && (s[i] == sep || !s[i + 1]))
+#define	ON_FORCEWRITE (sep == '|' && s[i] == '>' && s[i + 1] == '|')
 /* REPLACE WITH */
 /*
-static inline int new_word_on_pipe(char sep, char *s, int i) {
+static inline int ON_PIPE(char sep, char *s, int i) {
     return (sep == '|' && (s[i] == sep || !s[i + 1]));
 }
 
-static inline int skip_force_write(char sep, char *s, int i) {
+static inline int FORCEWRITE(char sep, char *s, int i) {
     return (sep == '|' && s[i] == '>' && s[i + 1] == '|');
 }
 
-static inline int new_word_on_space(char sep, char *s, int i) {
+static inline int ON_SPACE(char sep, char *s, int i) {
     return (sep == ' ' && !is_space(s[i]) && (is_space(s[i + 1]) || !s[i + 1]));
 }
 
-static inline int new_word_on_colon(char sep, char *s, int i) {
+static inline int ON_COLON(char sep, char *s, int i) {
     return (sep == ':' && (s[i] == sep || !s[i + 1]));
 }
 */
@@ -44,7 +45,7 @@ static inline int new_word_on_colon(char sep, char *s, int i) {
 typedef struct s_token_list
 {
 	char					*token;
-	int						delimiter;
+	int						sep;
 	struct s_token_list		*next;
 }							t_token_list;
 
@@ -70,16 +71,16 @@ typedef struct s_minishell
 	struct sigaction		sa_sigquit;
 	int						pipe_fd[2];
 	int						status;
-	int						pre_delimiter;
-	int						post_delimiter;
+	int						pre_sep;
+	int						post_sep;
 	int						builtin;
 	char	*new_key;
 	char						*new_value;
 	char	**new_envp;
-	char	*old_key;
-	char	*old_value;
+	char	*env_key;
+	char	*env_value;
 	char	*my_pid;
-	char	**split_array;
+	char	**split_arr;
 	char	*base;
 	char	*suffix;
 	char	*path;
@@ -91,6 +92,8 @@ typedef struct s_minishell
 	char	*temp_str;
 	char		cwd[PATH_MAX];
 	char	metaquote;
+	char	*token;
+	char	*last_arg;
 }							t_minishell;
 
 
@@ -132,7 +135,7 @@ enum e_custom_errno
 
 };
 
-enum						e_token_delimiter
+enum						e_token_sep
 {
 	INPUT,
 	OUTPUT,
@@ -140,7 +143,7 @@ enum						e_token_delimiter
 	APPEND,
 	COMMAND,
 	INVALID_PIPE,
-	FORCE_WRITE
+	FORCEWRITE
 };
 
 // signal handling modes
@@ -177,10 +180,9 @@ enum						e_builtin
 //freeing in append function
 enum	e_free_afterwards
 {
-	FREE_NONE,
-	FREE_BASE,
-	FREE_SUFFIX,
-	FREE_BOTH
+	BASE,
+	SUFFIX,
+	BOTH
 };
 /*************************PROTOTYPES*************************/
 //********************src/main
@@ -211,13 +213,12 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i);
 // err
 void						error_free_all(t_minishell *shell, int err,
 								char *prefix, char *custom_message);
-void	error_free_all_exit(t_minishell *shell, int err, char *prefix, char *custom_message);
 void						free_and_reset_ptr(void **ptr);
 void	free_and_reset_array(void ***array, bool is_list);
 int	free_all(t_minishell *shell);
 void						print_error(char *prefix, char *custom_message);
 void	free_iteration(t_minishell *shell);
-void	free_all_exit(t_minishell *shell, int exit_status);
+void	error_free_all_exit(t_minishell *shell, int exit_status);
 
 
 // prompt
@@ -235,6 +236,7 @@ void	append_to_command(t_minishell *shell, t_token_list **head,
 		char *command_arg, char **token);
 void						tokenize(t_minishell *shell, char *command,
 								int index);
+								char	*prepare_last_arg(t_minishell *shell, char *str);
 
 // pipes
 void						handle_pipes(t_minishell *shell,
@@ -255,8 +257,7 @@ int	parse_token(t_minishell *shell, t_token_list *list);
 int							find_redirect(char *command, int i);
 void						redirect_stream(t_minishell *shell, char *file,
 								int mode, int fd2);
-void						handle_redirections(t_minishell *shell,
-								t_token_list *list, int read_fd, int index);
+void	handle_redirections(t_minishell *shell, t_token_list *list, int index);
 char						*remove_metaquotes(t_minishell *shell,
 								char *command);
 // signals
@@ -267,17 +268,16 @@ void						parent_sigint_handler(int sig);
 void						set_signals(t_minishell *shell, int mode);
 
 // preprocess/expand
-char	*extract_substr_and_append(t_minishell *shell, char *base, int len);
+char	*extract_and_append(t_minishell *shell, char *base, int len);
 char						*append_heredoc_on_missing_quote(t_minishell *shell,
 								char *old_s);
 char						*expand_env_variables(t_minishell *shell, char *s);
 int							skip_between_metaquotes(char *str, int i,
 								char metaquote);
 char						*check_env_variables(t_minishell *shell, char *s);
-void	split_while_skipping_quotes(t_minishell *shell,
+char	**split_while_skipping_quotes(t_minishell *shell,
 								char *s, char sep);
 char	*ft_getenv(t_minishell *shell, char *key);
-void	update_last_arg(t_minishell *shell);
 void	handle_heredoc(t_minishell *shell, t_token_list *list, int error_at_index);
 
 //try
@@ -308,6 +308,9 @@ int ft_export(t_minishell *shell, char *arg, int *custom_errno);
 int export_no_args(t_minishell  *shell);
 int index_of_char(char *str, char c);
 char *update_value(t_minishell *shell, char *key, char *value, bool append);
+
+//testing:
+
 
 //********************src/utils
 // strings_1
@@ -352,5 +355,9 @@ int	count_literal_chars(char *str);
 char    **fill_array_with_null(char **array, int size);
 int count_occurences_of_char(char *str, char c);
 char	*last_word(char *str);
+int	calculate_len(int n);
+void	write_number(int n, char *str, int len);
+
+void	copy_char_and_increment_new_str(char *new_str, char c, int *j);
 
 #endif

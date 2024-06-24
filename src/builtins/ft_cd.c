@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:21:02 by msimic            #+#    #+#             */
-/*   Updated: 2024/06/11 12:38:53 by msimic           ###   ########.fr       */
+/*   Updated: 2024/06/24 18:37:25 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@ char	*get_new_pwd(t_minishell *shell)
 {
 	char	*new_pwd;
 
-	if (!shell->command_array[1] || ft_strcmp(shell->command_array[1], "--") == 0
-		|| ft_strcmp(shell->command_array[1], "~") == 0)
+	if (!shell->command_array[1] || ft_strcmp(shell->command_array[1],
+			"--") == 0 || ft_strcmp(shell->command_array[1], "~") == 0)
 		new_pwd = ft_getenv(shell, "HOME");
 	else if (shell->command_array[1][0] == '~')
-		new_pwd = ft_strjoin(shell, getenv("HOME"), shell->command_array[1] + 1);
+		new_pwd = ft_strjoin(shell, getenv("HOME"), shell->command_array[1]
+				+ 1);
 	else if (ft_strcmp(shell->command_array[1], "-") == 0)
 	{
 		new_pwd = ft_getenv(shell, "OLDPWD");

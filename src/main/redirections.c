@@ -1,5 +1,16 @@
-#include "../../inc/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirections.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:32:35 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:32:36 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "../../inc/minishell.h"
 
 void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 {
@@ -10,33 +21,28 @@ void	redirect_stream(t_minishell *shell, char *file, int mode, int fd2)
 	try_close(shell, fd);
 }
 
-void	handle_redirections(t_minishell *shell, t_token_list *list, int read_fd, int index)
+void	handle_redirections(t_minishell *shell, t_token_list *list, int index)
 {
 	char	*command;
-	char			*index_as_str;
 
-	command = NULL;
-	(void)read_fd;
+	shell->post_sep = COMMAND;
 	while (list)
 	{
-		if (list->delimiter == COMMAND)
+		if (list->sep == COMMAND)
 			command = list->token;
-		else if (list->delimiter == INPUT)
+		else if (list->sep == INPUT)
 			redirect_stream(shell, list->token, READ, STDIN_FILENO);
-		else if (list->delimiter == OUTPUT || list->delimiter == FORCE_WRITE)
+		else if (list->sep == OUTPUT || list->sep == FORCEWRITE)
 			redirect_stream(shell, list->token, WRITE_TRUNCATE, STDOUT_FILENO);
-		else if (list->delimiter == APPEND)
+		else if (list->sep == APPEND)
 			redirect_stream(shell, list->token, WRITE_APPEND, STDOUT_FILENO);
-		else if (list->delimiter == HEREDOC)
+		else if (list->sep == HEREDOC)
 		{
-			//printf("trying to redirect from %s\n", shell->input_file);
-			index_as_str = NULL;
-			index_as_str = ft_itoa(shell, index);
-			shell->input_file = append(shell, index_as_str, "_input.txt", FREE_BASE);
+			shell->input_file = append(shell, ft_itoa(shell, index),
+					"_input.txt", BASE);
 			redirect_stream(shell, shell->input_file, READ, STDIN_FILENO);
 			if (unlink(shell->input_file) == -1)
 				error_free_all(shell, ERR_UNLINK, shell->input_file, NULL);
-			//printf("unlinked %s\n", shell->input_file);
 			free_and_reset_ptr((void **)&shell->input_file);
 		}
 		list = list->next;

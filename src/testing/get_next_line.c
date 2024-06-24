@@ -12,38 +12,6 @@
 
 #include "get_next_line.h"
 
-static char	*ft_strchr(char *storage, char c)
-{
-	while (storage && *storage)
-	{
-		if (*storage == c)
-			return (storage);
-		storage++;
-	}
-	return (NULL);
-}
-
-static int	ft_strlen(char *str)
-{
-	int	len;
-
-	len = 0;
-	while (str && str[len])
-		len++;
-	return (len);
-}
-
-static char	*free_and_reset(char **ptr)
-{
-	if (*ptr)
-	{
-		free(*ptr);
-		*ptr = NULL;
-	}
-	return (NULL);
-}
-
-
 static char	*join_strings(char *storage, char *buffer)
 {
 	char	*joined;
@@ -52,14 +20,14 @@ static char	*join_strings(char *storage, char *buffer)
 	joined = malloc(sizeof(char) * (ft_strlen(storage) + ft_strlen(buffer)
 				+ 1));
 	if (!joined)
-		return (free_and_reset(&storage));
+		return (free_and_reset_ptr((void **)&storage));
 	i = 0;
 	while (storage && storage[i])
 	{
 		joined[i] = storage[i];
 		i++;
 	}
-	free_and_reset(&storage);
+	free_and_reset_ptr((void **)&storage);
 	while (buffer && *buffer)
 	{
 		joined[i] = *(buffer++);
@@ -94,10 +62,11 @@ char	*update_storage(char *storage, int newline_index, char **line)
 	int		i;
 
 	if (ft_strlen(storage) - newline_index <= 1)
-		return (free_and_reset(&storage));
+		return (free_and_reset_ptr((void **)&storage));
 	updated = malloc(sizeof(char) * (ft_strlen(storage) - newline_index));
 	if (!updated)
-		return (free_and_reset(&storage), free_and_reset(line));
+		return (free_and_reset_ptr((void **)&storage),
+			free_and_reset_ptr((void **)line));
 	i = 0;
 	while (storage[i + newline_index + 1])
 	{
@@ -105,7 +74,7 @@ char	*update_storage(char *storage, int newline_index, char **line)
 		i++;
 	}
 	updated[i] = '\0';
-	free_and_reset(&storage);
+	free_and_reset_ptr((void **)&storage);
 	return (updated);
 }
 
@@ -116,7 +85,7 @@ char	*read_and_store(char **storage, int fd)
 
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
-		return (free_and_reset(storage));
+		return (free_and_reset_ptr((void **)storage));
 	while (!ft_strchr(*storage, '\n'))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
@@ -125,14 +94,15 @@ char	*read_and_store(char **storage, int fd)
 			buffer[bytes_read] = '\0';
 			*storage = join_strings(*storage, buffer);
 			if (!(*storage))
-				return (free_and_reset(&buffer));
+				return (free_and_reset_ptr((void **)&buffer));
 		}
 		else if (bytes_read < 0)
-			return (free_and_reset(storage), free_and_reset(&buffer));
+			return (free_and_reset_ptr((void **)storage),
+				free_and_reset_ptr((void **)&buffer));
 		else
 			break ;
 	}
-	free_and_reset(&buffer);
+	free_and_reset_ptr((void **)&buffer);
 	return (ft_strchr(*storage, '\n'));
 }
 
@@ -149,7 +119,7 @@ char	*get_next_line(int fd)
 	{
 		line = extract_line(storage, newline_found - storage);
 		if (!line)
-			return (free_and_reset(&storage));
+			return (free_and_reset_ptr((void **)&storage));
 		storage = update_storage(storage, newline_found - storage, &line);
 	}
 	else if (storage && *storage)
@@ -162,12 +132,12 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-#include <stdio.h>
 /*
+#include <stdio.h>
 int	main(void)
 {
-	int     fd;
-	char    *line;
+	int		fd;
+	char	*line;
 
 	fd = open("test3.txt", O_RDONLY);
 	line = get_next_line(fd);

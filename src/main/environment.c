@@ -1,29 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   environment.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:36:45 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:36:46 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
-void	update_last_arg(t_minishell *shell)
+char	*prepare_last_arg(t_minishell *shell, char *str)
 {
-	int				i;
-	t_token_list	*list;
+	int		i;
+	int		end;
+	char	quote;
 
-	i = 0;
-	while (shell->input_array[i])
+	if (shell->last_arg)
+		free_and_reset_ptr((void **)&shell->last_arg);
+	i = ft_strlen(str) - 1;
+	if (str[i] == '"' || str[i] == '\'')
 	{
-		list = shell->list[i];
-		while (list)
-		{
-			if (shell->pipes_total == 0 && list->delimiter == COMMAND
-				&& list->token)
-			{
-				if (list->token[0])
-					update_value(shell, "_", last_word(list->token),
-						false);
-				else
-					update_value(shell, "_", "", false);
-			}
-			list = list->next;
-		}
-		i++;
+		quote = str[i];
+		end = i;
+		i--;
+		while (i >= 0 && str[i] != quote)
+			i--;
+		shell->last_arg = ft_substr(shell, str, i + 1, end - i);
 	}
+	else
+	{
+		while (i >= 0 && !is_space(str[i]))
+			i--;
+		shell->last_arg = ft_substr(shell, str, i + 1, ft_strlen(str) - i);
+	}
+	return (ft_strtrim(shell, shell->last_arg, " "));
 }
 
 char	*ft_getpid(t_minishell *shell)
@@ -84,22 +97,22 @@ char	*get_env_for_special_symbol(t_minishell *shell, char *base, int *start,
 {
 	if (!base[*i] || base[*i] == ' ' || base[*i] == shell->metaquote)
 	{
-		shell->old_value = ft_strdup(shell, "$");
+		shell->env_value = ft_strdup(shell, "$");
 		(*i)--;
 	}
 	else if (base[*i] == '$')
 	{
-		shell->old_value = ft_getpid(shell);
+		shell->env_value = ft_getpid(shell);
 		shell->my_pid = NULL;
 	}
 	else if (base[*i] == '?')
-		shell->old_value = ft_itoa(shell, shell->last_exit_status);
+		shell->env_value = ft_itoa(shell, shell->last_exit_status);
 	else if (base[*i] == '_')
-		shell->old_value = ft_getenv(shell, "_");
+		shell->env_value = ft_getenv(shell, "_");
 	else if (base[*i] == '"' || base[*i] == '\'')
 		(*i)--;
 	*start = *i + 1;
-	return (shell->old_value);
+	return (shell->env_value);
 }
 
 char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
@@ -107,7 +120,7 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 	(*i)++;
 	if (base[*i - 1] == '~')
 	{
-		shell->old_value = ft_getenv(shell, "HOME");
+		shell->env_value = ft_getenv(shell, "HOME");
 		if (base[*i])
 			*start = *i + 1;
 		else
@@ -119,13 +132,13 @@ char	*get_env_value(t_minishell *shell, char *base, int *start, int *i)
 		*start = *i;
 		while (ft_isalnum(base[*i]) || base[*i] == '_')
 			(*i)++;
-		shell->old_key = ft_substr(shell, base, *start, *i - *start);
-		shell->old_value = ft_getenv(shell, shell->old_key);
-		free_and_reset_ptr((void **)&shell->old_key);
+		shell->env_key = ft_substr(shell, base, *start, *i - *start);
+		shell->env_value = ft_getenv(shell, shell->env_key);
+		free_and_reset_ptr((void **)&shell->env_key);
 		*start = *i;
 		(*i)--;
 	}
 	else
-		shell->old_value = get_env_for_special_symbol(shell, base, start, i);
-	return (shell->old_value);
+		shell->env_value = get_env_for_special_symbol(shell, base, start, i);
+	return (shell->env_value);
 }

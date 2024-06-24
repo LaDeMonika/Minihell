@@ -1,26 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_msg_01.c                                     :+:      :+:    :+:   */
+/*   array.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msimic <msimic@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 14:17:14 by msimic            #+#    #+#             */
-/*   Updated: 2024/05/24 14:17:32 by msimic           ###   ########.fr       */
+/*   Created: 2024/06/24 18:30:05 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:30:06 by lilin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-void	print_error(char *prefix, char *custom_message)
+char	**fill_array_with_null(char **array, int size)
 {
-	write(STDERR_FILENO, prefix, ft_strlen(prefix));
-	write(STDERR_FILENO, ": ", 2);
-	if (custom_message)
+	int	i;
+
+	i = 0;
+	while (i < size)
 	{
-		write(STDERR_FILENO, custom_message, ft_strlen(custom_message));
-		write(STDERR_FILENO, "\n", 1);
+		array[i] = NULL;
+		i++;
 	}
-	else
-		perror(NULL);
+	return (array);
+}
+
+int	sizeof_array(void **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+		i++;
+	return (i);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lilin <lilin@student.42vienna.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 18:31:37 by lilin             #+#    #+#             */
+/*   Updated: 2024/06/24 18:34:01 by lilin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -16,13 +28,14 @@ char	*find_command_in_path_env(t_minishell *shell)
 		else
 			return (set_custom_errno(shell, U_NO_FILE, 127), NULL);
 	}
-	split_while_skipping_quotes(shell, shell->path, ':');
+	shell->path_array = split_while_skipping_quotes(shell, shell->path, ':');
+	shell->split_arr = NULL;
 	i = 0;
 	while (shell->path_array[i])
 	{
 		shell->command_path = ft_strjoin(shell, shell->path_array[i], "/");
 		shell->command_path = append(shell, shell->command_path,
-				shell->command_array[0], FREE_BASE);
+				shell->command_array[0], BASE);
 		if (access(shell->command_path, F_OK & X_OK) == 0)
 			return (shell->command_path);
 		free_and_reset_ptr((void **)&shell->command_path);
@@ -30,12 +43,16 @@ char	*find_command_in_path_env(t_minishell *shell)
 	}
 	return (NULL);
 }
+
 bool	parse_command(t_minishell *shell, char *command)
 {
 	int	i;
 
 	if (shell->pipes_total > 0)
-		split_while_skipping_quotes(shell, command, ' ');
+	{
+		shell->command_array = split_while_skipping_quotes(shell, command, ' ');
+		shell->split_arr = NULL;
+	}
 	i = 0;
 	while (shell->command_array[i])
 	{
